@@ -33,3 +33,27 @@
 .plan-empty__ticks { display: flex; gap: var(--space-2); block-size: var(--tick-large); }
 .plan-empty__ticks span { flex: 1; display: flex; gap: var(--tick-gap-large); }
 .plan-empty__ticks i { flex: 1; border: var(--border-mid) dashed var(--color-pencil); border-radius: var(--radius-tick); }
+
+/* ---------- Course names + copy (design PlanNames) ---------- */
+.plan-summary__ticks .tick-bar { block-size: 20px; } /* artboard: 20px plan ticks */
+.plan-picker .segmented__item { min-block-size: var(--tap); } /* artboard: 48px path items */
+.plan-shape {
+  margin: var(--space-1) var(--space-3) 0; display: flex; align-items: center; gap: var(--space-1);
+  font-size: var(--text-caption); font-weight: var(--weight-medium); color: var(--color-ink);
+}
+.plan-terms { padding-block-start: var(--space-2); }
+.plan-terms .card { padding: var(--space-1) var(--space-2) var(--space-2); gap: 0; }
+.plan-terms .card__header { padding-block: var(--space-1); }
+.term-row { min-block-size: 40px; display: flex; align-items: center; gap: var(--space-2); border-block-start: var(--border-thin) solid var(--color-rule); }
+.term-row__name { flex: 1; min-inline-size: 0; font-size: var(--text-body); }
+.copy-codes { margin-block-start: var(--space-1); display: flex; flex-direction: column; gap: var(--space-1); }
+.copy-codes__box {
+  padding: var(--space-1) var(--space-2); background: var(--color-paper);
+  border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-sm);
+  font-size: var(--text-caption); font-weight: var(--weight-semibold); text-align: left; line-height: 1.6;
+  user-select: all;
+}
+.copy-codes__failed { color: var(--color-ink); }
+/* Footer height (disclaimer + button + padding) so the copy result scrolls to just above it. */
+.copy-codes { scroll-margin-block: var(--space-2) 160px; }
+.copy-codes__code { white-space: nowrap; }

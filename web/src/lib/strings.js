@@ -7,6 +7,7 @@
 //   Unicode "left-to-right isolate" marks, so "CS 210" never flips inside Arabic text.
 // - names ({name}) may be Arabic or English, so they get a "first-strong isolate".
 import { fmtNumber } from './format.js';
+import { countOf } from './plural.js';
 
 const LRI = '⁦'; // left-to-right isolate
 const FSI = '⁨'; // first-strong isolate (direction taken from the text itself)
@@ -25,8 +26,8 @@ const STRINGS = {
   'input.start.manual.sub': 'انسخها من خطة قسمك، مقرر مقرر',
   'input.start.local': 'كل شي ينحفظ في جهازك بس',
   'input.list.title': 'مقررات خطتك',
-  'input.list.count': 'أضفت {n} مقرر، الأحدث فوق',
-  'input.upload.attached': 'سجلك مرفق، لقينا {n} مقرر خلصتها',
+  'input.list.count': 'أضفت {n|course}، الأحدث فوق',
+  'input.upload.attached': 'سجلك مرفق، لقينا {n|course} خلصتها',
   'input.upload.changeShort': 'غيّر',
   'input.addOne': 'أضف مقرر',
   'input.sheet.title': 'أضف مقرر',
@@ -40,7 +41,7 @@ const STRINGS = {
   'input.upload': 'ارفق سجلك الأكاديمي',
   'input.upload.sub': 'ملف PDF من موقع الجامعة، ونعلّم لك اللي خلصته',
   'input.upload.reading': 'نقرأ سجلك الأكاديمي…',
-  'input.upload.done': 'لقينا {n} مقرر خلصتها',
+  'input.upload.done': 'لقينا {n|course} خلصتها',
   'input.upload.error.title': 'ما قدرنا نقرأ سجلك',
   'input.upload.error.scan': 'الملف صورة ممسوحة، مو PDF فيه نص. نزّل السجل من بوابة الجامعة كـ PDF وارفقه مرة ثانية، أو أدخل مقرراتك يدويًا تحت.',
   'input.upload.error.retry': 'ارفق ملف ثاني',
@@ -61,7 +62,7 @@ const STRINGS = {
   'input.placeholder.name': 'مثال: الخوارزميات',
   'input.row.needs': 'يحتاج {code}',
   'input.row.delete': 'احذف {code}',
-  'input.search': 'ابحث في {n} مقرر',
+  'input.search': 'ابحث في {n|course}',
   // Added on the user's request (not in the design): university picker, sample data, reset.
   'input.university.label': 'جامعتك',
   'input.university.placeholder': 'اختر جامعتك',
@@ -77,13 +78,13 @@ const STRINGS = {
   'done.longHint': 'ابحث بدل ما تمرّر',
   'done.next.loading': 'اعرض المتبقي',
   'done.title': 'علّم المقررات اللي خلصتها',
-  'done.count': 'علّمت {n} من {total} مقرر',
+  'done.count': 'علّمت {n} من {total|course}',
   'done.search': 'ابحث بالرمز أو الاسم',
-  'done.next': 'اعرض المتبقي ({n} مقرر)',
+  'done.next': 'اعرض المتبقي ({n|course})',
   'done.empty.title': 'ما فيه مقررات تعلّمها للحين',
   'done.empty.body': 'أضف مقررات خطتك أول، وبعدها ارجع هنا وعلّم اللي خلصته.',
   'done.empty.button': 'أضف مقررات خطتك',
-  'done.loading': 'نجهّز {n} مقرر…',
+  'done.loading': 'نجهّز {n|course}…',
   'done.error.title': 'ما لقينا «{query}» في خطتك',
   'done.error.body': 'تأكد من الرمز. وإذا المقرر ناقص من خطتك، أضفه وارجع علّمه.',
   'done.error.button': 'أضف {query} لخطتك',
@@ -94,7 +95,7 @@ const STRINGS = {
   // The list titles are split from their count because the design styles «(٦)» lighter.
   'remaining.back': 'رجوع لتعليم المقررات',
   'remaining.summary': 'ملخص التقدم',
-  'remaining.ticks.label': 'خلصت {done} من {total} مقرر',
+  'remaining.ticks.label': 'خلصت {done} من {total|course}',
   'remaining.available.title': 'تقدر تسجّلها الترم الجاي',
   'remaining.locked.title': 'تحتاج متطلب قبلها',
   'common.count': '({n})',
@@ -107,11 +108,9 @@ const STRINGS = {
   'remaining.chain.title': 'الطريق له:',
   'remaining.chain.now': 'متاح الحين',
   'remaining.chain.next': 'الترم اللي بعده',
-  'remaining.chain.after2': 'أقرب وقت: بعد ترمين',
-  'remaining.chain.afterFew': 'أقرب وقت: بعد {n} أترام',
-  'remaining.chain.afterMany': 'أقرب وقت: بعد {n} ترم',
+  'remaining.chain.after': 'أقرب وقت: بعد {n|term}',
   'remaining.label': 'باقي لك',
-  'remaining.unit': 'مقرر',
+  'remaining.unit': '{n|courseWord}',
   'remaining.ticks': 'كل شرطة مقرر، خلصت {done} من {total}',
   'remaining.available': 'تقدر تسجّلها الترم الجاي ({n})',
   'remaining.locked': 'تحتاج متطلب قبلها ({n})',
@@ -145,26 +144,32 @@ const STRINGS = {
   'plan.term.9': 'الترم التاسع',
   'plan.term.10': 'الترم العاشر',
   'plan.term.n': 'الترم {n}',
-  // Term card count: Arabic uses «مقررات» for 3 to 10, «مقرر» otherwise (design: «٥ مقررات»).
-  'plan.term.count.few': '{n} مقررات',
-  'plan.term.count.other': '{n} مقرر',
-  'plan.title': 'تخلّص تقريبًا في {n} أترام',
-  'plan.sub': 'حسب اللي أدخلته، حد أقصى {max} مقررات بالترم',
+  'plan.term.count': '{n|course}',
+  // Course names + copy (design PlanNames).
+  'plan.shape.balanced': 'متوازن: {counts}',
+  'plan.shape.heavy': 'أول ترم أثقل ({first})، وآخر ترم أخف ({last})',
+  'plan.shape.light': 'تبدأ خفيف ({first}) وتزيد بعدين',
+  'plan.copy': 'انسخ رموز الترم الجاي ({n})',
+  'plan.copy.done': 'انسخت {n|code}',
+  'plan.copy.hint': 'الصقها في نظام التسجيل حق جامعتك',
+  'plan.copy.failed': 'ما قدرنا ننسخ. اضغط مطوّل على الرموز وانسخها',
+  'plan.title': 'تخلّص تقريبًا في {n|term}',
+  'plan.sub': 'حسب اللي أدخلته، حد أقصى {max|course} بالترم',
   // HANDOFF plan.paths, split per path: label + strategy.
   'plan.path.A': 'المسار أ',
   'plan.path.B': 'المسار ب',
   'plan.path.C': 'المسار ج',
   'plan.strategy.balanced': 'متوازن',
-  'plan.strategy.heavy-first': 'الثقيل أول',
-  'plan.strategy.light-first': 'الخفيف أول',
+  'plan.strategy.heavy-first': 'ثقيل',
+  'plan.strategy.light-first': 'خفيف',
   // HANDOFF plan.terms: names for the first, second and last term.
   'plan.term.next': 'الترم الجاي',
   'plan.term.after': 'الترم اللي بعده',
   'plan.term.last': 'ترم التخرج',
   'plan.disclaimer': 'ترتيب مقترح، مو ضمان. راجعه مع مرشدك الأكاديمي.',
   'plan.save': 'احفظ المسار {letter}',
-  'plan.loading': 'جاري ترتيب {n} مقرر…',
-  'plan.loading.sub': 'نحسب المتطلبات السابقة وحد {max} مقررات بالترم',
+  'plan.loading': 'جاري ترتيب {n|course}…',
+  'plan.loading.sub': 'نحسب المتطلبات السابقة وحد {max|course} بالترم',
   'plan.saving': 'جاري الحفظ…',
   'plan.saved': 'انحفظ المسار {letter} في جهازك',
   'plan.saved.sub': 'ترجع له متى ما فتحت أرشدني من نفس المتصفح',
@@ -182,7 +187,9 @@ export function t(key, vars = {}) {
     if (import.meta.env.DEV) console.warn(`strings.js: missing key "${key}"`);
     return key;
   }
-  return text.replace(/\{(\w+)\}/g, (match, name) => {
+  // {n|course}: a count with the right Arabic noun form (lib/plural.js).
+  return text.replace(/\{(\w+)\|(\w+)\}/g, (match, name, noun) => (name in vars ? countOf(vars[name], noun) : match))
+    .replace(/\{(\w+)\}/g, (match, name) => {
     if (!(name in vars)) return match;
     const value = vars[name];
     if (typeof value === 'number') return fmtNumber(value);

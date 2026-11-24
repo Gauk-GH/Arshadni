@@ -14,6 +14,8 @@
 //    C light-first: the same spread, smaller terms first (4, 5, 5).
 // 5. Rule 9: only paths that finish in the minimum number of terms are shown.
 import { codeKey } from './courses.js';
+import { fmtNumber } from './format.js';
+import { countOf } from './plural.js';
 
 export const STRATEGIES = [
   { id: 'A', strategy: 'balanced' },
@@ -106,3 +108,19 @@ export function generatePaths(courses, maxPerTerm, { ignorePrerequisites = false
   }
   return { termCount, paths };
 }
+
+// Shape line under the path picker (HANDOFF §8 plan.shape.*), from the path's real term counts.
+// Returns { key, vars } for t(). Balanced joins ALL counts with « ثم »; the noun follows the last count.
+//   balanced: «متوازن: ٥ ثم ٥ ثم ٤ مقررات»   heavy: «أول ترم أثقل (٦)، وآخر ترم أخف (٣)»   light: «تبدأ خفيف (٤) وتزيد بعدين»
+export function describeShape(path) {
+  const counts = path.terms.map((term) => term.length);
+  const first = counts[0];
+  const last = counts[counts.length - 1];
+  if (path.strategy === 'heavy-first') return { key: 'plan.shape.heavy', vars: { first, last } };
+  if (path.strategy === 'light-first') return { key: 'plan.shape.light', vars: { first } };
+  const joined = [...counts.slice(0, -1).map((n) => fmtNumber(n)), countOf(last, 'course')].join(' ثم ');
+  return { key: 'plan.shape.balanced', vars: { counts: joined } };
+}
+
+// «انسخ رموز الترم الجاي» (HANDOFF rule 24): codes as displayed, in the card's order, ", " between them.
+export const copyText = (codes) => codes.join(', ');

@@ -65,3 +65,15 @@ export const PencilIcon = ({ size = 24 }) => (
 export const ChevronUpIcon = ({ size = 16 }) => (
   <Svg size={size}><path d="M6 15l6-6 6 6" /></Svg>
 );
+
+export const CopyIcon = ({ size = 20 }) => (
+  <Svg size={size}>
+    <rect x="8" y="8" width="12" height="12" rx="2" />
+    <path d="M16 8V6a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8a2 2 0 0 0 2 2h2" />
+  </Svg>
+);
+
+// Three bars of different heights: the plan's "shape" line.
+export const BarsIcon = ({ size = 16 }) => (
+  <Svg size={size}><path d="M4 18h4V10H4zM10 18h4V6h-4zM16 18h4v-4h-4z" /></Svg>
+);

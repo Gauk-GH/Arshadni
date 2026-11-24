@@ -75,7 +75,7 @@ export default function RemainingScreen() {
             <p className="subtitle">{t('remaining.label')}</p>
             <div className="remaining-number">
               <span className="remaining-number__value">{fmtNumber(summary.remaining)}</span>
-              <span className="remaining-number__unit">{t('remaining.unit')}</span>
+              <span className="remaining-number__unit">{t('remaining.unit', { n: summary.remaining })}</span>
             </div>
             {summary.total > 0 && (
               <div className="remaining-ticks">

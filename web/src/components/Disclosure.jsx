@@ -37,13 +37,12 @@ export function MiniTicks({ solid, dashed }) {
   );
 }
 
-// Step label: 1 «متاح الحين», 2 «الترم اللي بعده», 3 «أقرب وقت: بعد ترمين», 4+ «بعد {n} أترام».
+// Step label: 1 «متاح الحين», 2 «الترم اللي بعده», 3+ «أقرب وقت: بعد ترمين / ٣ أترام / ١١ ترم».
 function stepLabel(index) {
   if (index === 0) return t('remaining.chain.now');
   if (index === 1) return t('remaining.chain.next');
-  const terms = index; // step 3 = after 2 terms, step 4 = after 3 terms…
-  if (terms === 2) return t('remaining.chain.after2');
-  return t(terms <= 10 ? 'remaining.chain.afterFew' : 'remaining.chain.afterMany', { n: terms });
+  // step 3 = after 2 terms («بعد ترمين»), step 4 = after 3 terms («بعد ٣ أترام»)… (plural helper)
+  return t('remaining.chain.after', { n: index });
 }
 
 // Numbered path: step dots on a rail (circles: the ONE place radius 50% is allowed, DESIGN.md §4).

@@ -120,6 +120,8 @@ Storage: device only (browser local storage), no account, no server. Key name an
 21. The available list is sorted by how many courses each one unlocks directly (most first); ties keep the student's list order. The «متاح» badge is not shown there. Courses that unlock 1+ get «يفتح {n}»; the first course gets «يفتح أكثر شي» only if it unlocks 1+.
 22. The open card lists the direct courses, then mini ticks (solid = direct, dashed = later) and «و{n} ثانية بعدها: {codes}» for everything further down the chain (no repeats, list order). The line is hidden when there are none. One card open at a time.
 23. **Chain («الطريق له:»):** from an available course to the locked course, following the prerequisite with the LONGEST chain at each step (it decides the earliest term); ties go to the first prerequisite. Step 1 «متاح الحين», step 2 «الترم اللي بعده», step 3 «أقرب وقت: بعد ترمين», step k ≥ 4 «أقرب وقت: بعد {k−1} أترام» (3–10) / «ترم» (11+).
+24. **Copy format («انسخ رموز الترم الجاي»):** the first term's codes as displayed («CS 210»), in the card's order, joined with ", " (English comma + space, because it is pasted into English registration systems), nothing before or after. Example: `CS 210, CS 250, CS 330, STAT 201, ISLM 102`. Try the clipboard API, then the older select-and-copy once; if both fail, show the text selected with «ما قدرنا ننسخ…». Changing the path resets the button.
+25. **Arabic counts:** one shared helper (`web/src/lib/plural.js`) for every number followed by a noun: 1 «مقرر واحد» · 2 «مقررين» · 3–10 «{n} مقررات» · 0 and 11+ «{n} مقرر»; the same for «رمز / رمزين / رموز» and «ترم / ترمين / أترام». In §8, `{n|course}`, `{n|code}`, `{n|term}` mean "the number with the right form" and `{n|courseWord}` the word alone. Definite phrases «كل الـ {n} مقرر» are not covered yet.
 
 ## 8. State texts
 
@@ -135,7 +137,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | input.upload | ارفق سجلك الأكاديمي |
 | input.upload.sub | ملف PDF من موقع الجامعة، ونعلّم لك اللي خلصته |
 | input.upload.reading | نقرأ سجلك الأكاديمي… |
-| input.upload.done | لقينا {n} مقرر خلصتها |
+| input.upload.done | لقينا {n|course} خلصتها |
 | input.upload.done.sub | ~~بتلقاها معلّمة في الخطوة الجاية~~ (replaced by the screen 1 redesign) |
 | input.upload.change | ~~غيّر الملف~~ (replaced by the screen 1 redesign) |
 | input.upload.error.title | ما قدرنا نقرأ سجلك |
@@ -161,8 +163,8 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | input.start.local | كل شي ينحفظ في جهازك بس |
 | input.university.optional | (اختياري) |
 | input.list.title | مقررات خطتك |
-| input.list.count | أضفت {n} مقرر، الأحدث فوق |
-| input.upload.attached | سجلك مرفق، لقينا {n} مقرر خلصتها |
+| input.list.count | أضفت {n|course}، الأحدث فوق |
+| input.upload.attached | سجلك مرفق، لقينا {n|course} خلصتها |
 | input.upload.changeShort | غيّر |
 | input.addOne | أضف مقرر |
 | input.sheet.title | أضف مقرر |
@@ -178,13 +180,13 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | input.error.duplicate | {code} مضاف قبل باسم «{name}». عدّله من القائمة تحت، أو اكتب رمز ثاني. |
 | input.success | ~~انضاف {code} {name}، تراجع~~ (replaced by the screen 1 redesign) |
 | done.title | علّم المقررات اللي خلصتها |
-| done.count | علّمت {n} من {total} مقرر |
+| done.count | علّمت {n} من {total|course} |
 | done.search | ابحث بالرمز أو الاسم |
-| done.next | اعرض المتبقي ({n} مقرر) |
+| done.next | اعرض المتبقي ({n|course}) |
 | done.empty.title | ما فيه مقررات تعلّمها للحين |
 | done.empty.body | أضف مقررات خطتك أول، وبعدها ارجع هنا وعلّم اللي خلصته. |
 | done.empty.button | أضف مقررات خطتك |
-| done.loading | نجهّز {n} مقرر… |
+| done.loading | نجهّز {n|course}… |
 | done.error.title | ما لقينا «{query}» في خطتك |
 | done.error.body | تأكد من الرمز. وإذا المقرر ناقص من خطتك، أضفه وارجع علّمه. |
 | done.error.button | أضف {query} لخطتك |
@@ -198,11 +200,9 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | remaining.chain.title | الطريق له: |
 | remaining.chain.now | متاح الحين |
 | remaining.chain.next | الترم اللي بعده |
-| remaining.chain.after2 | أقرب وقت: بعد ترمين |
-| remaining.chain.afterFew | أقرب وقت: بعد {n} أترام |
-| remaining.chain.afterMany | أقرب وقت: بعد {n} ترم |
+| remaining.chain.after | أقرب وقت: بعد {n|term} |
 | remaining.label | باقي لك |
-| remaining.unit | مقرر |
+| remaining.unit | {n|courseWord} |
 | remaining.ticks | كل شرطة مقرر، خلصت {done} من {total} |
 | remaining.firstYearHint | الخطة تقسمها لك على أترام |
 | remaining.available | تقدر تسجّلها الترم الجاي ({n}) |
@@ -221,14 +221,22 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | remaining.error.badge | متعارض |
 | remaining.error.button | صحّح المتطلب السابق |
 | remaining.success | تحدّث المتبقي: صار {new} بدل {old} |
-| plan.title | تخلّص تقريبًا في {n} أترام |
-| plan.sub | حسب اللي أدخلته، حد أقصى {max} مقررات بالترم |
-| plan.paths | المسار أ، متوازن / المسار ب، الثقيل أول / المسار ج، الخفيف أول |
+| plan.title | تخلّص تقريبًا في {n|term} |
+| plan.sub | حسب اللي أدخلته، حد أقصى {max|course} بالترم |
+| plan.paths | المسار أ، متوازن / المسار ب، ثقيل / المسار ج، خفيف |
 | plan.terms | الترم الجاي / الترم اللي بعده / ترم التخرج |
+| plan.term.count | {n|course} |
+| plan.shape.balanced | متوازن: {counts} (all term counts joined with « ثم »; the noun follows the last count, e.g. «٥ ثم ٥ ثم ٤ مقررات») |
+| plan.shape.heavy | أول ترم أثقل ({first})، وآخر ترم أخف ({last}) |
+| plan.shape.light | تبدأ خفيف ({first}) وتزيد بعدين |
+| plan.copy | انسخ رموز الترم الجاي ({n}) |
+| plan.copy.done | انسخت {n|code} |
+| plan.copy.hint | الصقها في نظام التسجيل حق جامعتك |
+| plan.copy.failed | ما قدرنا ننسخ. اضغط مطوّل على الرموز وانسخها |
 | plan.disclaimer | ترتيب مقترح، مو ضمان. راجعه مع مرشدك الأكاديمي. |
 | plan.save | احفظ المسار {letter} |
-| plan.loading | جاري ترتيب {n} مقرر… |
-| plan.loading.sub | نحسب المتطلبات السابقة وحد {max} مقررات بالترم |
+| plan.loading | جاري ترتيب {n|course}… |
+| plan.loading.sub | نحسب المتطلبات السابقة وحد {max|course} بالترم |
 | plan.saving | جاري الحفظ… |
 | plan.saved | انحفظ المسار {letter} في جهازك |
 | plan.saved.sub | ترجع له متى ما فتحت أرشدني من نفس المتصفح |
@@ -298,3 +306,4 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 27. Screen 1 redesign (design NewInput): start · list · add sheet (see §4). The inline form is gone; the university picker shows on the start state only. Filled choice card sub-text uses `paper`, not `rule`. «محفوظة في جهازك…» dropped from the list footer.
 28. «امسح كل المقررات» asks in a sheet («امسح» / «لا») and offers «تراجع» after.
 29. Screen 3 «يفتح لك» (design Unlocks): rules 20–23. Chain step dots are circles (the only radius-50% exception). The pill is 32px visually inside a 48px tap area. Mini ticks are ~20px each and wrap. `{codes}` is joined with «، ».
+30. Screen 4 course names + copy (design PlanNames): term cards list code + name rows; picker subs «متوازن / ثقيل / خفيف»; shape line from the real counts; «انسخ رموز الترم الجاي» in the first card only (rule 24); plan ticks 20px and path items 48px; Arabic counts through one helper (rule 25).

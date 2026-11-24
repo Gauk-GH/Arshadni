@@ -7,6 +7,7 @@ import { fmtNumber } from './format.js';
 export const DEV_STATES = ['empty', 'loading', 'duplicate', 'circular', 'circular3', 'zero', 'full', 'firstyear', 'noprereq'];
 export const DEV_UPLOADS = ['error', 'partial'];
 export const DEV_SAVES = ['fail']; // ?save=fail: saving the path fails like in private browsing
+export const DEV_COPIES = ['fail']; // ?copy=fail: both copy methods fail (old or locked-down browser)
 
 function readParam(name, allowed) {
   if (!import.meta.env.DEV) return null;
@@ -17,6 +18,7 @@ function readParam(name, allowed) {
 export const devState = () => readParam('state', DEV_STATES);
 export const devUpload = () => readParam('upload', DEV_UPLOADS);
 export const devSave = () => readParam('save', DEV_SAVES);
+export const devCopy = () => readParam('copy', DEV_COPIES);
 
 // Changes the starting courses to show a state. Returns a new array.
 export function applyDevState(state, courses) {

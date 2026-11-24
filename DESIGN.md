@@ -178,6 +178,13 @@ None. Separation is by 1px `rule` borders only.
 - Chips wrap in an RTL row; first course is at the right.
 
 ### Card (term card)
+- On the plan, a term card lists its courses as **rows**, not chips: min height 40px, code (72px column, 13px / 600, `dir="ltr"`) then name 16px, 1px `rule` line on top of each row. Card padding 8px 16px 16px; header row padding 8px 0.
+- **Copy («انسخ رموز الترم الجاي ({n})»), first card only:** secondary button (outlined, 48px, 20px copy icon), 8px above.
+  - **Done:** the button shows a check + «انسخت {n|code}» and stays tappable (copies again); below it an LTR box with the copied text (background `paper`, border 1px `rule`, radius 4px, padding 8px 16px, 13px / 600, left-aligned, line height 1.6, each code kept on one line), then the caption «الصقها في نظام التسجيل حق جامعتك».
+  - **Failed:** the same box with the text selected, and «ما قدرنا ننسخ. اضغط مطوّل على الرموز وانسخها» (13px / 500 `ink`).
+  - A new path resets it. The result scrolls into view above the sticky footer.
+- **Shape line** under the path picker: 16px bar icon + 13px / 500 `ink`, margin 8px 24px 0.
+
 - Background `surface`, border 1px `rule`, radius 8px, padding 16px, gap 8px.
 - Header row: term name 16px / 600 at start, count 13px / 500 `pencil` at end.
 
@@ -191,14 +198,14 @@ None. Separation is by 1px `rule` borders only.
 
 ### Segmented control (path picker)
 - Container: `surface`, border 1px `rule`, radius 8px, padding 4px, 3 equal columns, gap 4px.
-- Item: min height 56px, radius 4px, label 16px / 600 + sub-label 13px / 500.
+- Item: min height 48px (the plan screen, design PlanNames), radius 4px, label 16px / 600 + sub-label 13px / 500.
 - **Selected**: background `ink`, text `paper`, `aria-checked="true"`.
 - **Unselected**: transparent, text `ink`.
 
 ### Tick bar (signature)
 - One tick per course. Large: height 28px, gap 3px. Small: height 12px, gap 2px.
 - Filled = completed (`ink`), empty = remaining (`rule`). Fills from the right.
-- Plan version: remaining ticks as outlines (1.5px `ink`), grouped per term, 16px between groups.
+- Plan version: remaining ticks as outlines (1.5px `ink`), **20px tall** (design PlanNames), grouped per term, 16px between groups.
 - Has `role="img"` and an `aria-label` ("خلصت ٢٨ من ٤٢ مقرر").
 
 ### Step indicator

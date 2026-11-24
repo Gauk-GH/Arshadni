@@ -6,14 +6,15 @@ import { useStore } from '../../store/StoreProvider.jsx';
 import { navigate } from '../../App.jsx';
 import { PrimaryButton, SecondaryButton } from '../../components/Button.jsx';
 import { FieldError } from '../../components/Field.jsx';
-import { Chip } from '../../components/CourseRow.jsx';
 import { Card } from '../../components/Feedback.jsx';
 import { TickBar } from '../../components/TickBar.jsx';
 import { Segmented } from '../../components/Segmented.jsx';
 import { Screen, Footer } from '../../components/Screen.jsx';
-import { BackIcon, SpinnerIcon } from '../../components/Icons.jsx';
+import { BackIcon, BarsIcon, SpinnerIcon } from '../../components/Icons.jsx';
+import CopyCodes from './CopyCodes.jsx';
 import { findCycle } from '../../lib/courses.js';
-import { generatePaths, hasAnyPrerequisite } from '../../lib/plan.js';
+import { describeShape, generatePaths, hasAnyPrerequisite } from '../../lib/plan.js';
+import { codeKey } from '../../lib/courses.js';
 import { devSave } from '../../lib/devState.js';
 import { t } from '../../lib/strings.js';
 import './plan.css';
@@ -28,7 +29,7 @@ function termName(i, count) {
   if (i === 1) return t('plan.term.after');
   return i + 1 <= 10 ? t(`plan.term.${i + 1}`) : t('plan.term.n', { n: i + 1 });
 }
-const termCount = (n) => t(n >= 3 && n <= 10 ? 'plan.term.count.few' : 'plan.term.count.other', { n });
+const termCount = (n) => t('plan.term.count', { n });
 const sameTerms = (a, b) => JSON.stringify(a) === JSON.stringify(b);
 
 export default function PlanScreen() {
@@ -134,6 +135,7 @@ export default function PlanScreen() {
   }
 
   const letter = LETTER[path.id];
+  const nameOf = new Map(courses.map((c) => [codeKey(c.code), c.name]));
   const options = paths.map((p) => ({ value: p.id, label: t(`plan.path.${p.id}`), sub: t(`plan.strategy.${p.strategy}`) }));
 
   return (
@@ -156,11 +158,25 @@ export default function PlanScreen() {
         </div>
       )}
 
+      {(() => {
+        const shape = describeShape(path);
+        return <p className="plan-shape"><BarsIcon />{t(shape.key, shape.vars)}</p>;
+      })()}
+
       <ol className="plan-terms" key={path.id}>
         {path.terms.map((term, i) => (
           <li key={i} className="plan-terms__item" style={{ '--i': i }}>
             <Card title={termName(i, path.terms.length)} count={termCount(term.length)}>
-              <div className="chips">{term.map((code) => <Chip key={code}>{code}</Chip>)}</div>
+              <ul className="term-rows">
+                {term.map((code) => (
+                  <li key={code} className="term-row">
+                    <span className="course-row__code code" dir="ltr">{code}</span>
+                    <span className="term-row__name"><bdi>{nameOf.get(codeKey(code)) ?? ''}</bdi></span>
+                  </li>
+                ))}
+              </ul>
+              {/* Only the next term can be registered now: the copy button lives in the first card. */}
+              {i === 0 && <CopyCodes key={path.id} codes={term} />}
             </Card>
           </li>
         ))}
