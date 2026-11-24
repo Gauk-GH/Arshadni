@@ -162,6 +162,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | remaining.label | باقي لك |
 | remaining.unit | مقرر |
 | remaining.ticks | كل شرطة مقرر، خلصت {done} من {total} |
+| remaining.firstYearHint | الخطة تقسمها لك على أترام |
 | remaining.available | تقدر تسجّلها الترم الجاي ({n}) |
 | remaining.locked | تحتاج متطلب قبلها ({n}) |
 | remaining.badge.available | متاح |
@@ -174,6 +175,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | remaining.loading | نحسب اللي باقي لك… |
 | remaining.error.title | ما نقدر نرتّب خطتك |
 | remaining.error.body | {a} يحتاج {b}، و {b} يحتاج {a}. واحد منهم مكتوب غلط، صحّحه من مقرراتك. |
+| remaining.error.bodyLong | هذي المقررات تحتاج بعض في دايرة: {chain}. واحد من متطلباتها مكتوب غلط، صحّحه من مقرراتك. |
 | remaining.error.badge | متعارض |
 | remaining.error.button | صحّح المتطلب السابق |
 | remaining.success | تحدّث المتبقي: صار {new} بدل {old} |
@@ -196,6 +198,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | plan.error.retry | جرّب تحفظ المسار {letter} مرة ثانية |
 
 Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
+`remaining.error.bodyLong` is used for prerequisite loops of 3+ courses; `{chain}` is the codes joined with « ← », starting and ending with the same code (CS 310 ← CS 360 ← CS 410 ← CS 310). `remaining.firstYearHint` is added after `remaining.ticks` (separated by «،») when completed is under 25% of total.
 
 ## 9. Open questions for the backend / logic
 

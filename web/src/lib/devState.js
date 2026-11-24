@@ -4,7 +4,7 @@
 // While a dev state is active, nothing is saved, so your real saved courses stay untouched.
 import { fmtNumber } from './format.js';
 
-export const DEV_STATES = ['empty', 'loading', 'duplicate', 'circular', 'zero', 'full', 'firstyear'];
+export const DEV_STATES = ['empty', 'loading', 'duplicate', 'circular', 'circular3', 'zero', 'full', 'firstyear'];
 export const DEV_UPLOADS = ['error', 'partial'];
 
 function readParam(name, allowed) {
@@ -38,6 +38,14 @@ export function applyDevState(state, courses) {
       return copy.map((c) => {
         if (c.code === 'CS 310') return { ...c, prerequisites: ['CS 360'] };
         if (c.code === 'CS 360') return { ...c, prerequisites: ['CS 310'] };
+        return c;
+      });
+    case 'circular3':
+      // A loop of 3: CS 310 → CS 360 → CS 410 → CS 310.
+      return copy.map((c) => {
+        if (c.code === 'CS 310') return { ...c, prerequisites: ['CS 360'] };
+        if (c.code === 'CS 360') return { ...c, prerequisites: ['CS 410'] };
+        if (c.code === 'CS 410') return { ...c, prerequisites: ['CS 310'] };
         return c;
       });
     case 'full': {

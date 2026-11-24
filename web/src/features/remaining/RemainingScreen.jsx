@@ -17,6 +17,7 @@ import './remaining.css';
 
 const TOAST_MS = 5000;
 const DENSE_THRESHOLD = 60; // HANDOFF rule 19
+const FIRST_YEAR_SHARE = 0.25; // under 25% completed: add «الخطة تقسمها لك على أترام» (HANDOFF §8)
 
 function ListTitle({ titleKey, n }) {
   return (
@@ -89,7 +90,10 @@ export default function RemainingScreen() {
               </div>
             )}
             {!cycle && summary.total > 0 && (
-              <p className="caption">{t('remaining.ticks', { done: summary.completed, total: summary.total })}</p>
+              <p className="caption">
+                {t('remaining.ticks', { done: summary.completed, total: summary.total })}
+                {summary.completed < summary.total * FIRST_YEAR_SHARE && `، ${t('remaining.firstYearHint')}`}
+              </p>
             )}
           </>
         )}
@@ -121,7 +125,9 @@ export default function RemainingScreen() {
           <>
             <div className="remaining-alert">
               <AlertCard title={t('remaining.error.title')}>
-                {t('remaining.error.body', { a: cycle[0], b: cycle[1] ?? cycle[0] })}
+                {cycle.length === 2
+                  ? t('remaining.error.body', { a: cycle[0], b: cycle[1] })
+                  : t('remaining.error.bodyLong', { chain: [...cycle, cycle[0]] })}
               </AlertCard>
             </div>
             <ul>

@@ -100,6 +100,8 @@ const STRINGS = {
   'remaining.loading': 'نحسب اللي باقي لك…',
   'remaining.error.title': 'ما نقدر نرتّب خطتك',
   'remaining.error.body': '{a} يحتاج {b}، و {b} يحتاج {a}. واحد منهم مكتوب غلط، صحّحه من مقرراتك.',
+  'remaining.error.bodyLong': 'هذي المقررات تحتاج بعض في دايرة: {chain}. واحد من متطلباتها مكتوب غلط، صحّحه من مقرراتك.',
+  'remaining.firstYearHint': 'الخطة تقسمها لك على أترام',
   'remaining.error.badge': 'متعارض',
   'remaining.error.button': 'صحّح المتطلب السابق',
   'remaining.success': 'تحدّث المتبقي: صار {new} بدل {old}',
@@ -142,6 +144,8 @@ export function t(key, vars = {}) {
     if (!(name in vars)) return match;
     const value = vars[name];
     if (typeof value === 'number') return fmtNumber(value);
+    // A list of course codes ({chain}): each code isolated, joined with « ← ».
+    if (Array.isArray(value)) return value.map((code) => LRI + code + PDI).join(' ← ');
     if (LATIN_VARS.has(name)) return LRI + value + PDI;
     if (name === 'name') return FSI + value + PDI;
     return String(value);
