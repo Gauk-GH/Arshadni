@@ -5,16 +5,20 @@
 // size: 'large' (28px, gap 3) | 'small' (12px, gap 2). dense: gap 1px for very long plans.
 // groups: plan version, e.g. [5, 5, 4]: remaining ticks as outlines, grouped per term.
 export function TickBar({ total, filled, size = 'large', dense = false, groups = null, label, animate = false }) {
-  const cls = ['tick-bar', `tick-bar--${size}`, dense && 'tick-bar--dense', animate && 'tick-bar--animate']
+  // Many term groups (design full state, 7 terms): 8px between groups instead of 16px.
+  const tightGroups = groups && groups.length > 4;
+  const cls = ['tick-bar', `tick-bar--${size}`, dense && 'tick-bar--dense', animate && 'tick-bar--animate', tightGroups && 'tick-bar--tight-groups']
     .filter(Boolean).join(' ');
 
   if (groups) {
     let index = 0; // running index for the drop-in stagger
     return (
       <div className={cls} role="img" aria-label={label}>
-        <span className="tick-bar__group" style={{ '--n': filled }}>
-          {Array.from({ length: filled }, (_, i) => <span key={i} className="tick tick--filled" />)}
-        </span>
+        {filled > 0 && (
+          <span className="tick-bar__group" style={{ '--n': filled }}>
+            {Array.from({ length: filled }, (_, i) => <span key={i} className="tick tick--filled" />)}
+          </span>
+        )}
         {groups.map((count, g) => (
           <span key={g} className="tick-bar__group" style={{ '--n': count }}>
             {Array.from({ length: count }, (_, i) => (

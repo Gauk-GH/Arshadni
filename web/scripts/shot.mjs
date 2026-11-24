@@ -49,6 +49,10 @@ try {
   const evaluate = async (expr) => (await send('Runtime.evaluate', { expression: expr, awaitPromise: true, returnByValue: true })).result.value;
 
   await send('Page.enable');
+  // Optional: SHOT_REDUCED=1 emulates prefers-reduced-motion: reduce.
+  if (process.env.SHOT_REDUCED === '1') {
+    await send('Emulation.setEmulatedMedia', { features: [{ name: 'prefers-reduced-motion', value: 'reduce' }] });
+  }
   await send('Runtime.enable');
   for (const width of widths) {
     await send('Emulation.setDeviceMetricsOverride', { width, height, deviceScaleFactor: 2, mobile: true });

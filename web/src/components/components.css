@@ -194,3 +194,19 @@
 .footer__toast { position: absolute; inset-inline: var(--space-3); inset-block-end: calc(100% + var(--space-2)); }
 .footer { position: sticky; } /* the toast is positioned against the footer */
 .btn-secondary:disabled { border-color: var(--color-rule); color: var(--color-pencil); cursor: not-allowed; transform: none; background: var(--color-surface); }
+.tick-bar--tight-groups:has(.tick-bar__group) { gap: var(--space-1); }
+
+/* ---------- Segmented control (path picker) ---------- */
+.segmented {
+  padding: 4px; display: grid; gap: 4px;
+  background: var(--color-surface); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-lg);
+}
+.segmented__item {
+  min-block-size: var(--row-min); border: 0; border-radius: var(--radius-sm); cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  background: transparent; color: var(--color-ink);
+  font-size: var(--text-body); font-weight: var(--weight-semibold);
+  transition: background-color .15s ease, color .15s ease;
+}
+.segmented__item[aria-checked='true'] { background: var(--color-ink); color: var(--color-paper); }
+.segmented__sub { font-size: var(--text-caption); font-weight: var(--weight-medium); }

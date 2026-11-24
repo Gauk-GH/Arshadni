@@ -4,8 +4,9 @@
 // While a dev state is active, nothing is saved, so your real saved courses stay untouched.
 import { fmtNumber } from './format.js';
 
-export const DEV_STATES = ['empty', 'loading', 'duplicate', 'circular', 'circular3', 'zero', 'full', 'firstyear'];
+export const DEV_STATES = ['empty', 'loading', 'duplicate', 'circular', 'circular3', 'zero', 'full', 'firstyear', 'noprereq'];
 export const DEV_UPLOADS = ['error', 'partial'];
+export const DEV_SAVES = ['fail']; // ?save=fail: saving the path fails like in private browsing
 
 function readParam(name, allowed) {
   if (!import.meta.env.DEV) return null;
@@ -15,6 +16,7 @@ function readParam(name, allowed) {
 
 export const devState = () => readParam('state', DEV_STATES);
 export const devUpload = () => readParam('upload', DEV_UPLOADS);
+export const devSave = () => readParam('save', DEV_SAVES);
 
 // Changes the starting courses to show a state. Returns a new array.
 export function applyDevState(state, courses) {
@@ -48,6 +50,9 @@ export function applyDevState(state, courses) {
         if (c.code === 'CS 410') return { ...c, prerequisites: ['CS 310'] };
         return c;
       });
+    case 'noprereq':
+      // HANDOFF rule 6: the student entered no prerequisites at all.
+      return copy.map((c) => ({ ...c, prerequisites: [] }));
     case 'full': {
       // mock.json examples.longPlan: 72 courses, 50 completed.
       const extra = Array.from({ length: 30 }, (_, i) => ({

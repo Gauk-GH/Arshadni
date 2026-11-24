@@ -106,6 +106,23 @@ const STRINGS = {
   'remaining.error.button': 'صحّح المتطلب السابق',
   'remaining.success': 'تحدّث المتبقي: صار {new} بدل {old}',
 
+  // Design-only labels for screen 4 (HiPlan, StatesPlan), copied word for word.
+  'plan.back': 'رجوع للمتبقي',
+  'plan.header': 'خطة التخرج',
+  'plan.pick': 'اختر مسار',
+  // Middle terms in long plans (design: «الترم الثالث»، «الترم الرابع»).
+  'plan.term.3': 'الترم الثالث',
+  'plan.term.4': 'الترم الرابع',
+  'plan.term.5': 'الترم الخامس',
+  'plan.term.6': 'الترم السادس',
+  'plan.term.7': 'الترم السابع',
+  'plan.term.8': 'الترم الثامن',
+  'plan.term.9': 'الترم التاسع',
+  'plan.term.10': 'الترم العاشر',
+  'plan.term.n': 'الترم {n}',
+  // Term card count: Arabic uses «مقررات» for 3 to 10, «مقرر» otherwise (design: «٥ مقررات»).
+  'plan.term.count.few': '{n} مقررات',
+  'plan.term.count.other': '{n} مقرر',
   'plan.title': 'تخلّص تقريبًا في {n} أترام',
   'plan.sub': 'حسب اللي أدخلته، حد أقصى {max} مقررات بالترم',
   // HANDOFF plan.paths, split per path: label + strategy.

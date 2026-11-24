@@ -1,0 +1,35 @@
+/* plan.css: screen 4 layout (design HiPlan / StatesPlan). Tokens only. */
+
+.plan-top { padding: var(--space-1) var(--space-2) 0; display: flex; align-items: center; justify-content: space-between; }
+.plan-top__title { font-size: var(--text-body); font-weight: var(--weight-semibold); }
+.plan-top__spacer { inline-size: var(--tap); }
+
+/* Summary: title, caption, the term groups of outline ticks */
+.plan-summary { padding: var(--space-2) var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-1); }
+.plan-summary__ticks { margin-block-start: var(--space-2); }
+.plan-summary__ticks .tick-bar { block-size: var(--tick-large); }
+
+.plan-picker { margin-inline: var(--space-3); }
+
+/* Term cards: fade + rise, 400ms, 300ms + 120ms per card (DESIGN.md §7) */
+.plan-terms { flex: 1; padding: var(--space-3) var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
+.plan-terms__item { animation: card-in var(--dur-card-in) ease both; animation-delay: calc(300ms + var(--i) * 120ms); }
+@keyframes card-in { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
+
+.footer__center { text-align: center; }
+
+/* Loading: 900ms, empty ticks pulse (1s, 60ms stagger) */
+.plan-loading { flex: 1; padding: var(--space-3); display: flex; flex-direction: column; gap: var(--space-3); }
+.plan-loading__title { display: flex; align-items: center; gap: var(--space-1); }
+.plan-loading__ticks { display: flex; gap: var(--tick-gap-large); block-size: var(--tick-large); }
+.plan-loading__ticks span {
+  flex: 1; border-radius: var(--radius-tick); background: var(--color-rule);
+  animation: tick-wait 1s ease-in-out infinite; animation-delay: calc(var(--i) * 60ms);
+}
+@keyframes tick-wait { 0%, 100% { opacity: .35; } 50% { opacity: 1; } }
+
+/* No prerequisites (rule 6): two groups of dashed ticks, title, body */
+.plan-empty { flex: 1; padding: var(--space-3); display: flex; flex-direction: column; justify-content: center; gap: var(--space-2); }
+.plan-empty__ticks { display: flex; gap: var(--space-2); block-size: var(--tick-large); }
+.plan-empty__ticks span { flex: 1; display: flex; gap: var(--tick-gap-large); }
+.plan-empty__ticks i { flex: 1; border: var(--border-mid) dashed var(--color-pencil); border-radius: var(--radius-tick); }
