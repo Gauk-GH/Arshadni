@@ -258,4 +258,4 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 23. Screen 1 gets «امسح كل المقررات وابدأ من جديد» under the list (asks to confirm; clears courses, major and saved path on this device; keeps the university). Needed to reset between test students.
 24. Screen 1 starts with an optional «جامعتك» picker (native select: scroll wheel on iPhone). Riyadh universities + «جامعة ثانية». Saved with the plan, not used in the logic yet.
 25. The picker lists only the biggest universities: King Saud, Imam, Princess Nourah, King Saud bin Abdulaziz for Health Sciences, Saudi Electronic, and KFUPM (Dhahran, added on request), plus «جامعة ثانية». No logos (trademarks; the native picker cannot show images).
-26. The picker text uses the Title size (Readex Pro 24/600) in a 56px box. The native select sits invisibly over a text box so long names wrap instead of being cut.
+26. The picker uses the normal input size (16px, 48px box), like the other fields (24px was tried and reverted). The native select sits invisibly over a text box so long names wrap instead of being cut.
