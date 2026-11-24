@@ -33,3 +33,15 @@ export function StepIndicator({ step, total }) {
 export function Footer({ children }) {
   return <footer className="footer">{children}</footer>;
 }
+
+// Back button + step indicator in one row (screen 2 design: «‹ الخطوة ٢ من ٢ ━━━»).
+export function StepRow({ step, total, backLabel, onBack }) {
+  return (
+    <div className="step-row">
+      <button type="button" className="back-btn" aria-label={backLabel} onClick={onBack}>
+        <BackIcon />
+      </button>
+      <StepIndicator step={step} total={total} />
+    </div>
+  );
+}

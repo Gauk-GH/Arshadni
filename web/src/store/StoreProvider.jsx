@@ -28,6 +28,7 @@ const initialState = {
   courses: [],
   settings: { maxCoursesPerTerm: 6 },
   savedPath: null,
+  draft: null,       // { code } or { name } handed from screen 2 to screen 1's form. Never saved.
 };
 
 function reducer(state, action) {
@@ -53,6 +54,8 @@ function reducer(state, action) {
         courses: state.courses.map((c) => (keys.has(codeKey(c.code)) ? { ...c, completed: true } : c)),
       };
     }
+    case 'draft':
+      return { ...state, draft: action.draft };
     case 'savedPath':
       return { ...state, savedPath: action.savedPath };
     default:
@@ -118,6 +121,7 @@ export function StoreProvider({ children }) {
       removeCourse: (code) => dispatch({ type: 'removeCourse', code }),
       toggleCompleted: (code) => dispatch({ type: 'toggleCompleted', code }),
       markCompleted: (codes) => dispatch({ type: 'markCompleted', codes }),
+      setDraft: (draft) => dispatch({ type: 'draft', draft }),
       savePath,
     }),
     [state, savePath],

@@ -42,7 +42,7 @@ const STRINGS = {
   'input.error.noCode': 'ناقص رمز المقرر، مثل CS 310.',
   'input.error.noName': 'ناقص اسم المقرر. انسخه من خطة قسمك.',
   'input.error.duplicate': '{code} مضاف قبل باسم «{name}». عدّله من القائمة تحت، أو اكتب رمز ثاني.',
-  // HANDOFF: «انضاف {code} {name} · تراجع». «تراجع» is the toast's link, so it is its own key.
+  // HANDOFF: «انضاف {code} {name}، تراجع». «تراجع» is the toast's link, so it is its own key.
   'input.success': 'انضاف {code} {name}',
   'common.undo': 'تراجع',
   // Labels shown in the design (HiInput, StatesInput) but not in HANDOFF §8, copied word for word.
@@ -58,6 +58,11 @@ const STRINGS = {
   // From the design (StepIndicator, DESIGN.md §6), not in HANDOFF §8.
   'common.step': 'الخطوة {n} من {total}',
 
+  // Design-only labels for screen 2 (HiDone, StatesDone), copied word for word.
+  'done.back': 'رجوع لإدخال الخطة',
+  'done.search.label': 'ابحث في مقرراتك',
+  'done.longHint': 'ابحث بدل ما تمرّر',
+  'done.next.loading': 'اعرض المتبقي',
   'done.title': 'علّم المقررات اللي خلصتها',
   'done.count': 'علّمت {n} من {total} مقرر',
   'done.search': 'ابحث بالرمز أو الاسم',
@@ -74,7 +79,7 @@ const STRINGS = {
 
   'remaining.label': 'باقي لك',
   'remaining.unit': 'مقرر',
-  'remaining.ticks': 'كل شرطة مقرر · خلصت {done} من {total}',
+  'remaining.ticks': 'كل شرطة مقرر، خلصت {done} من {total}',
   'remaining.available': 'تقدر تسجّلها الترم الجاي ({n})',
   'remaining.locked': 'تحتاج متطلب قبلها ({n})',
   'remaining.badge.available': 'متاح',
@@ -92,7 +97,7 @@ const STRINGS = {
   'remaining.success': 'تحدّث المتبقي: صار {new} بدل {old}',
 
   'plan.title': 'تخلّص تقريبًا في {n} أترام',
-  'plan.sub': 'حسب اللي أدخلته · حد أقصى {max} مقررات بالترم',
+  'plan.sub': 'حسب اللي أدخلته، حد أقصى {max} مقررات بالترم',
   // HANDOFF plan.paths, split per path: label + strategy.
   'plan.path.A': 'المسار أ',
   'plan.path.B': 'المسار ب',

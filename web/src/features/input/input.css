@@ -27,19 +27,6 @@
 .input-empty__ticks { display: flex; gap: var(--tick-gap-large); block-size: var(--tick-large); margin-block-end: var(--space-2); }
 .input-empty__ticks span { flex: 1; border: var(--border-mid) dashed var(--color-pencil); border-radius: var(--radius-tick); }
 
-/* Search field (long plans) */
-.search {
-  block-size: var(--tap);
-  display: flex; align-items: center; gap: var(--space-1);
-  padding-inline: var(--space-2);
-  background: var(--color-surface);
-  border: var(--border-thin) solid var(--color-pencil); border-radius: var(--radius-lg);
-  color: var(--color-pencil);
-}
-.search:focus-within { border: var(--border-thick) solid var(--color-ink); padding-inline: calc(var(--space-2) - 1px); }
-.search input { flex: 1; min-inline-size: 0; border: 0; background: none; outline: none; font-size: var(--text-body); color: var(--color-ink); }
-.search input::placeholder { color: var(--color-pencil); opacity: 1; }
-
 /* Footer extras: «saved» note and the toast floating above the footer */
 .footer__note { display: flex; align-items: center; justify-content: center; gap: var(--space-1); }
 .footer__toast { position: absolute; inset-inline: var(--space-3); inset-block-end: calc(100% + var(--space-2)); }

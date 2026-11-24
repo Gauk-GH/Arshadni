@@ -14,6 +14,11 @@ export function normalizeCode(code) {
   return String(code).trim().replace(/\s+/g, ' ').toUpperCase();
 }
 
+// Does this text look like a course code ("cs501", "CS 501")? Used to decide how to show a search.
+export function looksLikeCode(text) {
+  return /^[A-Za-z]+\s*\d+[A-Za-z]?$/.test(String(text).trim());
+}
+
 export function findByCode(courses, code) {
   const key = codeKey(code);
   return courses.find((c) => codeKey(c.code) === key);

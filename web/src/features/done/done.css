@@ -1,0 +1,32 @@
+/* done.css: screen 2 layout (design HiDone / StatesDone). Tokens only. */
+
+.done-header { padding: 0 var(--space-3) var(--space-2); display: flex; flex-direction: column; gap: var(--space-1); }
+.done-title { margin-block-start: var(--space-1); }
+
+.done-search { padding: 0 var(--space-3) var(--space-1); }
+
+/* List: rows go edge to edge inside 16px side padding (design: ul padding 0 16px, row padding 0 8px). */
+.done-list { flex: 1; padding: 0 var(--space-2) var(--space-3); }
+.done-list .course-row--tappable { margin-inline: 0; padding-inline: var(--space-1); }
+
+/* All ticked: note card above the list */
+.done-note {
+  margin: 0 var(--space-3) var(--space-2);
+  padding: var(--space-2);
+  background: var(--color-surface);
+  border: var(--border-thin) solid var(--color-rule);
+  border-radius: var(--radius-lg);
+  display: flex; gap: var(--space-2); align-items: flex-start;
+}
+.done-note__text { display: flex; flex-direction: column; gap: var(--space-1); }
+
+/* Search found nothing */
+.done-notfound { flex: 1; padding: var(--space-4) var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-2); }
+
+/* Empty: a dashed placeholder row, then title and body, centred vertically */
+.done-empty { flex: 1; padding: 0 var(--space-3); display: flex; flex-direction: column; justify-content: center; gap: var(--space-2); }
+.done-empty__row {
+  min-block-size: var(--row-min); display: flex; align-items: center; gap: var(--space-2);
+  border-block-end: var(--border-thin) dashed var(--color-pencil); color: var(--color-pencil);
+}
+.done-empty__box { inline-size: 24px; block-size: 24px; flex-shrink: 0; border: var(--border-mid) solid var(--color-pencil); border-radius: var(--radius-sm); background: var(--color-surface); }

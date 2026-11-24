@@ -5,11 +5,11 @@ import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../store/StoreProvider.jsx';
 import { navigate } from '../../App.jsx';
 import { PrimaryButton, SecondaryButton } from '../../components/Button.jsx';
-import { TextField, FieldError } from '../../components/Field.jsx';
+import { TextField, FieldError, SearchField } from '../../components/Field.jsx';
 import { CourseRow } from '../../components/CourseRow.jsx';
 import { Toast, Skeleton } from '../../components/Feedback.jsx';
 import { Screen, StepIndicator, Footer } from '../../components/Screen.jsx';
-import { CheckIcon, CloseIcon, PlusIcon, SearchIcon, SpinnerIcon } from '../../components/Icons.jsx';
+import { CheckIcon, CloseIcon, PlusIcon, SpinnerIcon } from '../../components/Icons.jsx';
 import { codeKey, makeCourse, searchCourses, validateNewCourse } from '../../lib/courses.js';
 import { readTranscript } from '../../lib/transcript.js';
 import { devState, devUpload } from '../../lib/devState.js';
@@ -29,7 +29,7 @@ const ERROR_TEXT = {
 };
 
 export default function InputScreen() {
-  const { status, courses, addCourse, addCourses, removeCourse, markCompleted } = useStore();
+  const { status, courses, addCourse, addCourses, removeCourse, markCompleted, draft, setDraft } = useStore();
   const loading = status === 'loading';
 
   const [form, setForm] = useState({ code: '', pre: '', name: '' });
@@ -48,6 +48,14 @@ export default function InputScreen() {
     const id = setTimeout(() => setToast(null), TOAST_MS);
     return () => clearTimeout(id);
   }, [toast]);
+
+  // Arrived from screen 2's «أضف CS 501 لخطتك»: prefill the form, then focus the next empty field.
+  useEffect(() => {
+    if (!draft || loading) return;
+    setForm({ code: draft.code ?? '', pre: '', name: draft.name ?? '' });
+    setDraft(null);
+    (draft.code ? nameRef : codeRef).current?.focus();
+  }, [draft, loading, setDraft]);
 
   function setField(field, value) {
     setForm((f) => ({ ...f, [field]: value }));
@@ -188,14 +196,10 @@ export default function InputScreen() {
             {showSearch && <span className="caption">{t('input.newestFirst')}</span>}
           </div>
           {showSearch && (
-            <label className="search">
-              <SearchIcon />
-              <span className="sr-only">{t('input.search', { n: courses.length })}</span>
-              <input
-                type="search" dir="auto" value={query} onChange={(e) => setQuery(e.target.value)}
-                placeholder={t('input.search', { n: courses.length })} autoComplete="off" spellCheck={false}
-              />
-            </label>
+            <SearchField
+              value={query} onChange={setQuery}
+              label={t('input.search', { n: courses.length })} placeholder={t('input.search', { n: courses.length })}
+            />
           )}
           {visible.length === 0 && <p className="caption input-list__none">{t('done.error.title', { query: query.trim() })}</p>}
           <ul>
