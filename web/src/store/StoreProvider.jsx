@@ -39,6 +39,7 @@ const initialState = {
   savedPath: null,
   lastRemaining: null, // remaining count when screen 3 was last shown (for «تحدّث المتبقي»). Never saved.
   draft: null,       // { code } or { name } handed from screen 2 to screen 1's form. Never saved.
+  transcript: null,  // { found } after a transcript import, for screen 1's «سجلك مرفق» line. Never saved.
 };
 
 function reducer(state, action) {
@@ -71,8 +72,13 @@ function reducer(state, action) {
     case 'loadSample':
       return { ...state, ...fromMock(), lastRemaining: null };
     case 'resetAll':
-      // Keeps the chosen university; clears courses, major and the saved path.
-      return { ...state, ...emptyStart(), lastRemaining: null, draft: null };
+      // Keeps the chosen university; clears courses, major, the saved path and the import line.
+      return { ...state, ...emptyStart(), lastRemaining: null, draft: null, transcript: null };
+    case 'restorePlan':
+      // «تراجع» after a reset: puts back exactly what resetAll removed.
+      return { ...state, ...action.snapshot };
+    case 'transcript':
+      return { ...state, transcript: action.transcript };
     case 'university':
       return { ...state, university: action.id };
     case 'savedPath':
@@ -149,7 +155,14 @@ export function StoreProvider({ children }) {
       setDraft: (draft) => dispatch({ type: 'draft', draft }),
       setLastRemaining: (n) => dispatch({ type: 'lastRemaining', n }),
       loadSample: () => dispatch({ type: 'loadSample' }),
-      resetAll: () => dispatch({ type: 'resetAll' }),
+      // Returns a snapshot so the screen can offer «تراجع».
+      resetAll: () => {
+        const snapshot = { major: state.major, courses: state.courses, savedPath: state.savedPath, transcript: state.transcript };
+        dispatch({ type: 'resetAll' });
+        return snapshot;
+      },
+      restorePlan: (snapshot) => dispatch({ type: 'restorePlan', snapshot }),
+      setTranscript: (transcript) => dispatch({ type: 'transcript', transcript }),
       setUniversity: (id) => dispatch({ type: 'university', id }),
       savePath,
     }),

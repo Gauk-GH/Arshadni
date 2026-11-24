@@ -1,31 +1,44 @@
-/* input.css: screen 1 layout (design HiInput / StatesInput / StatesUpload). Tokens only. */
+/* input.css: screen 1 layout (redesign: design NewInput · بداية · قائمة · إضافة). Tokens only. */
 
-.input-title { margin-block-start: var(--space-2); }
-
-.input-upload { margin: 0 var(--space-3) var(--space-2); }
-
-/* Form card */
-.input-form {
-  margin-inline: var(--space-3);
-  padding: var(--space-2);
-  background: var(--color-surface);
-  border: var(--border-thin) solid var(--color-rule);
-  border-radius: var(--radius-lg);
-  display: flex; flex-direction: column; gap: var(--space-2);
+/* ---------- Start (no courses) ---------- */
+.start-header { padding: var(--space-3) var(--space-3) 0; display: flex; flex-direction: column; gap: var(--space-1); }
+.ghost-ticks { display: flex; gap: var(--tick-gap-large); block-size: var(--tick-large); margin-block-start: var(--space-4); }
+.ghost-ticks span { flex: 1; border: var(--border-mid) dashed var(--color-pencil); border-radius: var(--radius-tick); }
+.start-title { margin-block-start: var(--space-2); }
+.start-choices { padding: var(--space-4) var(--space-3) 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.start-university { padding: var(--space-4) var(--space-3) 0; }
+.start-bottom {
+  margin-block-start: auto; padding: var(--space-2) var(--space-3) var(--space-4);
+  display: flex; flex-direction: column; align-items: center; gap: 4px;
 }
-.input-form__row { display: flex; gap: var(--space-1); }
-.input-form .field-error { margin-block-start: calc(-1 * var(--space-1)); }
+.start-bottom .text-link { align-self: center; }
+.start-bottom__note { display: flex; align-items: center; gap: var(--space-1); }
 
-/* List */
-.input-list { flex: 1; padding: var(--space-3) var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-1); }
-.input-list__head { display: flex; justify-content: space-between; align-items: center; }
-.input-list__loading { display: flex; align-items: center; gap: var(--space-1); }
-.input-list__none { padding-block: var(--space-2); }
+/* ---------- List (has courses) ---------- */
+.list-header { padding: var(--space-3) var(--space-3) var(--space-2); display: flex; flex-direction: column; gap: var(--space-1); }
+.list-title { margin-block-start: var(--space-1); }
+.list-header__loading { display: flex; align-items: center; gap: var(--space-1); }
+/* One outlined tick per course: 20px high, 2px gap (design). */
+.added-ticks { display: flex; gap: var(--tick-gap-small); block-size: 20px; }
+.added-ticks span { flex: 1; min-inline-size: 1px; border: var(--border-mid) solid var(--color-ink); border-radius: var(--radius-tick); }
+.added-ticks span.is-new { background: var(--color-ink); }
+.list-upload { margin: 0 var(--space-3) var(--space-2); }
+.list-search { padding: 0 var(--space-3) var(--space-1); }
+.list-courses { flex: 1; padding: 0 var(--space-3) var(--space-3); display: flex; flex-direction: column; }
+.list-courses__none { padding-block: var(--space-2); }
 
-/* Empty state: dashed ticks + title + body */
-.input-empty { padding-block: var(--space-4); justify-content: center; }
-.input-empty__ticks { display: flex; gap: var(--tick-gap-large); block-size: var(--tick-large); margin-block-end: var(--space-2); }
-.input-empty__ticks span { flex: 1; border: var(--border-mid) dashed var(--color-pencil); border-radius: var(--radius-tick); }
+/* «سجلك مرفق» one-line summary */
+.upload-line {
+  min-block-size: var(--tap); padding: 0 var(--space-2);
+  display: flex; align-items: center; gap: var(--space-1);
+  background: var(--color-surface); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-lg);
+}
+.upload-line__text { flex: 1; font-size: var(--text-caption); font-weight: var(--weight-medium); }
+
+/* ---------- Add sheet form ---------- */
+.sheet-form { display: flex; flex-direction: column; gap: var(--space-2); }
+.sheet-form__row { display: flex; gap: var(--space-1); }
+.sheet-form .field-error { margin-block-start: calc(-1 * var(--space-1)); }
 
 /* ---------- Upload card ---------- */
 .upload {
@@ -45,17 +58,8 @@
 .upload__sub { font-size: var(--text-caption); font-weight: var(--weight-medium); color: var(--color-pencil); }
 .upload__sub.code { text-align: right; }
 
-.upload--idle {
-  border: var(--border-mid) dashed var(--color-ink);
-  cursor: pointer; font: inherit;
-  transition: transform var(--dur-press) var(--ease-press), background-color var(--dur-press) var(--ease-press);
-}
-.upload--idle:active { background: var(--color-wash-pressed); transform: scale(var(--press-scale)); }
 .upload--reading { border: var(--border-thin) solid var(--color-rule); }
 .upload--done { border: var(--border-thin) solid var(--color-ink); }
 .upload--failed { border: var(--border-thick) solid var(--color-error-ink); }
 .upload--failed .upload__head, .upload--failed .upload__title { color: var(--color-error-ink); }
 .upload__error { font-size: var(--text-caption); font-weight: var(--weight-medium); color: var(--color-error-ink); }
-
-/* University picker (added on request): above the upload card */
-.input-university { margin: 0 var(--space-3) var(--space-2); }

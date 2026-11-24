@@ -1,114 +1,90 @@
-// Screen 1: أدخل خطتك الدراسية (HANDOFF §2, design HiInput + StatesInput + StatesUpload).
-// States: default list · empty · loading (restore) · field errors · duplicate · added toast + undo ·
-// long plan with search (> 20 courses) · upload card (idle, reading, done, failed, partial).
+// Screen 1: أدخل خطتك (redesign: design NewInput · بداية · قائمة · إضافة; HANDOFF §4 + §8).
+// States: start (no courses: two choice cards) · list (has courses) · add sheet ·
+// loading (restore) · upload card (reading, failed, partial) · «سجلك مرفق» line after an import ·
+// long plan with search (> 20 courses) · reset with confirmation and «تراجع».
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../store/StoreProvider.jsx';
 import { navigate } from '../../App.jsx';
 import { PrimaryButton, SecondaryButton, TextLink } from '../../components/Button.jsx';
-import { TextField, FieldError, SearchField, SelectField } from '../../components/Field.jsx';
+import { SearchField, SelectField } from '../../components/Field.jsx';
 import { CourseRow } from '../../components/CourseRow.jsx';
 import { Toast, Skeleton } from '../../components/Feedback.jsx';
+import { ChoiceCard } from '../../components/ChoiceCard.jsx';
+import { BottomSheet } from '../../components/BottomSheet.jsx';
 import { Screen, StepIndicator, Footer } from '../../components/Screen.jsx';
-import { CheckIcon, CloseIcon, PlusIcon, SpinnerIcon } from '../../components/Icons.jsx';
-import { codeKey, makeCourse, searchCourses, validateNewCourse } from '../../lib/courses.js';
+import { CheckIcon, CloseIcon, FileUploadIcon, PencilIcon, PlusIcon, SpinnerIcon } from '../../components/Icons.jsx';
+import { codeKey, makeCourse, searchCourses } from '../../lib/courses.js';
 import { readTranscript } from '../../lib/transcript.js';
 import { devState, devUpload } from '../../lib/devState.js';
 import { t } from '../../lib/strings.js';
 import { OTHER_UNIVERSITY, UNIVERSITIES } from '../../lib/universities.js';
-import UploadCard from './UploadCard.jsx';
+import UploadCard, { UploadSummary } from './UploadCard.jsx';
+import AddCourseSheet from './AddCourseSheet.jsx';
 import './input.css';
 
 const SEARCH_THRESHOLD = 20; // decision 7 (HANDOFF rule 12)
 const TOAST_MS = 5000;
-const EMPTY_TICKS = 8;
-
-const ERROR_TEXT = {
-  bothEmpty: () => t('input.error.bothEmpty'),
-  noCode: () => t('input.error.noCode'),
-  noName: () => t('input.error.noName'),
-  duplicate: (e) => t('input.error.duplicate', { code: e.existing.code, name: e.existing.name }),
-};
+const GHOST_TICKS = 10;
 
 export default function InputScreen() {
   const {
     status, courses, addCourse, addCourses, removeCourse, markCompleted, draft, setDraft,
-    university, setUniversity, loadSample, resetAll,
+    university, setUniversity, loadSample, resetAll, restorePlan, transcript, setTranscript,
   } = useStore();
   const loading = status === 'loading';
 
-  const [form, setForm] = useState({ code: '', pre: '', name: '' });
-  const [error, setError] = useState(null); // { kind, existing? }
-  const [toast, setToast] = useState(null); // { code, name }
+  const [sheet, setSheet] = useState(null); // null | { initial, submitOnOpen }
+  const [confirmReset, setConfirmReset] = useState(false);
+  const [toast, setToast] = useState(null); // floating toast: { text, onUndo }
   const [newCode, setNewCode] = useState(null);
+  const [dupCode, setDupCode] = useState(null);
   const [query, setQuery] = useState('');
   const [upload, setUpload] = useState({ status: 'idle', fileName: '', result: null });
+  const fileRef = useRef(null);
+  const addBtnRef = useRef(null);
 
-  const codeRef = useRef(null);
-  const nameRef = useRef(null);
-
-  // Toast disappears by itself after 5 seconds.
   useEffect(() => {
     if (!toast) return undefined;
     const id = setTimeout(() => setToast(null), TOAST_MS);
     return () => clearTimeout(id);
   }, [toast]);
 
-  // Arrived from screen 2's «أضف CS 501 لخطتك»: prefill the form, then focus the next empty field.
+  // Arrived from screen 2's «أضف CS 501 لخطتك»: open the sheet prefilled.
   useEffect(() => {
     if (!draft || loading) return;
-    setForm({ code: draft.code ?? '', pre: '', name: draft.name ?? '' });
+    setSheet({ initial: draft, submitOnOpen: false });
     setDraft(null);
-    (draft.code ? nameRef : codeRef).current?.focus();
   }, [draft, loading, setDraft]);
 
-  function setField(field, value) {
-    setForm((f) => ({ ...f, [field]: value }));
-    if (field !== 'pre') setError(null); // the error clears as soon as the user fixes the field
-  }
-
-  function add(values = form) {
-    const problem = validateNewCourse(courses, values);
-    if (problem) {
-      setError(problem);
-      (problem.kind === 'noName' ? nameRef : codeRef).current?.focus();
-      return;
-    }
-    const course = makeCourse({ code: values.code, name: values.name, prerequisite: values.pre });
-    addCourse(course);
-    setForm({ code: '', pre: '', name: '' });
-    setError(null);
-    setQuery('');
-    setNewCode(course.code);
-    setToast({ code: course.code, name: course.name });
-    codeRef.current?.focus();
-  }
-
-  // «امسح كل المقررات وابدأ من جديد»: asks first, then clears this device's plan (keeps the university).
-  function resetPlan() {
-    if (!window.confirm(t('input.reset.confirm'))) return;
-    resetAll();
-    setForm({ code: '', pre: '', name: '' });
-    setError(null);
-    setToast(null);
-    setQuery('');
-    setNewCode(null);
-    setUpload({ status: 'idle', fileName: '', result: null });
-  }
-
-  function undoAdd() {
-    if (toast) removeCourse(toast.code);
-    setToast(null);
-  }
-
-  // Dev-only: ?state=duplicate types "cs210" and presses «أضف المقرر» once.
+  // Dev-only: ?state=duplicate opens the sheet with "cs210" and presses «أضف المقرر» once.
   const devRan = useRef(false);
   useEffect(() => {
     if (!import.meta.env.DEV || loading || devRan.current || devState() !== 'duplicate') return;
     devRan.current = true;
-    const values = { code: 'cs210', pre: '', name: 'هياكل بيانات' };
-    setForm(values);
-    add(values);
-  });
+    setSheet({ initial: { code: 'cs210', name: 'هياكل بيانات' }, submitOnOpen: true });
+  }, [loading]);
+
+  function openSheet() {
+    setSheet({ initial: null, submitOnOpen: false });
+  }
+
+  // Focus goes back to «+ أضف مقرر». (If the sheet was opened from the start screen's choice card,
+  // that card is gone once the first course is added, so the add button is the only sensible target.)
+  function closeSheet() {
+    setSheet(null);
+    setDupCode(null);
+    requestAnimationFrame(() => addBtnRef.current?.focus());
+  }
+
+  function onAdded(course) {
+    addCourse(course);
+    setQuery('');
+    setNewCode(course.code);
+  }
+
+  function chooseFile() {
+    fileRef.current?.click();
+  }
 
   async function pickFile(file) {
     setUpload({ status: 'reading', fileName: file.name, result: null });
@@ -118,160 +94,218 @@ export default function InputScreen() {
       return;
     }
     markCompleted(result.matchedCodes);
-    setUpload({ status: result.unmatchedCourses.length ? 'partial' : 'done', fileName: file.name, result });
+    if (result.unmatchedCourses.length) {
+      setUpload({ status: 'partial', fileName: file.name, result });
+    } else {
+      finishImport(result);
+    }
+  }
+
+  // Import finished: the card collapses to the «سجلك مرفق» line (kept in memory across screens).
+  function finishImport(result) {
+    setTranscript({ found: result.foundCodes.length });
+    setUpload({ status: 'idle', fileName: '', result: null });
   }
 
   function addUnmatched() {
     const added = upload.result.unmatchedCourses.map((c) => ({ ...makeCourse(c), completed: true }));
     addCourses(added);
-    setUpload((u) => ({ ...u, status: 'done' }));
+    finishImport(upload.result);
+  }
+
+  function ignoreUnmatched() {
+    finishImport(upload.result);
+  }
+
+  // «امسح كل المقررات»: confirm first, then clear, then offer «تراجع».
+  function doReset() {
+    const count = courses.length;
+    const snapshot = resetAll();
+    setConfirmReset(false);
+    setQuery('');
+    setNewCode(null);
+    setUpload({ status: 'idle', fileName: '', result: null });
+    setToast({ text: t('input.reset.done', { n: count }), onUndo: () => restorePlan(snapshot) });
   }
 
   const reading = upload.status === 'reading';
-  const isEmpty = !loading && courses.length === 0;
+  const cardOpen = ['reading', 'failed', 'partial'].includes(upload.status);
+  const isStart = !loading && courses.length === 0;
   const showSearch = courses.length > SEARCH_THRESHOLD;
-  // Duplicate: the existing course is pinned to the top of the list (as in the design), right under
-  // the form, so the error and the highlighted row are seen together without scrolling away.
-  const dupKey = error?.kind === 'duplicate' ? codeKey(error.existing.code) : null;
+
+  // Duplicate in the sheet: the existing course is pinned to the top of the list behind it.
+  const dupKey = dupCode ? codeKey(dupCode) : null;
   const found = searchCourses(courses, query);
   const visible = dupKey
     ? [...found.filter((c) => codeKey(c.code) === dupKey), ...found.filter((c) => codeKey(c.code) !== dupKey)]
     : found;
-  const errField = error && { bothEmpty: 'both', noCode: 'code', noName: 'name', duplicate: 'code' }[error.kind];
-  const errorId = 'add-course-error';
-  const errorLine = error && <FieldError id={errorId}>{ERROR_TEXT[error.kind](error)}</FieldError>;
 
-  return (
-    <Screen>
-      <header className="screen__header">
-        <StepIndicator step={1} total={2} />
-        <h1 className="title input-title">{t('input.title')}</h1>
-        <p className="subtitle">{t('input.subtitle')}</p>
-        {/* Decision 2: the paste link «الصقها مرة وحدة» is hidden this round. */}
-      </header>
+  const fileInput = (
+    <input
+      ref={fileRef} type="file" accept="application/pdf" hidden
+      onChange={(e) => {
+        const file = e.target.files?.[0];
+        e.target.value = ''; // picking the same file again still fires
+        if (file) pickFile(file);
+      }}
+    />
+  );
 
-      <div className="input-university">
-        <SelectField
-          label={t('input.university.label')}
-          placeholder={t('input.university.placeholder')}
-          value={university}
-          onChange={setUniversity}
-          options={[
-            ...UNIVERSITIES.map((u) => ({ value: u.id, label: u.name })),
-            { value: OTHER_UNIVERSITY, label: t('input.university.other') },
-          ]}
-        />
-      </div>
+  const universityPicker = (
+    <SelectField
+      label={<>{t('input.university.label')} <span className="caption">{t('input.university.optional')}</span></>}
+      placeholder={t('input.university.placeholder')}
+      value={university}
+      onChange={setUniversity}
+      options={[
+        ...UNIVERSITIES.map((u) => ({ value: u.id, label: u.name })),
+        { value: OTHER_UNIVERSITY, label: t('input.university.other') },
+      ]}
+    />
+  );
 
-      <div className="input-upload">
-        <UploadCard
-          upload={upload}
-          onPick={pickFile}
-          onReset={() => setUpload({ status: 'idle', fileName: '', result: null })}
-          onAddUnmatched={addUnmatched}
-          onIgnoreUnmatched={() => setUpload((u) => ({ ...u, status: 'done' }))}
-        />
-      </div>
+  const floatingToast = toast && (
+    <div className="floating-toast">
+      <Toast actionLabel={t('common.undo')} onAction={() => { toast.onUndo(); setToast(null); }}>{toast.text}</Toast>
+    </div>
+  );
 
-      <form className="input-form" noValidate onSubmit={(e) => { e.preventDefault(); add(); }}>
-        <div className="input-form__row">
-          <TextField
-            label={t('input.field.code')} latin value={form.code} placeholder="CS 310"
-            onChange={(v) => setField('code', v)} inputRef={codeRef}
-            invalid={errField === 'code' || errField === 'both'}
-            describedBy={errField === 'code' || errField === 'both' ? errorId : undefined}
-          />
-          <TextField
-            label={t('input.field.pre')} latin value={form.pre} placeholder={t('input.placeholder.pre')}
-            onChange={(v) => setField('pre', v)}
+  // ---------- Start: no courses yet ----------
+  const startContent = (
+      <>
+        <header className="start-header">
+          <StepIndicator step={1} total={2} />
+          <div className="ghost-ticks" aria-hidden="true">
+            {Array.from({ length: GHOST_TICKS }, (_, i) => <span key={i} />)}
+          </div>
+          <h1 className="title start-title">{t('input.start.title')}</h1>
+          <p className="subtitle">{t('input.start.body')}</p>
+        </header>
+
+        <div className="start-choices">
+          {cardOpen ? (
+            <UploadCard upload={upload} onChooseFile={chooseFile} onAddUnmatched={addUnmatched} onIgnoreUnmatched={ignoreUnmatched} />
+          ) : (
+            <ChoiceCard
+              variant="filled" icon={<FileUploadIcon />} tag={t('input.start.fastest')}
+              title={t('input.upload')} sub={t('input.upload.sub')} onClick={chooseFile}
+            />
+          )}
+          <ChoiceCard
+            variant="outlined" icon={<PencilIcon />}
+            title={t('input.start.manual')} sub={t('input.start.manual.sub')} onClick={openSheet}
           />
         </div>
-        {errField === 'code' && errorLine}
-        <TextField
-          label={t('input.field.name')} value={form.name} placeholder={t('input.placeholder.name')}
-          onChange={(v) => setField('name', v)} inputRef={nameRef}
-          invalid={errField === 'name' || errField === 'both'}
-          describedBy={errField === 'name' || errField === 'both' ? errorId : undefined}
-        />
-        {(errField === 'name' || errField === 'both') && errorLine}
-        <SecondaryButton type="submit" icon={<PlusIcon />}>{t('input.add')}</SecondaryButton>
-      </form>
 
-      {loading && (
-        <section className="input-list" aria-live="polite" aria-busy="true">
-          <h2 className="section-heading input-list__loading"><SpinnerIcon size={16} />{t('input.loading')}</h2>
-          <ul>
+        <div className="start-university">{universityPicker}</div>
+
+        <div className="start-bottom">
+          <TextLink onClick={loadSample}>{t('input.sample')}</TextLink>
+          <span className="caption start-bottom__note"><CheckIcon size={16} stroke={2} />{t('input.start.local')}</span>
+        </div>
+
+      </>
+  );
+
+  // ---------- List: has courses (or restoring) ----------
+  const listContent = (
+    <>
+      <header className="list-header">
+        <StepIndicator step={1} total={2} />
+        <h1 className="title list-title">{t('input.list.title')}</h1>
+        {loading ? (
+          <p className="caption list-header__loading" aria-live="polite"><SpinnerIcon size={16} />{t('input.loading')}</p>
+        ) : (
+          <>
+            {/* One outlined tick per course; the one just added fills (design: newest tick filled). */}
+            <div className="added-ticks" role="img" aria-label={t('input.list.count', { n: courses.length })}>
+              {courses.map((c, i) => (
+                <span key={c.code} className={newCode && i === courses.length - 1 ? 'is-new' : undefined} />
+              ))}
+            </div>
+            <p className="caption" aria-live="polite">{t('input.list.count', { n: courses.length })}</p>
+          </>
+        )}
+      </header>
+
+      {cardOpen && (
+        <div className="list-upload">
+          <UploadCard upload={upload} onChooseFile={chooseFile} onAddUnmatched={addUnmatched} onIgnoreUnmatched={ignoreUnmatched} />
+        </div>
+      )}
+      {!cardOpen && transcript && (
+        <div className="list-upload"><UploadSummary found={transcript.found} onChooseFile={chooseFile} /></div>
+      )}
+
+      {showSearch && (
+        <div className="list-search">
+          <SearchField value={query} onChange={setQuery}
+            label={t('input.search', { n: courses.length })} placeholder={t('input.search', { n: courses.length })} />
+        </div>
+      )}
+
+      <section className="list-courses">
+        {loading ? (
+          <ul aria-busy="true">
             {['100%', '60%', '75%', '50%'].map((w) => (
               <li key={w} className="course-row"><Skeleton inline={64} /><Skeleton inline={w} /></li>
             ))}
           </ul>
-        </section>
-      )}
-
-      {isEmpty && (
-        <section className="input-list input-empty">
-          <div className="input-empty__ticks" aria-hidden="true">
-            {Array.from({ length: EMPTY_TICKS }, (_, i) => <span key={i} />)}
-          </div>
-          <h2 className="section-heading">{t('input.empty.title')}</h2>
-          <p className="subtitle">{t('input.empty.body')}</p>
-          <TextLink onClick={loadSample}>{t('input.sample')}</TextLink>
-        </section>
-      )}
-
-      {!loading && !isEmpty && (
-        <section className="input-list">
-          <div className="input-list__head">
-            <h2 className="section-heading" aria-live="polite">{t('input.count', { n: courses.length })}</h2>
-            {showSearch && <span className="caption">{t('input.newestFirst')}</span>}
-          </div>
-          {showSearch && (
-            <SearchField
-              value={query} onChange={setQuery}
-              label={t('input.search', { n: courses.length })} placeholder={t('input.search', { n: courses.length })}
-            />
-          )}
-          {visible.length === 0 && <p className="caption input-list__none">{t('done.error.title', { query: query.trim() })}</p>}
-          <ul>
-            {visible.map((c) => {
-              const isTarget = codeKey(c.code) === dupKey;
-              return (
-                <CourseRow
-                  key={c.code}
-                  code={c.code}
-                  name={c.name}
-                  highlight={isTarget ? 'target' : c.code === newCode ? 'new' : null}
-                  sub={c.prerequisites.length > 0 && t('input.row.needs', { code: c.prerequisites.join('، ') })}
-                  trailing={
-                    <button type="button" className="row-delete" aria-label={t('input.row.delete', { code: c.code })} onClick={() => removeCourse(c.code)}>
-                      <CloseIcon />
-                    </button>
-                  }
-                />
-              );
-            })}
-          </ul>
-          <TextLink size="caption" onClick={resetPlan}>{t('input.reset')}</TextLink>
-        </section>
-      )}
-
-      <Footer>
-        {toast && (
-          <div className="footer__toast">
-            <Toast actionLabel={t('common.undo')} onAction={undoAdd}>
-              {t('input.success', { code: toast.code, name: toast.name })}
-            </Toast>
-          </div>
-        )}
-        {isEmpty ? (
-          <PrimaryButton disabled>{t('input.empty.button')}</PrimaryButton>
         ) : (
           <>
-            <span className="caption footer__note"><CheckIcon size={16} stroke={2} />{t('input.saved')}</span>
-            <PrimaryButton disabled={loading || reading} onClick={() => navigate('/done')}>{t('input.next')}</PrimaryButton>
+            {visible.length === 0 && <p className="caption list-courses__none">{t('done.error.title', { query: query.trim() })}</p>}
+            <ul>
+              {visible.map((c) => {
+                const isTarget = codeKey(c.code) === dupKey;
+                return (
+                  <CourseRow
+                    key={c.code}
+                    code={c.code}
+                    name={c.name}
+                    highlight={isTarget ? 'target' : c.code === newCode ? 'new' : null}
+                    sub={c.prerequisites.length > 0 && t('input.row.needs', { code: c.prerequisites.join('، ') })}
+                    trailing={
+                      <button type="button" className="row-delete" aria-label={t('input.row.delete', { code: c.code })} onClick={() => removeCourse(c.code)}>
+                        <CloseIcon />
+                      </button>
+                    }
+                  />
+                );
+              })}
+            </ul>
+            <TextLink size="caption" onClick={() => setConfirmReset(true)}>{t('input.reset')}</TextLink>
           </>
         )}
+      </section>
+
+      <Footer>
+        <SecondaryButton ref={addBtnRef} icon={<PlusIcon />} disabled={loading} onClick={openSheet}>{t('input.addOne')}</SecondaryButton>
+        <PrimaryButton disabled={loading || reading} onClick={() => navigate('/done')}>{t('input.next')}</PrimaryButton>
       </Footer>
+
+    </>
+  );
+
+  // The file picker, toast and sheets sit OUTSIDE both layouts, at a fixed place. Adding the first
+  // course switches start → list; if the sheet lived inside a layout it would be rebuilt and lose
+  // its toast and focus.
+  return (
+    <Screen>
+      {isStart ? startContent : listContent}
+      {fileInput}
+      {floatingToast}
+      {sheet && (
+        <AddCourseSheet courses={courses} initial={sheet.initial} submitOnOpen={sheet.submitOnOpen}
+          onAdd={onAdded} onUndo={removeCourse} onDuplicate={setDupCode} onClose={closeSheet} />
+      )}
+      {confirmReset && (
+        <BottomSheet title={t('input.reset.confirm', { n: courses.length })} closeLabel={t('input.reset.no')} onClose={() => setConfirmReset(false)}>
+          <div className="sheet__actions">
+            <PrimaryButton onClick={doReset}>{t('input.reset.yes')}</PrimaryButton>
+            <SecondaryButton onClick={() => setConfirmReset(false)}>{t('input.reset.no')}</SecondaryButton>
+          </div>
+        </BottomSheet>
+      )}
     </Screen>
   );
 }

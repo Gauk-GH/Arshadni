@@ -39,8 +39,11 @@ Back: the right-pointing arrow on screens 2–4 goes one step back. «عدّل �
 
 | Screen | Situation | What the user sees | Way out |
 |---|---|---|---|
-| 1 | First visit, no courses | Empty state, primary disabled «أضف مقرر واحد على الأقل» | Type a course, or paste link |
+| 1 | First visit, no courses | **Start** (redesign): ghost ticks, «كيف تبي تبدأ؟», two choice cards («ارفق سجلك الأكاديمي» filled with «الأسرع», «أدخل مقرراتك بنفسك» outlined), «جامعتك (اختياري)», «جرّب ببيانات تجريبية», «كل شي ينحفظ في جهازك بس». No form, no footer button | Attach a transcript, or open the add sheet, or try the sample |
 | 1 | Returning after closing the page | «نرجّع مقرراتك المحفوظة…» + skeleton rows | Automatic |
+| 1 | Has courses | **List** (redesign): «مقررات خطتك», one outlined tick per course (20px, gap 2px), «أضفت {n} مقرر، الأحدث فوق», «سجلك مرفق…» line after an import, search above 20, the list, footer «+ أضف مقرر» + «التالي: علّم اللي خلصته», «امسح كل المقررات…» link at the end | Add more, or continue |
+| 1 | Adding courses | **Add sheet** (redesign): bottom sheet «أضف مقرر» with the code / prerequisite / name fields. After each add it stays open, clears, focuses the code field and shows «انضاف {code} {name}. أضف اللي بعده» + «تراجع»; the new row is highlighted behind and its tick fills | Add the next one, or close (✕ / Escape) |
+| 1 | Clear everything | Confirm sheet «تمسح كل الـ {n} مقرر؟» with «امسح» / «لا»; after it, toast «انمسحت كل الـ {n} مقرر» + «تراجع» | «لا», or «تراجع» to bring everything back |
 | 1 | Tap «أضف المقرر» with empty fields | Error under the fields, red borders on the missing field(s) | Fill the field |
 | 1 | Code already exists (`CS210` vs `CS 210`) | «CS 210 مضاف قبل باسم «هياكل البيانات». عدّله من القائمة تحت، أو اكتب رمز ثاني.» + existing row highlighted | Edit existing or change code |
 | 1 | Very long plan (64 courses) | Search field appears above the list | Search |
@@ -118,40 +121,58 @@ Storage: device only (browser local storage), no account, no server. Key name an
 
 | Key | Arabic text |
 |---|---|
-| input.title | أدخل خطتك الدراسية |
-| input.subtitle | انسخ المقررات من خطة قسمك. المتطلب السابق اختياري، بس يخلّي ترتيب الخطة أدق. |
+| input.title | ~~أدخل خطتك الدراسية~~ (replaced by the screen 1 redesign) |
+| input.subtitle | ~~انسخ المقررات من خطة قسمك. المتطلب السابق اختياري، بس يخلّي ترتيب الخطة أدق.~~ (replaced by the screen 1 redesign) |
 | input.pasteLink | عندك القائمة كاملة؟ الصقها مرة وحدة |
 | input.add | أضف المقرر |
-| input.count | أضفت {n} مقرر |
-| input.saved | محفوظة في جهازك. لو قفلت الصفحة ترجع لك |
+| input.count | ~~أضفت {n} مقرر~~ (replaced by the screen 1 redesign) |
+| input.saved | ~~محفوظة في جهازك. لو قفلت الصفحة ترجع لك~~ (replaced by the screen 1 redesign) |
 | input.next | التالي: علّم اللي خلصته |
 | input.upload | ارفق سجلك الأكاديمي |
 | input.upload.sub | ملف PDF من موقع الجامعة، ونعلّم لك اللي خلصته |
 | input.upload.reading | نقرأ سجلك الأكاديمي… |
 | input.upload.done | لقينا {n} مقرر خلصتها |
-| input.upload.done.sub | بتلقاها معلّمة في الخطوة الجاية |
-| input.upload.change | غيّر الملف |
+| input.upload.done.sub | ~~بتلقاها معلّمة في الخطوة الجاية~~ (replaced by the screen 1 redesign) |
+| input.upload.change | ~~غيّر الملف~~ (replaced by the screen 1 redesign) |
 | input.upload.error.title | ما قدرنا نقرأ سجلك |
 | input.upload.error.scan | الملف صورة ممسوحة، مو PDF فيه نص. نزّل السجل من بوابة الجامعة كـ PDF وارفقه مرة ثانية، أو أدخل مقرراتك يدويًا تحت. |
 | input.upload.error.retry | ارفق ملف ثاني |
 | input.upload.partial.sub | {matched} منها في خطتك، و{unmatched} مو موجودة فيها |
 | input.upload.partial.add | أضف الـ {unmatched} لخطتك |
 | input.upload.partial.ignore | تجاهلها، مو من متطلبات تخصصي |
-| input.empty.title | ابدأ بأول مقرر من خطة قسمك |
-| input.empty.body | افتح خطتك الدراسية من موقع القسم، وانسخ رمز كل مقرر واسمه هنا. أو الصق القائمة كلها من الرابط فوق. |
-| input.empty.button | أضف مقرر واحد على الأقل |
+| input.empty.title | ~~ابدأ بأول مقرر من خطة قسمك~~ (replaced by the screen 1 redesign) |
+| input.empty.body | ~~افتح خطتك الدراسية من موقع القسم، وانسخ رمز كل مقرر واسمه هنا. أو الصق القائمة كلها من الرابط فوق.~~ (replaced by the screen 1 redesign) |
+| input.empty.button | ~~أضف مقرر واحد على الأقل~~ (replaced by the screen 1 redesign) |
 | input.university.label | جامعتك |
 | input.university.placeholder | اختر جامعتك |
 | input.university.other | جامعة ثانية |
 | input.sample | جرّب ببيانات تجريبية |
 | input.reset | امسح كل المقررات وابدأ من جديد |
-| input.reset.confirm | متأكد؟ بنمسح كل مقرراتك والمسار المحفوظ من هذا الجهاز. |
+| input.reset.confirm | تمسح كل الـ {n} مقرر؟ |
+| input.start.title | كيف تبي تبدأ؟ |
+| input.start.body | نحتاج مقررات خطتك عشان نحسب لك وش باقي. |
+| input.start.fastest | الأسرع |
+| input.start.manual | أدخل مقرراتك بنفسك |
+| input.start.manual.sub | انسخها من خطة قسمك، مقرر مقرر |
+| input.start.local | كل شي ينحفظ في جهازك بس |
+| input.university.optional | (اختياري) |
+| input.list.title | مقررات خطتك |
+| input.list.count | أضفت {n} مقرر، الأحدث فوق |
+| input.upload.attached | سجلك مرفق، لقينا {n} مقرر خلصتها |
+| input.upload.changeShort | غيّر |
+| input.addOne | أضف مقرر |
+| input.sheet.title | أضف مقرر |
+| input.sheet.close | سكّر |
+| input.success.next | انضاف {code} {name}. أضف اللي بعده |
+| input.reset.yes | امسح |
+| input.reset.no | لا |
+| input.reset.done | انمسحت كل الـ {n} مقرر |
 | input.loading | نرجّع مقرراتك المحفوظة… |
 | input.error.bothEmpty | اكتب رمز المقرر واسمه من خطة قسمك، وبعدها اضغط «أضف المقرر». |
 | input.error.noCode | ناقص رمز المقرر، مثل CS 310. |
 | input.error.noName | ناقص اسم المقرر. انسخه من خطة قسمك. |
 | input.error.duplicate | {code} مضاف قبل باسم «{name}». عدّله من القائمة تحت، أو اكتب رمز ثاني. |
-| input.success | انضاف {code} {name}، تراجع |
+| input.success | ~~انضاف {code} {name}، تراجع~~ (replaced by the screen 1 redesign) |
 | done.title | علّم المقررات اللي خلصتها |
 | done.count | علّمت {n} من {total} مقرر |
 | done.search | ابحث بالرمز أو الاسم |
@@ -259,3 +280,5 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 24. Screen 1 starts with an optional «جامعتك» picker (native select: scroll wheel on iPhone). Riyadh universities + «جامعة ثانية». Saved with the plan, not used in the logic yet.
 25. The picker lists only the biggest universities: King Saud, Imam, Princess Nourah, King Saud bin Abdulaziz for Health Sciences, Saudi Electronic, and KFUPM (Dhahran, added on request), plus «جامعة ثانية». No logos (trademarks; the native picker cannot show images).
 26. The picker uses the normal input size (16px, 48px box), like the other fields (24px was tried and reverted). The native select sits invisibly over a text box so long names wrap instead of being cut.
+27. Screen 1 redesign (design NewInput): start · list · add sheet (see §4). The inline form is gone; the university picker shows on the start state only. Filled choice card sub-text uses `paper`, not `rule`. «محفوظة في جهازك…» dropped from the list footer.
+28. «امسح كل المقررات» asks in a sheet («امسح» / «لا») and offers «تراجع» after.

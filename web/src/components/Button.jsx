@@ -4,7 +4,8 @@ import { CheckIcon, SpinnerIcon } from './Icons.jsx';
 // Primary: one per screen, in the footer. 56px tall, full width.
 // status: 'default' | 'loading' | 'done'. `disabled` shows the grey state;
 // its label must say what is missing (e.g. «أضف مقرر واحد على الأقل»).
-export function PrimaryButton({ status = 'default', disabled = false, onClick, children, ...rest }) {
+// icon: optional 20px icon at the start (e.g. «+» in «أضف المقرر»), shown in the default status.
+export function PrimaryButton({ status = 'default', icon = null, disabled = false, onClick, children, ...rest }) {
   const busy = status === 'loading';
   return (
     <button
@@ -17,6 +18,7 @@ export function PrimaryButton({ status = 'default', disabled = false, onClick, c
     >
       {busy && <SpinnerIcon />}
       {status === 'done' && <CheckIcon />}
+      {status === 'default' && icon}
       <span>{children}</span>
     </button>
   );

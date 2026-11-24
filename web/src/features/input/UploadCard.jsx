@@ -1,30 +1,14 @@
-// UploadCard.jsx: «ارفق سجلك الأكاديمي» and its states (DESIGN.md §6 Upload card, StatesUpload).
-// idle → reading → done | partial | failed. The reading is simulated (lib/transcript.js).
-import { useRef } from 'react';
+// UploadCard.jsx: the transcript card's states (DESIGN.md §6 Upload card, StatesUpload).
+// reading → done | partial | failed. The reading is simulated (lib/transcript.js).
+// The idle state is the filled choice card on the start screen; the file picker lives in InputScreen,
+// so every "choose a file" button opens the same one (onChooseFile).
 import { SecondaryButton, TextLink } from '../../components/Button.jsx';
 import { CourseRow } from '../../components/CourseRow.jsx';
-import { AlertIcon, CheckIcon, FileUploadIcon, SpinnerIcon } from '../../components/Icons.jsx';
+import { AlertIcon, CheckIcon, SpinnerIcon } from '../../components/Icons.jsx';
 import { t } from '../../lib/strings.js';
 
-export default function UploadCard({ upload, onPick, onReset, onAddUnmatched, onIgnoreUnmatched }) {
-  const fileRef = useRef(null);
-  const openPicker = () => fileRef.current?.click();
+export default function UploadCard({ upload, onChooseFile, onAddUnmatched, onIgnoreUnmatched }) {
   const { status, fileName, result } = upload;
-
-  // Results are announced by role="status" / role="alert" on each card.
-  const input = (
-    <input
-      ref={fileRef}
-      type="file"
-      accept="application/pdf"
-      hidden
-      onChange={(e) => {
-        const file = e.target.files?.[0];
-        e.target.value = ''; // so picking the same file again still fires
-        if (file) onPick(file);
-      }}
-    />
-  );
 
   if (status === 'reading') {
     return (
@@ -49,58 +33,41 @@ export default function UploadCard({ upload, onPick, onReset, onAddUnmatched, on
           </span>
         </div>
         <p className="upload__error">{t('input.upload.error.scan')}</p>
-        <SecondaryButton onClick={openPicker}>{t('input.upload.error.retry')}</SecondaryButton>
-        {input}
+        <SecondaryButton onClick={onChooseFile}>{t('input.upload.error.retry')}</SecondaryButton>
       </div>
     );
   }
 
-  if (status === 'done' || status === 'partial') {
-    const found = result.foundCodes.length;
+  if (status === 'partial') {
     const unmatched = result.unmatchedCourses.length;
-    const partial = status === 'partial';
     return (
-      <div className={`upload upload--done${partial ? ' upload--stack' : ''}`} role="status">
+      <div className="upload upload--done upload--stack" role="status">
         <div className="upload__head">
           <CheckIcon size={24} />
           <span className="upload__text">
-            <span className="upload__title">{t('input.upload.done', { n: found })}</span>
-            <span className="upload__sub">
-              {partial
-                ? t('input.upload.partial.sub', { matched: result.matchedCodes.length, unmatched })
-                : t('input.upload.done.sub')}
-            </span>
+            <span className="upload__title">{t('input.upload.done', { n: result.foundCodes.length })}</span>
+            <span className="upload__sub">{t('input.upload.partial.sub', { matched: result.matchedCodes.length, unmatched })}</span>
           </span>
-          {!partial && (
-            <TextLink size="caption" onClick={() => { onReset(); openPicker(); }}>{t('input.upload.change')}</TextLink>
-          )}
         </div>
-        {partial && (
-          <>
-            <ul>
-              {result.unmatchedCourses.map((c) => <CourseRow key={c.code} code={c.code} name={c.name} />)}
-            </ul>
-            <SecondaryButton onClick={onAddUnmatched}>{t('input.upload.partial.add', { unmatched })}</SecondaryButton>
-            <TextLink onClick={onIgnoreUnmatched}>{t('input.upload.partial.ignore')}</TextLink>
-          </>
-        )}
-        {input}
+        <ul>
+          {result.unmatchedCourses.map((c) => <CourseRow key={c.code} code={c.code} name={c.name} />)}
+        </ul>
+        <SecondaryButton onClick={onAddUnmatched}>{t('input.upload.partial.add', { unmatched })}</SecondaryButton>
+        <TextLink onClick={onIgnoreUnmatched}>{t('input.upload.partial.ignore')}</TextLink>
       </div>
     );
   }
 
-  // idle: the whole card is one button.
-  return (
-    <>
-      <button type="button" className="upload upload--idle" onClick={openPicker}>
-        <FileUploadIcon />
-        <span className="upload__text">
-          <span className="upload__title">{t('input.upload')}</span>
-          <span className="upload__sub">{t('input.upload.sub')}</span>
-        </span>
-      </button>
-      {input}
-    </>
-  );
+  return null;
 }
 
+// The list state's one-line summary after an import: «سجلك مرفق، لقينا ٢٨ مقرر خلصتها · غيّر».
+export function UploadSummary({ found, onChooseFile }) {
+  return (
+    <div className="upload-line" role="status">
+      <CheckIcon size={20} />
+      <span className="upload-line__text">{t('input.upload.attached', { n: found })}</span>
+      <TextLink size="caption" onClick={onChooseFile}>{t('input.upload.changeShort')}</TextLink>
+    </div>
+  );
+}

@@ -52,3 +52,12 @@ export const SearchIcon = ({ size = 20 }) => (
 export const ChevronDownIcon = ({ size = 20 }) => (
   <Svg size={size}><path d="M6 9l6 6 6-6" /></Svg>
 );
+
+// Forward in RTL = pointing LEFT (choice cards).
+export const ChevronForwardIcon = ({ size = 20 }) => (
+  <Svg size={size}><path d="M15 6l-6 6 6 6" /></Svg>
+);
+
+export const PencilIcon = ({ size = 24 }) => (
+  <Svg size={size}><path d="M12 20h9M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4z" /></Svg>
+);

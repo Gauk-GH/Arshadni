@@ -26,8 +26,9 @@ Derived surfaces (not for text):
 | `wash-pressed` | `#EFECE4` | Secondary button pressed, list row pressed, duplicate/new row highlight |
 | `wash-new` | `#E9E4D8` | Start color of the "new row" fade (1.2s → transparent) |
 | `skeleton` | `#E5E0D3` | Loading skeleton blocks |
+| `scrim` | `#1F2A44` at 40% (`rgba(31, 42, 68, .4)`) | **Only** behind the bottom sheet. The one allowed transparency |
 
-No gradients. No shadows. No transparency effects.
+No gradients. No shadows. No transparency effects (except `scrim` behind the bottom sheet).
 
 ---
 
@@ -103,6 +104,19 @@ None. Separation is by 1px `rule` borders only.
 - **Done**: border 1px `ink`, 24px check, «لقينا {n} مقرر خلصتها» + «غيّر الملف» link at end.
 - **Error**: border 2px `error-ink`, title in `error-ink`, body 13px `error-ink`, secondary button «ارفق ملف ثاني», `role="alert"`.
 - **Partial**: done style + list of unmatched course rows + secondary «أضف الـ {n} لخطتك» + text link to ignore.
+
+### Choice card (screen 1 start)
+- Full width (342px), padding 24px 16px, gap 16px, radius 8px. Whole card is one button.
+- Start: 48 × 48px icon tile (radius 8px, background `paper`, 24px icon in `ink`). Middle: optional tag, title 16px / 600, sub 13px / 500 (line height 1.5), 4px apart. End: 20px chevron pointing **left** (forward in RTL).
+- **Filled** (recommended choice): background `ink`, text `paper` (title and sub; hierarchy by size and weight, never `rule` on text). Tag: background `paper`, text `ink`, 13px / 600, padding 0 8px, radius 4px. Pressed: `ink-pressed`, `scale(.98)`.
+- **Outlined**: background `surface`, border 1.5px `ink`, sub in `pencil`, icon tile with 1px `rule` border. Pressed: `wash-pressed`, `scale(.98)`.
+
+### Bottom sheet
+- Behind: `scrim` over the whole screen; tapping it closes the sheet.
+- Sheet: full width (max 390px), background `paper`, radius 8px on the top corners only, padding 8px 24px 32px, gap 16px, max height 90% of the screen (scrolls inside).
+- Handle: 40 × 4px, `rule`, radius 2px, centred. Header: title 24px Readex Pro 600 at start, 48px close ✕ (24px icon) at end.
+- A toast inside the sheet sits under the header (not floating).
+- `role="dialog"`, `aria-modal="true"`; focus moves to the first field, Tab is trapped, Escape / ✕ / scrim close it, focus returns to the button that opened it; the page behind is `inert`.
 
 ### Secondary button (outlined)
 - Height 48px, border 1.5px `ink`, background `surface` (or transparent in footer), text 16px / 600 `ink`, radius 8px.
@@ -191,6 +205,7 @@ None. Separation is by 1px `rule` borders only.
 | **Signature**: ticks into terms | Each remaining tick drops in (`translateY(-20px)` → 0, opacity 0 → 1), 450ms `cubic-bezier(.2,.8,.2,1)`, 45ms stagger, starting from the right |
 | Term cards | fade + `translateY(8px)` → 0, 400ms, delay 300ms + 120ms per card |
 | Save | 700ms loading, then done state |
+| Bottom sheet | slides up from `translateY(100%)`, 250ms `cubic-bezier(.2,.8,.2,1)` |
 | Reduced motion | `@media (prefers-reduced-motion: reduce)` disables all animation and transitions |
 
 ---

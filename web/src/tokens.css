@@ -16,6 +16,7 @@
   --color-wash-pressed: #EFECE4; /* secondary/row pressed, highlighted row */
   --color-wash-new: #E9E4D8;     /* start of the new-row fade */
   --color-skeleton: #E5E0D3;     /* skeleton blocks */
+  --color-scrim: rgba(31, 42, 68, .4); /* ink at 40%: ONLY behind the bottom sheet */
 
   /* 2. Typography (DESIGN.md §2): only these four sizes */
   --font-display: 'Readex Pro', 'IBM Plex Sans Arabic', Tahoma, sans-serif;
@@ -63,6 +64,7 @@
   --dur-new-row: 1.2s;
   --dur-tick-drop: 450ms;
   --dur-card-in: 400ms;
+  --dur-sheet: 250ms;
   --ease-press: ease;
   --ease-drop: cubic-bezier(.2, .8, .2, 1);
   --press-scale: .98;

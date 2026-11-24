@@ -229,3 +229,62 @@
   position: absolute; inset: 0; inline-size: 100%; block-size: 100%;
   opacity: 0; cursor: pointer; border: 0; margin: 0; font-size: var(--text-body);
 }
+
+/* ---------- Choice card (screen 1 start) ---------- */
+.choice {
+  inline-size: 100%; padding: var(--space-3) var(--space-2);
+  display: flex; align-items: center; gap: var(--space-2);
+  border-radius: var(--radius-lg); cursor: pointer; text-align: start; font: inherit;
+  transition: transform var(--dur-press) var(--ease-press), background-color var(--dur-press) var(--ease-press);
+}
+.choice:active { transform: scale(var(--press-scale)); }
+.choice__icon {
+  inline-size: var(--tap); block-size: var(--tap); flex-shrink: 0; border-radius: var(--radius-lg);
+  display: flex; align-items: center; justify-content: center;
+  background: var(--color-paper); color: var(--color-ink);
+}
+.choice__text { flex: 1; min-inline-size: 0; display: flex; flex-direction: column; gap: 4px; }
+.choice__title { font-size: var(--text-body); font-weight: var(--weight-semibold); }
+.choice__sub { font-size: var(--text-caption); font-weight: var(--weight-medium); line-height: var(--leading-body); }
+.choice__tag {
+  align-self: flex-start; padding: 0 var(--space-1); border-radius: var(--radius-sm);
+  background: var(--color-paper); color: var(--color-ink);
+  font-size: var(--text-caption); font-weight: var(--weight-semibold);
+}
+/* Filled: the recommended choice. Subtitle in paper (rule is never used for text). */
+.choice--filled { border: 0; background: var(--color-ink); color: var(--color-paper); }
+.choice--filled:active { background: var(--color-ink-pressed); }
+/* Outlined */
+.choice--outlined { border: var(--border-mid) solid var(--color-ink); background: var(--color-surface); color: var(--color-ink); }
+.choice--outlined:active { background: var(--color-wash-pressed); }
+.choice--outlined .choice__icon { border: var(--border-thin) solid var(--color-rule); }
+.choice--outlined .choice__sub { color: var(--color-pencil); }
+
+/* ---------- Bottom sheet ---------- */
+.sheet-layer { position: fixed; inset: 0; z-index: 10; display: flex; justify-content: center; align-items: flex-end; }
+.sheet-scrim { position: absolute; inset: 0; background: var(--color-scrim); }
+.sheet {
+  position: relative; inline-size: 100%; max-inline-size: var(--frame);
+  max-block-size: 90dvh; overflow-y: auto;
+  padding: var(--space-1) var(--space-3) var(--space-4);
+  display: flex; flex-direction: column; gap: var(--space-2);
+  background: var(--color-paper); color: var(--color-ink);
+  border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+  animation: sheet-up var(--dur-sheet) var(--ease-drop);
+}
+@keyframes sheet-up { from { transform: translateY(100%); } to { transform: none; } }
+.sheet__handle { align-self: center; inline-size: 40px; block-size: 4px; border-radius: var(--radius-bar); background: var(--color-rule); }
+.sheet__head { display: flex; align-items: center; justify-content: space-between; }
+.sheet__close {
+  inline-size: var(--tap); block-size: var(--tap); margin-inline-end: -12px;
+  display: flex; align-items: center; justify-content: center;
+  border: 0; background: none; color: var(--color-ink); cursor: pointer; border-radius: var(--radius-lg);
+}
+.sheet__actions { display: flex; flex-direction: column; gap: var(--space-1); }
+
+/* ---------- Floating toast (screens without a footer) ---------- */
+.floating-toast {
+  position: fixed; inset-inline: 0; inset-block-end: var(--space-4); z-index: 5;
+  display: flex; justify-content: center; padding-inline: var(--space-3); pointer-events: none;
+}
+.floating-toast > * { inline-size: 100%; max-inline-size: calc(var(--frame) - 2 * var(--space-3)); pointer-events: auto; }
