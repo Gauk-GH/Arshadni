@@ -2,12 +2,20 @@
 // Run from the repo root with the dev server on :5173:
 //   SHOT_LOG=1 SHOT_JS="$(cat web/scripts/checks/unlocks-ui.js)" node web/scripts/shot.mjs "http://localhost:5173/#/input" /tmp/unlocks 390 844 0
 const w = (ms) => new Promise((r) => setTimeout(r, ms));
+// Wait until the app is really ready (cold starts after a deploy are slower): poll, don't guess.
+const waitFor = async (test, what, ms = 15000) => {
+  for (const end = Date.now() + ms; Date.now() < end; await new Promise((r) => setTimeout(r, 100))) {
+    const v = test(); if (v) return v;
+  }
+  throw new Error('not ready after ' + ms / 1000 + 's: ' + what);
+};
 const log = (window.__log = []);
 const plain = (x) => (x ?? '').replace(/[⁦-⁩]/g, '').replace(/\s+/g, ' ').trim();
 const check = (ok, msg) => log.push((ok ? 'OK   ' : 'FAIL ') + msg);
-await w(300);
-[...document.querySelectorAll('button')].find((b) => b.textContent.includes('جرّب ببيانات')).click(); await w(200);
-location.hash = '#/remaining'; await w(400);
+(await waitFor(() => [...document.querySelectorAll('button')].find((b) => b.textContent.includes('جرّب ببيانات')), 'start screen')).click();
+await waitFor(() => document.querySelector('.list-courses'), 'sample courses loaded');
+location.hash = '#/remaining';
+await waitFor(() => document.querySelector('.remaining-list .unlock-item'), 'remaining lists');
 const items = [...document.querySelectorAll('.remaining-list > ul')[0].children];
 const codes = items.map((li) => plain(li.querySelector('.course-row__code').textContent));
 check(codes.join(',') === 'CS 210,CS 250,CS 330,STAT 201,ISLM 102,ENGL 102', 'sort: ' + codes.join(', '));

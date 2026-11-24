@@ -121,7 +121,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 22. The open card lists the direct courses, then mini ticks (solid = direct, dashed = later) and «و{n} ثانية بعدها: {codes}» for everything further down the chain (no repeats, list order). The line is hidden when there are none. One card open at a time.
 23. **Chain («الطريق له:»):** from an available course to the locked course, following the prerequisite with the LONGEST chain at each step (it decides the earliest term); ties go to the first prerequisite. Step 1 «متاح الحين», step 2 «الترم اللي بعده», step 3 «أقرب وقت: بعد ترمين», step k ≥ 4 «أقرب وقت: بعد {k−1} أترام» (3–10) / «ترم» (11+).
 24. **Copy format («انسخ رموز الترم الجاي»):** the first term's codes as displayed («CS 210»), in the card's order, joined with ", " (English comma + space, because it is pasted into English registration systems), nothing before or after. Example: `CS 210, CS 250, CS 330, STAT 201, ISLM 102`. Try the clipboard API, then the older select-and-copy once; if both fail, show the text selected with «ما قدرنا ننسخ…». Changing the path resets the button.
-25. **Arabic counts:** one shared helper (`web/src/lib/plural.js`) for every number followed by a noun: 1 «مقرر واحد» · 2 «مقررين» · 3–10 «{n} مقررات» · 0 and 11+ «{n} مقرر»; the same for «رمز / رمزين / رموز» and «ترم / ترمين / أترام». In §8, `{n|course}`, `{n|code}`, `{n|term}` mean "the number with the right form" and `{n|courseWord}` the word alone. Definite phrases «كل الـ {n} مقرر» are not covered yet.
+25. **Arabic counts:** one shared helper (`web/src/lib/plural.js`) for every number followed by a noun: 1 «مقرر واحد» · 2 «مقررين» · 3–10 «{n} مقررات» · 0 and 11+ «{n} مقرر»; the same for «رمز / رمزين / رموز» and «ترم / ترمين / أترام». In §8, `{n|course}`, `{n|code}`, `{n|term}` mean "the number with the right form" and `{n|courseWord}` the word alone. Sentences whose wording changes with the count (definite «كل الـ {n} مقرر») have their own `.one` / `.two` rows in §8; 3+ uses the main row.
 
 ## 8. State texts
 
@@ -144,7 +144,9 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | input.upload.error.scan | الملف صورة ممسوحة، مو PDF فيه نص. نزّل السجل من بوابة الجامعة كـ PDF وارفقه مرة ثانية، أو أدخل مقرراتك يدويًا تحت. |
 | input.upload.error.retry | ارفق ملف ثاني |
 | input.upload.partial.sub | {matched} منها في خطتك، و{unmatched} مو موجودة فيها |
-| input.upload.partial.add | أضف الـ {unmatched} لخطتك |
+| input.upload.partial.add | أضف الـ {n} لخطتك |
+| input.upload.partial.add.one | أضفه لخطتك |
+| input.upload.partial.add.two | أضف الاثنين لخطتك |
 | input.upload.partial.ignore | تجاهلها، مو من متطلبات تخصصي |
 | input.empty.title | ~~ابدأ بأول مقرر من خطة قسمك~~ (replaced by the screen 1 redesign) |
 | input.empty.body | ~~افتح خطتك الدراسية من موقع القسم، وانسخ رمز كل مقرر واسمه هنا. أو الصق القائمة كلها من الرابط فوق.~~ (replaced by the screen 1 redesign) |
@@ -155,6 +157,8 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | input.sample | جرّب ببيانات تجريبية |
 | input.reset | امسح كل المقررات وابدأ من جديد |
 | input.reset.confirm | تمسح كل الـ {n} مقرر؟ |
+| input.reset.confirm.one | تمسح المقرر الوحيد؟ |
+| input.reset.confirm.two | تمسح المقررين؟ |
 | input.start.title | كيف تبي تبدأ؟ |
 | input.start.body | نحتاج مقررات خطتك عشان نحسب لك وش باقي. |
 | input.start.fastest | الأسرع |
@@ -173,6 +177,8 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | input.reset.yes | امسح |
 | input.reset.no | لا |
 | input.reset.done | انمسحت كل الـ {n} مقرر |
+| input.reset.done.one | انمسح المقرر |
+| input.reset.done.two | انمسح المقررين |
 | input.loading | نرجّع مقرراتك المحفوظة… |
 | input.error.bothEmpty | اكتب رمز المقرر واسمه من خطة قسمك، وبعدها اضغط «أضف المقرر». |
 | input.error.noCode | ناقص رمز المقرر، مثل CS 310. |
@@ -241,7 +247,9 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | plan.saved | انحفظ المسار {letter} في جهازك |
 | plan.saved.sub | ترجع له متى ما فتحت أرشدني من نفس المتصفح |
 | plan.empty.title | نحتاج المتطلبات السابقة عشان نرتّب |
-| plan.empty.body | ما أدخلت أي متطلب سابق، فنعتبر كل الـ {n} مقرر متاحة الحين. أضف المتطلبات من خطة قسمك والترتيب يطلع أدق. |
+| plan.empty.body | ما أدخلت أي متطلب سابق، فنعتبر كل الـ {n} مقرر متاحة الحين. أضف المتطلبات من خطة قسمك والترتيب يطلع أدق. | |
+| plan.empty.body.one | ما أدخلت أي متطلب سابق، فنعتبر المقرر الوحيد متاح الحين. أضف المتطلبات من خطة قسمك والترتيب يطلع أدق. |
+| plan.empty.body.two | ما أدخلت أي متطلب سابق، فنعتبر المقررين متاحين الحين. أضف المتطلبات من خطة قسمك والترتيب يطلع أدق. |
 | plan.empty.primary | أضف المتطلبات السابقة |
 | plan.empty.secondary | رتّبها بدونها، {max} بالترم |
 | plan.error.save | ما انحفظ المسار لأن المتصفح في وضع التصفح الخاص. افتح أرشدني في نافذة عادية واحفظ مرة ثانية. |
@@ -307,3 +315,4 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 28. «امسح كل المقررات» asks in a sheet («امسح» / «لا») and offers «تراجع» after.
 29. Screen 3 «يفتح لك» (design Unlocks): rules 20–23. Chain step dots are circles (the only radius-50% exception). The pill is 32px visually inside a 48px tap area. Mini ticks are ~20px each and wrap. `{codes}` is joined with «، ».
 30. Screen 4 course names + copy (design PlanNames): term cards list code + name rows; picker subs «متوازن / ثقيل / خفيف»; shape line from the real counts; «انسخ رموز الترم الجاي» in the first card only (rule 24); plan ticks 20px and path items 48px; Arabic counts through one helper (rule 25).
+31. One/two wording for the definite-count texts: reset confirm, reset toast, «أضف الـ {n} لخطتك», and the plan «no prerequisites» body (rule 25).

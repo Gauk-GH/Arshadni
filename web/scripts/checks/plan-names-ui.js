@@ -3,14 +3,23 @@
 //   SHOT_LOG=1 SHOT_JS="$(cat web/scripts/checks/plan-names-ui.js)" node web/scripts/shot.mjs "http://localhost:5173/#/input" /tmp/plan 390 844 0
 // For the failed-copy state add ?copy=fail to the URL (dev only); this script checks it when present.
 const w = (ms) => new Promise((r) => setTimeout(r, ms));
+// Wait until the app is really ready (cold starts after a deploy are slower): poll, don't guess.
+const waitFor = async (test, what, ms = 15000) => {
+  for (const end = Date.now() + ms; Date.now() < end; await new Promise((r) => setTimeout(r, 100))) {
+    const v = test(); if (v) return v;
+  }
+  throw new Error('not ready after ' + ms / 1000 + 's: ' + what);
+};
 const log = (window.__log = []);
 const plain = (x) => (x ?? '').replace(/[⁦-⁩]/g, '').replace(/\s+/g, ' ').trim();
 const check = (ok, msg) => log.push((ok ? 'OK   ' : 'FAIL ') + msg);
 const btn = (txt) => [...document.querySelectorAll('button')].find((b) => b.textContent.includes(txt));
 const failMode = new URLSearchParams(location.search).get('copy') === 'fail';
-await w(300);
-btn('جرّب ببيانات').click(); await w(200);
-location.hash = '#/plan'; await w(2600);
+(await waitFor(() => btn('جرّب ببيانات'), 'start screen')).click();
+await waitFor(() => document.querySelector('.list-courses'), 'sample courses loaded');
+location.hash = '#/plan';
+await waitFor(() => document.querySelector('.plan-terms .card .term-row') && !document.querySelector('.plan-loading'), 'plan built');
+await w(1200); // let the tick drop and card fade-in finish
 let copied = null;
 if (!failMode) navigator.clipboard.writeText = async (x) => { copied = x; };
 const cards = () => [...document.querySelectorAll('.plan-terms .card')];

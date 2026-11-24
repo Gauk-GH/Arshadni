@@ -16,7 +16,7 @@ import { findCycle } from '../../lib/courses.js';
 import { describeShape, generatePaths, hasAnyPrerequisite } from '../../lib/plan.js';
 import { codeKey } from '../../lib/courses.js';
 import { devSave } from '../../lib/devState.js';
-import { t } from '../../lib/strings.js';
+import { t, tn } from '../../lib/strings.js';
 import './plan.css';
 
 const LOADING_MS = 900; // DESIGN.md §7: plan loading
@@ -109,7 +109,7 @@ export default function PlanScreen() {
             {[0, 1].map((g) => <span key={g}>{[0, 1, 2].map((i) => <i key={i} />)}</span>)}
           </div>
           <h1 className="title">{t('plan.empty.title')}</h1>
-          <p className="subtitle">{t('plan.empty.body', { n: remaining })}</p>
+          <p className="subtitle">{tn('plan.empty.body', remaining)}</p>
         </section>
         <Footer>
           <PrimaryButton onClick={() => navigate('/input')}>{t('plan.empty.primary')}</PrimaryButton>

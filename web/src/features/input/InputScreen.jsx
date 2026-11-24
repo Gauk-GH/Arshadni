@@ -16,7 +16,7 @@ import { CheckIcon, CloseIcon, FileUploadIcon, PencilIcon, PlusIcon, SpinnerIcon
 import { codeKey, makeCourse, searchCourses } from '../../lib/courses.js';
 import { readTranscript } from '../../lib/transcript.js';
 import { devState, devUpload } from '../../lib/devState.js';
-import { t } from '../../lib/strings.js';
+import { t, tn } from '../../lib/strings.js';
 import { OTHER_UNIVERSITY, UNIVERSITIES } from '../../lib/universities.js';
 import UploadCard, { UploadSummary } from './UploadCard.jsx';
 import AddCourseSheet from './AddCourseSheet.jsx';
@@ -131,7 +131,7 @@ export default function InputScreen() {
     setQuery('');
     setNewCode(null);
     setUpload({ status: 'idle', fileName: '', result: null });
-    setToast({ text: t('input.reset.done', { n: count }), onUndo: () => restorePlan(snapshot) });
+    setToast({ text: tn('input.reset.done', count), onUndo: () => restorePlan(snapshot) });
   }
 
   const reading = upload.status === 'reading';
@@ -309,7 +309,7 @@ export default function InputScreen() {
           onAdd={onAdded} onUndo={removeCourse} onDuplicate={setDupCode} onClose={closeSheet} />
       )}
       {confirmReset && (
-        <BottomSheet title={t('input.reset.confirm', { n: courses.length })} closeLabel={t('input.reset.no')} onClose={() => setConfirmReset(false)}>
+        <BottomSheet title={tn('input.reset.confirm', courses.length)} closeLabel={t('input.reset.no')} onClose={() => setConfirmReset(false)}>
           <div className="sheet__actions">
             <PrimaryButton onClick={doReset}>{t('input.reset.yes')}</PrimaryButton>
             <SecondaryButton onClick={() => setConfirmReset(false)}>{t('input.reset.no')}</SecondaryButton>

@@ -7,7 +7,7 @@
 //   Unicode "left-to-right isolate" marks, so "CS 210" never flips inside Arabic text.
 // - names ({name}) may be Arabic or English, so they get a "first-strong isolate".
 import { fmtNumber } from './format.js';
-import { countOf } from './plural.js';
+import { countOf, pluralForm } from './plural.js';
 
 const LRI = '⁦'; // left-to-right isolate
 const FSI = '⁨'; // first-strong isolate (direction taken from the text itself)
@@ -35,9 +35,13 @@ const STRINGS = {
   'input.success.next': 'انضاف {code} {name}. أضف اللي بعده',
   'input.university.optional': '(اختياري)',
   'input.reset.confirm': 'تمسح كل الـ {n} مقرر؟',
+  'input.reset.confirm.one': 'تمسح المقرر الوحيد؟',
+  'input.reset.confirm.two': 'تمسح المقررين؟',
   'input.reset.yes': 'امسح',
   'input.reset.no': 'لا',
   'input.reset.done': 'انمسحت كل الـ {n} مقرر',
+  'input.reset.done.one': 'انمسح المقرر',
+  'input.reset.done.two': 'انمسح المقررين',
   'input.upload': 'ارفق سجلك الأكاديمي',
   'input.upload.sub': 'ملف PDF من موقع الجامعة، ونعلّم لك اللي خلصته',
   'input.upload.reading': 'نقرأ سجلك الأكاديمي…',
@@ -46,7 +50,9 @@ const STRINGS = {
   'input.upload.error.scan': 'الملف صورة ممسوحة، مو PDF فيه نص. نزّل السجل من بوابة الجامعة كـ PDF وارفقه مرة ثانية، أو أدخل مقرراتك يدويًا تحت.',
   'input.upload.error.retry': 'ارفق ملف ثاني',
   'input.upload.partial.sub': '{matched} منها في خطتك، و{unmatched} مو موجودة فيها',
-  'input.upload.partial.add': 'أضف الـ {unmatched} لخطتك',
+  'input.upload.partial.add': 'أضف الـ {n} لخطتك',
+  'input.upload.partial.add.one': 'أضفه لخطتك',
+  'input.upload.partial.add.two': 'أضف الاثنين لخطتك',
   'input.upload.partial.ignore': 'تجاهلها، مو من متطلبات تخصصي',
   'input.loading': 'نرجّع مقرراتك المحفوظة…',
   'input.error.bothEmpty': 'اكتب رمز المقرر واسمه من خطة قسمك، وبعدها اضغط «أضف المقرر».',
@@ -175,6 +181,8 @@ const STRINGS = {
   'plan.saved.sub': 'ترجع له متى ما فتحت أرشدني من نفس المتصفح',
   'plan.empty.title': 'نحتاج المتطلبات السابقة عشان نرتّب',
   'plan.empty.body': 'ما أدخلت أي متطلب سابق، فنعتبر كل الـ {n} مقرر متاحة الحين. أضف المتطلبات من خطة قسمك والترتيب يطلع أدق.',
+  'plan.empty.body.one': 'ما أدخلت أي متطلب سابق، فنعتبر المقرر الوحيد متاح الحين. أضف المتطلبات من خطة قسمك والترتيب يطلع أدق.',
+  'plan.empty.body.two': 'ما أدخلت أي متطلب سابق، فنعتبر المقررين متاحين الحين. أضف المتطلبات من خطة قسمك والترتيب يطلع أدق.',
   'plan.empty.primary': 'أضف المتطلبات السابقة',
   'plan.empty.secondary': 'رتّبها بدونها، {max} بالترم',
   'plan.error.save': 'ما انحفظ المسار لأن المتصفح في وضع التصفح الخاص. افتح أرشدني في نافذة عادية واحفظ مرة ثانية.',
@@ -199,4 +207,12 @@ export function t(key, vars = {}) {
     if (name === 'name') return FSI + value + PDI;
     return String(value);
   });
+}
+
+// tn(): like t(), for sentences whose wording changes with a count («كل الـ {n} مقرر»).
+// Uses key.one for 1 and key.two for 2 when they exist (HANDOFF rule 25); {n} is always filled.
+export function tn(key, n, vars = {}) {
+  const form = pluralForm(n);
+  const variant = form === 0 ? `${key}.one` : form === 1 ? `${key}.two` : null;
+  return t(variant && variant in STRINGS ? variant : key, { n, ...vars });
 }

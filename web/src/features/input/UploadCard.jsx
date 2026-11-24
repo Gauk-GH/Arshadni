@@ -5,7 +5,7 @@
 import { SecondaryButton, TextLink } from '../../components/Button.jsx';
 import { CourseRow } from '../../components/CourseRow.jsx';
 import { AlertIcon, CheckIcon, SpinnerIcon } from '../../components/Icons.jsx';
-import { t } from '../../lib/strings.js';
+import { t, tn } from '../../lib/strings.js';
 
 export default function UploadCard({ upload, onChooseFile, onAddUnmatched, onIgnoreUnmatched }) {
   const { status, fileName, result } = upload;
@@ -52,7 +52,7 @@ export default function UploadCard({ upload, onChooseFile, onAddUnmatched, onIgn
         <ul>
           {result.unmatchedCourses.map((c) => <CourseRow key={c.code} code={c.code} name={c.name} />)}
         </ul>
-        <SecondaryButton onClick={onAddUnmatched}>{t('input.upload.partial.add', { unmatched })}</SecondaryButton>
+        <SecondaryButton onClick={onAddUnmatched}>{tn('input.upload.partial.add', unmatched)}</SecondaryButton>
         <TextLink onClick={onIgnoreUnmatched}>{t('input.upload.partial.ignore')}</TextLink>
       </div>
     );
