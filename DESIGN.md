@@ -1,96 +1,215 @@
-# DESIGN.md
+# Arshadni (أرشدني) — DESIGN.md
 
-<!--
-  ذاكرة التصميم حقة مشروعك. الـagent يقراه قبل أي شغل واجهات (السطر في CLAUDE.md يقول له كذا).
-  تعبّيه في تطبيق ٣ من الـmockup اللي اخترته: إما بالـprompt "اكتب DESIGN.md" من صفحة اليوم الثاني،
-  أو بيدك. كل [ ] لازم تنمسح وتنكتب مكانها قيمة. قيم دقيقة، مو "modern" ولا "clean".
-  مثال معبّى كامل: example/DESIGN.md (كورة الخميس).
-  أقل من ٢٠٠ سطر.
--->
+Direction: **Ink & Paper (حبر وورق)**. Like an academic advisor's notebook: quiet paper, navy ink, one red-pen mark on the thing that matters.
+Device: mobile, 390 × 844 px frame. Language: Arabic, `dir="rtl"`, `lang="ar"`.
+Boldness is spent in **one place**: the "remaining" number and the 42-tick bar on the Remaining screen. Everything else is calm.
 
-## 1. Direction
+---
 
-- Name: [اسم الاتجاه اللي اخترته، مثال: لوحة الملعب]
-- Concept: [one line: what the product feels like and why it fits its users]
-- Adjectives: [three words]
-- Primary reference: `design/refs/01-primary-[name].png`
-- Mockup: `design/mockups/home-375.png`
+## 1. Color tokens
 
-### This design never does
-
-- [three things, e.g. gradients, emoji as icons, centered body text]
-- No Inter, Roboto, Arial, Space Grotesk. No purple gradients. No three identical cards in a row.
-
-## 2. Colors
-
-One dominant colour, one sharp accent. Hex values read from a screenshot are estimates: check them by eye.
-
-| Token | Hex | Role | Allowed on |
+| Token | Hex | Allowed on | Contrast on `paper` |
 |---|---|---|---|
-| `--color-bg` | [#] | page background | |
-| `--color-surface` | [#] | cards, sheets | |
-| `--color-ink` | [#] | main text | |
-| `--color-muted` | [#] | secondary text | never for long paragraphs |
-| `--color-primary` | [#] | main actions only | buttons, active nav |
-| `--color-accent` | [#] | one highlight per screen | never for text blocks |
-| `--color-line` | [#] | borders, dividers | |
-| `--color-danger` | [#] | errors | error text and banners only |
+| `ink` | `#1F2A44` | Primary text, primary button fill, filled ticks, icons, checked checkbox, selected segment, toast background, badge "متاح" border | 13.1:1 |
+| `ink-pressed` | `#121A2E` | Primary button **pressed** only | — |
+| `red-pen` | `#D9481F` | The "باقي لك" number (112px) **only**. Never on text under 24px | 3.9:1 (large text only) |
+| `paper` | `#F7F5F0` | Background of every screen; text on `ink` | — |
+| `surface` | `#FFFFFF` | Inside inputs, cards, segmented control, alert card | — |
+| `pencil` | `#5B6170` | Secondary text, captions, input borders (1px), unchecked checkbox border, locked badge (dashed) | 5.7:1 |
+| `rule` | `#DDD8CC` | 1px dividers, empty ticks, disabled button fill, card borders. Never on text | — |
+| `error-ink` | `#A8361A` | Error text, error input border (2px), alert card border (2px), "متعارض" badge | 6.0:1 |
 
-Contrast: text on bg and on surface passes WCAG AA (4.5:1).
+Derived surfaces (not for text):
 
-## 3. Typography
+| Name | Hex | Used for |
+|---|---|---|
+| `wash-pressed` | `#EFECE4` | Secondary button pressed, list row pressed, duplicate/new row highlight |
+| `wash-new` | `#E9E4D8` | Start color of the "new row" fade (1.2s → transparent) |
+| `skeleton` | `#E5E0D3` | Loading skeleton blocks |
 
-- Display font: [name] [weights], from Google Fonts
-- Body font (must support Arabic): [Noto Sans Arabic / Tajawal / Cairo / Readex Pro / Almarai] [weights]
-  - Check it: type «حتى» and «على» in the font. If the final ى looks wrong (some fonts draw «حتى» like «حق»), pick another one.
-- Scale (size / line-height / weight):
-  - h1: [ ] / [ ] / [ ]
-  - h2: [ ] / [ ] / [ ]
-  - body: [16px or more] / [1.7-1.8] / [ ]
-  - caption: [ ] / [ ] / [ ]
-- No letter-spacing and no uppercase on Arabic. Opaque text colours only.
+No gradients. No shadows. No transparency effects.
 
-## 4. Spacing and layout
+---
 
-- Spacing scale: [4, 8, 12, 16, 24, 32, 48]: use only these steps
-- Radius: [ ]   Border: [ ]   Shadow: [none / exact value]
-- Max content width: [ ]
-- Breakpoints: 375 (design here first) / 768 / 1280
-- Touch targets: 44px minimum
+## 2. Typography
 
-## 5. Components
+Fonts (Google Fonts): **Readex Pro** (500, 600) for display and titles, **IBM Plex Sans Arabic** (400, 500, 600) for everything else.
 
-For each one: default, hover, focus, disabled, loading, error.
+| Role | Font | Size | Weight | Line height | Used for |
+|---|---|---|---|---|---|
+| Display | Readex Pro | 112px | 600 | 1 | Remaining number only (`red-pen`) |
+| Title | Readex Pro | 24px | 600 | 1.4 | Screen titles, the unit word "مقرر" next to the number |
+| Body | IBM Plex Sans Arabic | 16px | 400 (600 for buttons, section headings, header title) | 1.5 | Course names, paragraphs, buttons, inputs |
+| Caption | IBM Plex Sans Arabic | 13px | 500 (600 for course codes, chips) | 1.5 | Labels, counters, badges, helper and error text |
 
-- Button (primary, secondary): [shape, colours, states]
-- Input: [ ]
-- Card: [ ]
-- Navigation: [top / bottom, active state]
-- List item: [ ]
-- Empty state: [one short line + one action]
-- Loading: [skeletons that match the real layout]
-- Error: [plain Arabic + retry]
+Rules:
+- Only these four sizes.
+- `letter-spacing: 0` on all Arabic.
+- Course codes are Latin with Latin digits and set `dir="ltr"` (`CS 210`). All other numbers use Arabic-Indic digits (١٢٣).
 
-## 6. Arabic and RTL
+---
 
-- `<html lang="ar" dir="rtl">`. Logical properties only. Flex rows follow `dir`.
-- Mirror: back/forward arrows, chevrons, progress that fills along the reading direction.
-- Never mirror: logos, play/pause, checkmarks, clocks, numbers.
-- English names in `<bdi>`; codes and long numbers in `<span dir="ltr">`; user inputs `dir="auto"`.
-- Numerals: Arabic-Indic ١٢٣ for every number the user reads in the Arabic UI (counts, prices, times,
-  percents); 0-9 only inside code. Never zero-pad (٥ not ٠٥); no middle dot (U+00B7) next to a number
-  (the Arabic zero is a dot), use «،». A count that is still 0 says it in words («ما فيه شي للحين»),
-  not a lone «٠». Calendar: [Gregorian / Hijri].
-  Locale in `web/src/lib/format.js`: [ar-SA-u-ca-gregory (default) / ar-SA (Hijri)]
-  Choice: [keep Arabic-Indic / switch to Western 0-9 everywhere because ...]
-  (0-9 = `ar-SA-u-ca-gregory-nu-latn`; pick it only if your users expect it, and write why.)
+## 3. Spacing (8px grid)
+
+Scale: `8, 16, 24, 32, 48`.
+
+| Where | Value |
+|---|---|
+| Screen side padding | 24px |
+| Header row (back button row) | padding 8px top, 16px sides |
+| Between sections | 32px |
+| Inside a component | 8px or 16px |
+| Gap between list rows | 0 (rows separated by 1px `rule`) |
+| Footer | padding 16px top, 24px sides, 32px bottom; 1px `rule` top border |
+| Frame gap for tick bar | 3px (large), 2px (small), 16px between term groups |
+
+Touch targets: minimum 48 × 48px. List rows minimum 56px tall.
+
+---
+
+## 4. Radius
+
+| Value | Used on |
+|---|---|
+| 8px | Buttons, inputs, cards, toast, alert card, segmented control container |
+| 4px | Badges, chips, checkbox, segmented control items, highlighted row |
+| 2px | Step progress bar |
+| 1px | Ticks |
+| 50% | — (not used) |
+
+## 5. Shadows
+
+None. Separation is by 1px `rule` borders only.
+
+---
+
+## 6. Components and their states
+
+### Primary button (one per screen, in the footer)
+- Size: height 56px, full width (342px), radius 8px.
+- Text: 16px / 600, color `paper`.
+- **Default**: background `ink`.
+- **Pressed**: background `ink-pressed`, `transform: scale(.98)`, 120ms ease.
+- **Loading**: background `ink`, 20px spinner (stroke 2.5px, 0.9s linear rotate) at the start side + text in present progressive ("جاري الحفظ…").
+- **Done**: background `ink`, 20px check icon at start side + past tense text ("انحفظ المسار أ في جهازك").
+- **Disabled**: background `rule`, text `pencil`. The label says what is missing ("أضف مقرر واحد على الأقل").
+- Label always says what will happen: "رتّب لي خطة التخرج", "اعرض المتبقي (١٤ مقرر)", "احفظ المسار أ".
+
+### Upload card (attach academic record)
+- Full width (342px), min height 64px, radius 8px, padding 8px 16px, gap 16px, 24px file icon at start.
+- Title 16px / 600, sub-line 13px / 500 `pencil`.
+- **Idle**: background `surface`, border 1.5px **dashed** `ink`. Whole card is one button. Pressed like a secondary button.
+- **Reading**: border 1px `rule`, 24px spinner, «نقرأ سجلك الأكاديمي…» + file name (`dir="ltr"`), `role="status"`.
+- **Done**: border 1px `ink`, 24px check, «لقينا {n} مقرر خلصتها» + «غيّر الملف» link at end.
+- **Error**: border 2px `error-ink`, title in `error-ink`, body 13px `error-ink`, secondary button «ارفق ملف ثاني», `role="alert"`.
+- **Partial**: done style + list of unmatched course rows + secondary «أضف الـ {n} لخطتك» + text link to ignore.
+
+### Secondary button (outlined)
+- Height 48px, border 1.5px `ink`, background `surface` (or transparent in footer), text 16px / 600 `ink`, radius 8px.
+- Optional 20px icon on the start side (e.g. "+" in "أضف المقرر").
+- **Pressed**: background `wash-pressed`, `scale(.98)`, 120ms.
+
+### Text link
+- 16px / 600 (13px / 500 inside lists), `ink`, underline, `text-underline-offset: 4px`, padding 12px 0 (keeps 44px+ tap height).
+
+### Input
+- Height 48px, background `surface`, border 1px `pencil`, radius 8px, padding 0 16px, text 16px `ink`, placeholder `pencil`.
+- Label above: 13px / 500, gap 8px.
+- **Focus**: border 2px `ink`, no outline.
+- **Error**: border 2px `error-ink`, `aria-invalid="true"`, error text below (13px / 500 `error-ink`, 16px alert-circle icon at start side, `role="alert"`).
+- Course code inputs: `dir="ltr"`, `text-align: right`.
+
+### Checkbox
+- 24 × 24px, radius 4px, `appearance: none`.
+- **Unchecked**: border 1.5px `pencil`, background `surface`.
+- **Checked**: background and border `ink`, check mark in `paper` (stroke 2.5px).
+- **Focus-visible**: outline 2px `ink`, offset 2px.
+- Whole row is the label (56px tall).
+
+### List item (course row)
+- Min height 56px, gap 16px, bottom border 1px `rule`.
+- Order from the start (right): [checkbox] → code (72px column, 13px / 600, `dir="ltr"`) → name (16px, flex 1) → trailing badge or 48px delete button.
+- **Pressed** (tappable rows): background `wash-pressed`.
+- **New**: background fades from `wash-new` to transparent over 1.2s.
+- **Highlighted** (duplicate target): background `wash-pressed`, radius 4px.
+
+### Badge
+- 13px / 500, padding 0 8px, radius 4px.
+- **متاح**: border 1px `ink`, text `ink`.
+- **بعد CS 210** (locked): border 1px dashed `pencil`, text `pencil`.
+- **متعارض** (conflict): border 1px `error-ink`, text `error-ink`.
+
+### Chip (course code in a term)
+- 13px / 600, padding 4px 8px, background `paper`, border 1px `rule`, radius 4px, `dir="ltr"`.
+- Chips wrap in an RTL row; first course is at the right.
+
+### Card (term card)
+- Background `surface`, border 1px `rule`, radius 8px, padding 16px, gap 8px.
+- Header row: term name 16px / 600 at start, count 13px / 500 `pencil` at end.
+
+### Alert card (blocking error)
+- Background `surface`, border 2px `error-ink`, radius 8px, padding 16px.
+- Title 16px / 600 `error-ink` with 20px icon, body 13px / 500 `ink`.
+
+### Toast (success)
+- Height min 48px, background `ink`, text 13px / 500 `paper`, radius 8px, padding 0 16px, positioned above the footer, `role="status"`.
+- 16px check icon at start, optional "تراجع" link at end (600, underline).
+
+### Segmented control (path picker)
+- Container: `surface`, border 1px `rule`, radius 8px, padding 4px, 3 equal columns, gap 4px.
+- Item: min height 56px, radius 4px, label 16px / 600 + sub-label 13px / 500.
+- **Selected**: background `ink`, text `paper`, `aria-checked="true"`.
+- **Unselected**: transparent, text `ink`.
+
+### Tick bar (signature)
+- One tick per course. Large: height 28px, gap 3px. Small: height 12px, gap 2px.
+- Filled = completed (`ink`), empty = remaining (`rule`). Fills from the right.
+- Plan version: remaining ticks as outlines (1.5px `ink`), grouped per term, 16px between groups.
+- Has `role="img"` and an `aria-label` ("خلصت ٢٨ من ٤٢ مقرر").
+
+### Step indicator
+- Caption "الخطوة ١ من ٢" + 4px bar (`rule` track, `ink` fill from right), radius 2px.
+
+### Back button
+- 48 × 48px, chevron pointing **right**, stroke 1.75px, at the start (right) of the header. `aria-label` says where it goes ("رجوع للمتبقي").
+
+### Skeleton
+- Background `skeleton`, radius 4px, opacity pulse .45 → 1, 1.2s ease-in-out infinite.
+
+### Tab bar (defined, not used this round)
+- Height 64px, background `surface`, top border 1px `rule`, 3 items (المتبقي، الخطة، مقرراتي), 24px icon above 13px label. Selected: `ink` 600; others `pencil`.
+
+---
 
 ## 7. Motion
 
-- Durations: [ ]   Easing: [ ]
-- The one page-load animation: [what enters, in what order] (or "none yet")
-- Respects `prefers-reduced-motion`.
+| What | Spec |
+|---|---|
+| Press (buttons, rows) | 120ms ease, `scale(.98)` + darker fill |
+| New row | background `wash-new` → transparent, 1.2s ease-out |
+| Plan loading | 900ms; 14 empty ticks pulse (1s, 60ms stagger) |
+| **Signature**: ticks into terms | Each remaining tick drops in (`translateY(-20px)` → 0, opacity 0 → 1), 450ms `cubic-bezier(.2,.8,.2,1)`, 45ms stagger, starting from the right |
+| Term cards | fade + `translateY(8px)` → 0, 400ms, delay 300ms + 120ms per card |
+| Save | 700ms loading, then done state |
+| Reduced motion | `@media (prefers-reduced-motion: reduce)` disables all animation and transitions |
 
-## 8. The one bold place
+---
 
-- [The single strong moment on the main screen. Everything else stays calm.]
+## 8. Icons
+
+Inline stroke SVG, 24px viewBox, `stroke-linecap: round`. Stroke 1.75px (back), 2px (UI), 2.5–3px (check, spinner). Decorative icons `aria-hidden="true"`. No emoji.
+
+---
+
+## 9. Arabic and RTL rules
+
+- `<html lang="ar" dir="rtl">` on every screen.
+- Layout starts from the right. Back arrow at the right, pointing right.
+- Progress (step bar, tick bar, plan groups) fills from the right.
+- Icons sit on the start (right) side of their label. Trailing actions (delete ✕) sit at the end (left).
+- No `letter-spacing` on Arabic.
+- Arabic-Indic digits (٠١٢٣٤٥٦٧٨٩) for all UI numbers: counts, percentages, term counts.
+- Course codes stay Latin (`CS 210`) and are wrapped in `dir="ltr"` / `unicode-bidi: isolate`.
+- Not mirrored: check marks, spinners, course codes.
+- Use Arabic punctuation: « » for quotes, ، for commas.
+- Use logical CSS properties (`margin-inline-end`, `justify-content: flex-start`) so RTL is the default.

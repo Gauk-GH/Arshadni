@@ -1,53 +1,43 @@
 import { useEffect, useState } from 'react';
-import Home from './screens/Home.jsx';
-import Detail from './screens/Detail.jsx';
-import Action from './screens/Action.jsx';
+import InputScreen from './features/input/InputScreen.jsx';
+import DoneScreen from './features/done/DoneScreen.jsx';
+import RemainingScreen from './features/remaining/RemainingScreen.jsx';
+import PlanScreen from './features/plan/PlanScreen.jsx';
 
-// Three placeholder screens = your 3 key screens. Rename them to match design/wireframes.md.
-// Routing is a tiny hash switch (#/, #/detail/1, #/action): no library needed for 3 screens.
-const SCREENS = [
-  { path: '/', label: 'الرئيسية' },
-  { path: '/detail/1', label: 'التفاصيل' },
-  { path: '/action', label: 'الفعل الرئيسي' },
-];
+// Hash routing: the part after # in the URL picks the screen (#/input, #/done, ...).
+// No library needed for 4 screens. Unknown paths fall back to screen 1.
+const ROUTES = {
+  '/input': InputScreen,
+  '/done': DoneScreen,
+  '/remaining': RemainingScreen,
+  '/plan': PlanScreen,
+};
 
-function useHashPath() {
-  const read = () => window.location.hash.replace(/^#/, '') || '/';
-  const [path, setPath] = useState(read);
-  useEffect(() => {
-    const onChange = () => setPath(read());
-    window.addEventListener('hashchange', onChange);
-    return () => window.removeEventListener('hashchange', onChange);
-  }, []);
-  return path;
+function readPath() {
+  const path = window.location.hash.replace(/^#/, '');
+  return ROUTES[path] ? path : '/input';
+}
+
+export function navigate(path) {
+  window.location.hash = path;
 }
 
 export default function App() {
-  const path = useHashPath();
-  const [, section, id] = path.split('/');
+  const [path, setPath] = useState(readPath);
 
-  let screen = <Home />;
-  if (section === 'detail') screen = <Detail id={id} />;
-  if (section === 'action') screen = <Action />;
+  useEffect(() => {
+    const onChange = () => {
+      setPath(readPath());
+      window.scrollTo(0, 0);
+    };
+    window.addEventListener('hashchange', onChange);
+    return () => window.removeEventListener('hashchange', onChange);
+  }, []);
 
+  const Screen = ROUTES[path];
   return (
-    <>
-      <div className="starter-banner">
-        هذا هيكل رمادي عن قصد. الشكل يجي من DESIGN.md حقك. (يختفي الشريط لما تعبّي tokens.css)
-      </div>
-      <div className="shell">
-        <nav className="nav" aria-label="الشاشات">
-          {SCREENS.map((s) => {
-            const current = s.path === '/' ? path === '/' : path.startsWith('/' + s.path.split('/')[1]);
-            return (
-              <a key={s.path} href={'#' + s.path} aria-current={current ? 'page' : undefined}>
-                {s.label}
-              </a>
-            );
-          })}
-        </nav>
-        <main>{screen}</main>
-      </div>
-    </>
+    <div className="app">
+      <Screen />
+    </div>
   );
 }

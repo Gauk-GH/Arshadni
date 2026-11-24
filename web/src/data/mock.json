@@ -1,34 +1,116 @@
 {
-  "_note": "Mock data until Day 3. Replace it with YOUR product's data, but keep the three troublemakers: one very long Arabic name, one English name, one number-heavy line. Codes with dashes (4471-22-0098) live in their own field and render inside <span dir=\"ltr\">, or the RTL page flips them to 0098-22-4471.",
-  "user": {
-    "name": "عبدالرحمن بن عبدالله بن محمد العبدالكريم",
-    "city": "الرياض"
+  "schemaVersion": 1,
+  "studyPlan": {
+    "major": "علوم الحاسب",
+    "courses": [
+      { "code": "CS 110", "name": "مقدمة في البرمجة", "prerequisites": [], "completed": true },
+      { "code": "CS 111", "name": "البرمجة الكائنية", "prerequisites": ["CS 110"], "completed": true },
+      { "code": "CS 140", "name": "أساسيات الحاسب", "prerequisites": [], "completed": true },
+      { "code": "CS 150", "name": "الرياضيات المتقطعة", "prerequisites": [], "completed": true },
+      { "code": "CS 180", "name": "أخلاقيات الحوسبة", "prerequisites": [], "completed": true },
+      { "code": "CS 200", "name": "تنظيم الحاسب", "prerequisites": ["CS 140"], "completed": true },
+      { "code": "CS 205", "name": "برمجة الويب", "prerequisites": ["CS 111"], "completed": true },
+      { "code": "CS 220", "name": "تحليل وتصميم النظم", "prerequisites": ["CS 111"], "completed": true },
+      { "code": "CS 230", "name": "تفاعل الإنسان مع الحاسب", "prerequisites": ["CS 111"], "completed": true },
+      { "code": "MATH 101", "name": "التفاضل والتكامل ١", "prerequisites": [], "completed": true },
+      { "code": "MATH 102", "name": "التفاضل والتكامل ٢", "prerequisites": ["MATH 101"], "completed": true },
+      { "code": "MATH 201", "name": "الجبر الخطي", "prerequisites": ["MATH 101"], "completed": true },
+      { "code": "PHYS 101", "name": "فيزياء عامة ١", "prerequisites": [], "completed": true },
+      { "code": "PHYS 102", "name": "فيزياء عامة ٢", "prerequisites": ["PHYS 101"], "completed": true },
+      { "code": "CHEM 101", "name": "كيمياء عامة", "prerequisites": [], "completed": true },
+      { "code": "STAT 101", "name": "مبادئ الإحصاء", "prerequisites": [], "completed": true },
+      { "code": "ENGL 101", "name": "English Composition I", "prerequisites": [], "completed": true },
+      { "code": "ARAB 101", "name": "المهارات اللغوية", "prerequisites": [], "completed": true },
+      { "code": "ARAB 102", "name": "التحرير العربي", "prerequisites": ["ARAB 101"], "completed": true },
+      { "code": "ISLM 101", "name": "الثقافة الإسلامية ١", "prerequisites": [], "completed": true },
+      { "code": "ISLM 103", "name": "النظام الاقتصادي في الإسلام", "prerequisites": [], "completed": true },
+      { "code": "ISLM 104", "name": "النظام السياسي في الإسلام", "prerequisites": [], "completed": true },
+      { "code": "COMM 101", "name": "مهارات الاتصال", "prerequisites": [], "completed": true },
+      { "code": "MGT 101", "name": "مبادئ الإدارة", "prerequisites": [], "completed": true },
+      { "code": "UNIV 101", "name": "التهيئة الجامعية", "prerequisites": [], "completed": true },
+      { "code": "BIO 101", "name": "أحياء عامة", "prerequisites": [], "completed": true },
+      { "code": "MATH 110", "name": "الرياضيات العامة", "prerequisites": [], "completed": true },
+      { "code": "CS 160", "name": "تطبيقات الحاسب", "prerequisites": [], "completed": true },
+
+      { "code": "CS 210", "name": "هياكل البيانات", "prerequisites": ["CS 110"], "completed": false },
+      { "code": "CS 250", "name": "تصميم المنطق الرقمي", "prerequisites": ["CS 140"], "completed": false },
+      { "code": "CS 330", "name": "نظم إدارة قواعد البيانات العلائقية", "prerequisites": ["CS 111"], "completed": false },
+      { "code": "STAT 201", "name": "الإحصاء والاحتمالات", "prerequisites": ["STAT 101"], "completed": false },
+      { "code": "ISLM 102", "name": "الثقافة الإسلامية ٢", "prerequisites": ["ISLM 101"], "completed": false },
+      { "code": "ENGL 102", "name": "Technical Writing", "prerequisites": ["ENGL 101"], "completed": false },
+      { "code": "CS 310", "name": "الخوارزميات", "prerequisites": ["CS 210"], "completed": false },
+      { "code": "CS 320", "name": "البرمجة المتقدمة", "prerequisites": ["CS 210"], "completed": false },
+      { "code": "CS 340", "name": "نظم التشغيل", "prerequisites": ["CS 250"], "completed": false },
+      { "code": "CS 360", "name": "هندسة البرمجيات", "prerequisites": ["CS 210"], "completed": false },
+      { "code": "CS 370", "name": "شبكات الحاسب", "prerequisites": ["CS 250"], "completed": false },
+      { "code": "CS 410", "name": "الذكاء الاصطناعي", "prerequisites": ["CS 310"], "completed": false },
+      { "code": "CS 498", "name": "التدريب الميداني", "prerequisites": ["CS 360"], "completed": false },
+      { "code": "CS 499", "name": "مشروع التخرج", "prerequisites": ["CS 360"], "completed": false }
+    ]
   },
-  "items": [
+  "settings": {
+    "maxCoursesPerTerm": 6
+  },
+  "summary": {
+    "total": 42,
+    "completed": 28,
+    "remaining": 14,
+    "available": ["CS 210", "CS 250", "CS 330", "STAT 201", "ISLM 102", "ENGL 102"],
+    "locked": [
+      { "code": "CS 310", "waitingFor": "CS 210" },
+      { "code": "CS 320", "waitingFor": "CS 210" },
+      { "code": "CS 340", "waitingFor": "CS 250" },
+      { "code": "CS 360", "waitingFor": "CS 210" },
+      { "code": "CS 370", "waitingFor": "CS 250" },
+      { "code": "CS 410", "waitingFor": "CS 310" },
+      { "code": "CS 498", "waitingFor": "CS 360" },
+      { "code": "CS 499", "waitingFor": "CS 360" }
+    ]
+  },
+  "paths": [
     {
-      "id": "1",
-      "title": "عنصر عنوانه طويل مره عشان نشوف وش يصير لما السطر ينكسر في شاشة الجوال",
-      "subtitle": "اسم طويل: هل ينقطع بنقاط ولا يدف اللي جنبه؟",
-      "price": 1250.5,
-      "count": 14,
-      "date": "2026-12-03T21:00:00"
+      "id": "A",
+      "label": "المسار أ",
+      "strategy": "balanced",
+      "strategyLabel": "متوازن",
+      "terms": [
+        ["CS 210", "CS 250", "CS 330", "STAT 201", "ISLM 102"],
+        ["CS 310", "CS 320", "CS 340", "CS 360", "ENGL 102"],
+        ["CS 370", "CS 410", "CS 498", "CS 499"]
+      ]
     },
     {
-      "id": "2",
-      "title": "Coffee Lab",
-      "subtitle": "اسم إنجليزي وسط واجهة عربية، لاحظ الترتيب",
-      "price": 18,
-      "count": 3,
-      "date": "2026-12-04T08:15:00"
+      "id": "B",
+      "label": "المسار ب",
+      "strategy": "heavy-first",
+      "strategyLabel": "الثقيل أول",
+      "terms": [
+        ["CS 210", "CS 250", "CS 330", "STAT 201", "ISLM 102", "ENGL 102"],
+        ["CS 310", "CS 320", "CS 340", "CS 360", "CS 370"],
+        ["CS 410", "CS 498", "CS 499"]
+      ]
     },
     {
-      "id": "3",
-      "title": "طلب رقم",
-      "code": "4471-22-0098",
-      "subtitle": "سطر كله أرقام: 3 من 12 · 87% · 2026/12/05",
-      "price": 0,
-      "count": 120,
-      "date": "2026-12-05T17:45:00"
+      "id": "C",
+      "label": "المسار ج",
+      "strategy": "light-first",
+      "strategyLabel": "الخفيف أول",
+      "terms": [
+        ["CS 210", "CS 250", "ISLM 102", "ENGL 102"],
+        ["CS 310", "CS 330", "CS 340", "CS 360", "STAT 201"],
+        ["CS 320", "CS 370", "CS 410", "CS 498", "CS 499"]
+      ]
     }
-  ]
+  ],
+  "savedPath": {
+    "pathId": "A",
+    "savedAt": "2026-11-23T21:40:00+03:00"
+  },
+  "examples": {
+    "duplicateInput": { "typed": "cs210", "matches": "CS 210", "existingName": "هياكل البيانات" },
+    "circularPrerequisite": { "a": "CS 310", "b": "CS 360", "note": "Only for the error state: CS 310 → CS 360 and CS 360 → CS 310" },
+    "searchNotFound": "CS 501",
+    "firstYearStudent": { "total": 42, "completed": 4, "remaining": 38, "terms": 7 },
+    "longPlan": { "totalCourses": 72, "completed": 50 }
+  }
 }

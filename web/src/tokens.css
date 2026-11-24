@@ -1,58 +1,69 @@
 /*
-  tokens.css: the ONLY place colours, fonts, sizes and spacing are defined.
-  Every other file uses var(--...). No hex values anywhere else.
-
-  These values are neutral greys ON PURPOSE: the starter is a wireframe, not a design.
-  Your look comes from YOUR DESIGN.md. When you (or the agent) copy the tokens from
-  DESIGN.md into this file, also delete the --starter-banner line below:
-  the grey "هذا هيكل" banner disappears, and that is how you know the tokens are yours.
+  tokens.css: the ONLY place colours, fonts, sizes, spacing, radius and motion are defined.
+  Mirrors DESIGN.md (Ink & Paper). Every other file uses var(--...). No hex values anywhere else.
 */
 :root {
-  --starter-banner: block; /* DELETE this line once the tokens come from DESIGN.md */
+  /* 1. Colours (DESIGN.md §1) */
+  --color-ink: #1F2A44;          /* primary text, primary fill, filled ticks, icons */
+  --color-ink-pressed: #121A2E;  /* primary button pressed only */
+  --color-red-pen: #D9481F;      /* the 112px remaining number ONLY */
+  --color-paper: #F7F5F0;        /* screen background; text on ink */
+  --color-surface: #FFFFFF;      /* inputs, cards, segmented control, alert card */
+  --color-pencil: #5B6170;       /* secondary text, input borders, locked badge */
+  --color-rule: #DDD8CC;         /* dividers, empty ticks, disabled fill, card borders. Never text */
+  --color-error-ink: #A8361A;    /* error text and borders, conflict badge */
+  /* Derived surfaces (never for text) */
+  --color-wash-pressed: #EFECE4; /* secondary/row pressed, highlighted row */
+  --color-wash-new: #E9E4D8;     /* start of the new-row fade */
+  --color-skeleton: #E5E0D3;     /* skeleton blocks */
 
-  /* Colours: 5-6 named roles. One dominant, one accent. */
-  --color-bg: #f2f2f2;
-  --color-surface: #ffffff;
-  --color-ink: #1c1c1c;
-  --color-muted: #666666;
-  --color-primary: #333333;
-  --color-accent: #888888;
-  --color-line: #d4d4d4;
-  --color-danger: #9a2a2a;
-
-  /* Type: a display font and a body font. The body font must support Arabic.
-     Default body: Noto Sans Arabic (alternatives: Tajawal, Cairo, Readex Pro, Almarai).
-     Before you switch, type «حتى» and «على» in the new font: some fonts draw «حتى» like «حق». */
-  --font-display: 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
-  --font-body: 'Noto Sans Arabic', 'Segoe UI', Tahoma, sans-serif;
-  --text-h1: 32px;
-  --text-h2: 22px;
+  /* 2. Typography (DESIGN.md §2): only these four sizes */
+  --font-display: 'Readex Pro', 'IBM Plex Sans Arabic', Tahoma, sans-serif;
+  --font-body: 'IBM Plex Sans Arabic', Tahoma, sans-serif;
+  --text-display: 112px;
+  --text-title: 24px;
   --text-body: 16px;
   --text-caption: 13px;
   --weight-regular: 400;
-  --weight-bold: 700;
-  --leading-tight: 1.35;
-  --leading-body: 1.75;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --leading-display: 1;
+  --leading-title: 1.4;
+  --leading-body: 1.5;
 
-  /* Spacing scale: use only these steps. */
-  --space-1: 4px;
-  --space-2: 8px;
-  --space-3: 12px;
-  --space-4: 16px;
-  --space-5: 24px;
-  --space-6: 32px;
-  --space-7: 48px;
+  /* 3. Spacing (8px grid) */
+  --space-1: 8px;
+  --space-2: 16px;
+  --space-3: 24px;
+  --space-4: 32px;
+  --space-5: 48px;
+  --tap: 48px;        /* minimum touch target */
+  --row-min: 56px;    /* list rows, primary button, segmented items */
+  --frame: 390px;     /* mobile frame width */
+  --code-col: 72px;   /* course code column in list rows */
+  --tick-large: 28px; /* tick bar heights and gaps (DESIGN.md §6) */
+  --tick-small: 12px;
+  --tick-gap-large: 3px;
+  --tick-gap-small: 2px;
+  --tick-gap-dense: 1px;
 
-  /* Shape */
-  --radius: 8px;
-  --border-width: 1px;
-  --shadow: none;
+  /* 4. Radius (DESIGN.md §4) */
+  --radius-lg: 8px;   /* buttons, inputs, cards, toast, alert, segmented container */
+  --radius-sm: 4px;   /* badges, chips, checkbox, segmented items, highlighted row */
+  --radius-bar: 2px;  /* step progress bar */
+  --radius-tick: 1px; /* ticks */
 
-  /* Layout */
-  --tap: 44px;          /* minimum touch target */
-  --content-max: 1120px;
+  /* Borders */
+  --border-thin: 1px;
+  --border-mid: 1.5px;
+  --border-thick: 2px;
 
-  /* Motion */
-  --dur-fast: 150ms;
-  --ease: cubic-bezier(0.2, 0.8, 0.2, 1);
+  /* 7. Motion (DESIGN.md §7) */
+  --dur-press: 120ms;
+  --dur-new-row: 1.2s;
+  --dur-tick-drop: 450ms;
+  --dur-card-in: 400ms;
+  --ease-press: ease;
+  --ease-drop: cubic-bezier(.2, .8, .2, 1);
+  --press-scale: .98;
 }

@@ -1,0 +1,76 @@
+/* input.css: screen 1 layout (design HiInput / StatesInput / StatesUpload). Tokens only. */
+
+.input-title { margin-block-start: var(--space-2); }
+
+.input-upload { margin: 0 var(--space-3) var(--space-2); }
+
+/* Form card */
+.input-form {
+  margin-inline: var(--space-3);
+  padding: var(--space-2);
+  background: var(--color-surface);
+  border: var(--border-thin) solid var(--color-rule);
+  border-radius: var(--radius-lg);
+  display: flex; flex-direction: column; gap: var(--space-2);
+}
+.input-form__row { display: flex; gap: var(--space-1); }
+.input-form .field-error { margin-block-start: calc(-1 * var(--space-1)); }
+
+/* List */
+.input-list { flex: 1; padding: var(--space-3) var(--space-3) var(--space-3); display: flex; flex-direction: column; gap: var(--space-1); }
+.input-list__head { display: flex; justify-content: space-between; align-items: center; }
+.input-list__loading { display: flex; align-items: center; gap: var(--space-1); }
+.input-list__none { padding-block: var(--space-2); }
+
+/* Empty state: dashed ticks + title + body */
+.input-empty { padding-block: var(--space-4); justify-content: center; }
+.input-empty__ticks { display: flex; gap: var(--tick-gap-large); block-size: var(--tick-large); margin-block-end: var(--space-2); }
+.input-empty__ticks span { flex: 1; border: var(--border-mid) dashed var(--color-pencil); border-radius: var(--radius-tick); }
+
+/* Search field (long plans) */
+.search {
+  block-size: var(--tap);
+  display: flex; align-items: center; gap: var(--space-1);
+  padding-inline: var(--space-2);
+  background: var(--color-surface);
+  border: var(--border-thin) solid var(--color-pencil); border-radius: var(--radius-lg);
+  color: var(--color-pencil);
+}
+.search:focus-within { border: var(--border-thick) solid var(--color-ink); padding-inline: calc(var(--space-2) - 1px); }
+.search input { flex: 1; min-inline-size: 0; border: 0; background: none; outline: none; font-size: var(--text-body); color: var(--color-ink); }
+.search input::placeholder { color: var(--color-pencil); opacity: 1; }
+
+/* Footer extras: «saved» note and the toast floating above the footer */
+.footer__note { display: flex; align-items: center; justify-content: center; gap: var(--space-1); }
+.footer__toast { position: absolute; inset-inline: var(--space-3); inset-block-end: calc(100% + var(--space-2)); }
+.footer { position: sticky; } /* the toast is positioned against the footer */
+
+/* ---------- Upload card ---------- */
+.upload {
+  inline-size: 100%;
+  min-block-size: 64px;
+  padding: var(--space-1) var(--space-2);
+  display: flex; align-items: center; gap: var(--space-2);
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  color: var(--color-ink);
+  text-align: start;
+}
+.upload--stack { flex-direction: column; align-items: stretch; padding: var(--space-2); }
+.upload__head { display: flex; align-items: center; gap: var(--space-2); }
+.upload__text { flex: 1; min-inline-size: 0; display: flex; flex-direction: column; }
+.upload__title { font-size: var(--text-body); font-weight: var(--weight-semibold); }
+.upload__sub { font-size: var(--text-caption); font-weight: var(--weight-medium); color: var(--color-pencil); }
+.upload__sub.code { text-align: right; }
+
+.upload--idle {
+  border: var(--border-mid) dashed var(--color-ink);
+  cursor: pointer; font: inherit;
+  transition: transform var(--dur-press) var(--ease-press), background-color var(--dur-press) var(--ease-press);
+}
+.upload--idle:active { background: var(--color-wash-pressed); transform: scale(var(--press-scale)); }
+.upload--reading { border: var(--border-thin) solid var(--color-rule); }
+.upload--done { border: var(--border-thin) solid var(--color-ink); }
+.upload--failed { border: var(--border-thick) solid var(--color-error-ink); }
+.upload--failed .upload__head, .upload--failed .upload__title { color: var(--color-error-ink); }
+.upload__error { font-size: var(--text-caption); font-weight: var(--weight-medium); color: var(--color-error-ink); }
