@@ -63,3 +63,6 @@
 .upload--failed { border: var(--border-thick) solid var(--color-error-ink); }
 .upload--failed .upload__head, .upload--failed .upload__title { color: var(--color-error-ink); }
 .upload__error { font-size: var(--text-caption); font-weight: var(--weight-medium); color: var(--color-error-ink); }
+
+/* Toast on the start screen (e.g. after a reset): in the page, above «جرّب ببيانات تجريبية» */
+.start-bottom__toast { align-self: stretch; margin-block-end: var(--space-1); }

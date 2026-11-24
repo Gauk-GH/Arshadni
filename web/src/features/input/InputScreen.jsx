@@ -41,7 +41,13 @@ export default function InputScreen() {
   const [query, setQuery] = useState('');
   const [upload, setUpload] = useState({ status: 'idle', fileName: '', result: null });
   const fileRef = useRef(null);
+  const toastRef = useRef(null);
   const addBtnRef = useRef(null);
+
+  useEffect(() => {
+    // Bring the whole bottom block (toast + link) into view on short phones.
+    toastRef.current?.parentElement?.scrollIntoView({ block: 'nearest' });
+  }, [toast]);
 
   useEffect(() => {
     if (!toast) return undefined;
@@ -164,10 +170,13 @@ export default function InputScreen() {
     />
   );
 
-  const floatingToast = toast && (
-    <div className="floating-toast">
-      <Toast actionLabel={t('common.undo')} onAction={() => { toast.onUndo(); setToast(null); }}>{toast.text}</Toast>
-    </div>
+  // On the start screen the toast sits in the page, just ABOVE «جرّب ببيانات تجريبية», so it never
+  // covers that link; on short phones it is scrolled into view. Elsewhere it floats above the content.
+  const toastBody = toast && (
+    <Toast actionLabel={t('common.undo')} onAction={() => { toast.onUndo(); setToast(null); }}>{toast.text}</Toast>
+  );
+  const floatingToast = toast && !isStart && (
+    <div className="floating-toast">{toastBody}</div>
   );
 
   // ---------- Start: no courses yet ----------
@@ -200,6 +209,7 @@ export default function InputScreen() {
         <div className="start-university">{universityPicker}</div>
 
         <div className="start-bottom">
+          {toast && <div ref={toastRef} className="start-bottom__toast">{toastBody}</div>}
           <TextLink onClick={loadSample}>{t('input.sample')}</TextLink>
           <span className="caption start-bottom__note"><CheckIcon size={16} stroke={2} />{t('input.start.local')}</span>
         </div>
