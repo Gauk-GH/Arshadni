@@ -53,18 +53,22 @@ export function SearchField({ value, onChange, placeholder, label, disabled = fa
 }
 
 // Select field: a native <select>, so phones show their own picker (a scroll wheel on iPhone).
-// options: [{ value, label }]. The first, empty option is the placeholder.
-export function SelectField({ label, value, onChange, placeholder, options }) {
+// The real <select> is invisible and covers a normal text box that shows the chosen option,
+// because a native <select> cannot wrap long names onto two lines; this box can.
+// options: [{ value, label }]. The empty value shows the placeholder.
+export function SelectField({ label, value, onChange, placeholder, options, className = '' }) {
   const id = useId();
+  const chosen = options.find((o) => o.value === value);
   return (
     <div className="field">
       <label className="field__label" htmlFor={id}>{label}</label>
-      <div className="select">
-        <select id={id} className="field__input select__input" data-empty={value === "" || undefined} value={value} onChange={(e) => onChange(e.target.value)}>
+      <div className={`select ${className}`} data-empty={!chosen || undefined}>
+        <span className="select__value" aria-hidden="true">{chosen ? chosen.label : placeholder}</span>
+        <ChevronDownIcon />
+        <select id={id} className="select__native" value={value} onChange={(e) => onChange(e.target.value)}>
           <option value="">{placeholder}</option>
           {options.map((o) => <option key={o.value} value={o.value}>{o.label}</option>)}
         </select>
-        <ChevronDownIcon />
       </div>
     </div>
   );

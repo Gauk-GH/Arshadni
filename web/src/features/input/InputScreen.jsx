@@ -152,6 +152,7 @@ export default function InputScreen() {
 
       <div className="input-university">
         <SelectField
+          className="select--title"
           label={t('input.university.label')}
           placeholder={t('input.university.placeholder')}
           value={university}

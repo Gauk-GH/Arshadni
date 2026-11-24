@@ -211,9 +211,21 @@
 .segmented__item[aria-checked='true'] { background: var(--color-ink); color: var(--color-paper); }
 .segmented__sub { font-size: var(--text-caption); font-weight: var(--weight-medium); }
 
-/* ---------- Select field (native picker) ---------- */
-.select { position: relative; color: var(--color-pencil); }
-.select__input { appearance: none; cursor: pointer; padding-inline-end: calc(var(--space-2) + 28px); }
-.select__input:focus { padding-inline-end: calc(var(--space-2) + 27px); }
-.select svg { position: absolute; inset-inline-end: var(--space-2); inset-block-start: 50%; transform: translateY(-50%); pointer-events: none; }
-.select__input[data-empty] { color: var(--color-pencil); }
+/* ---------- Select field (native picker under a text box) ---------- */
+.select {
+  position: relative; min-block-size: var(--tap);
+  display: flex; align-items: center; gap: var(--space-1);
+  padding: var(--space-1) var(--space-2);
+  background: var(--color-surface); color: var(--color-ink);
+  border: var(--border-thin) solid var(--color-pencil); border-radius: var(--radius-lg);
+  font-size: var(--text-body);
+}
+.select:focus-within { border: var(--border-thick) solid var(--color-ink); padding: calc(var(--space-1) - 1px) calc(var(--space-2) - 1px); }
+.select__value { flex: 1; min-inline-size: 0; }
+.select[data-empty] .select__value { color: var(--color-pencil); }
+.select svg { color: var(--color-pencil); }
+/* The native select covers the whole box, invisible; 16px stops iPhone from zooming in on tap. */
+.select__native {
+  position: absolute; inset: 0; inline-size: 100%; block-size: 100%;
+  opacity: 0; cursor: pointer; border: 0; margin: 0; font-size: var(--text-body);
+}
