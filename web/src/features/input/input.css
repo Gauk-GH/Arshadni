@@ -56,3 +56,6 @@
 .upload--failed { border: var(--border-thick) solid var(--color-error-ink); }
 .upload--failed .upload__head, .upload--failed .upload__title { color: var(--color-error-ink); }
 .upload__error { font-size: var(--text-caption); font-weight: var(--weight-medium); color: var(--color-error-ink); }
+
+/* University picker (added on request): above the upload card */
+.input-university { margin: 0 var(--space-3) var(--space-2); }

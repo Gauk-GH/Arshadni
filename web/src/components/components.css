@@ -210,3 +210,10 @@
 }
 .segmented__item[aria-checked='true'] { background: var(--color-ink); color: var(--color-paper); }
 .segmented__sub { font-size: var(--text-caption); font-weight: var(--weight-medium); }
+
+/* ---------- Select field (native picker) ---------- */
+.select { position: relative; color: var(--color-pencil); }
+.select__input { appearance: none; cursor: pointer; padding-inline-end: calc(var(--space-2) + 28px); }
+.select__input:focus { padding-inline-end: calc(var(--space-2) + 27px); }
+.select svg { position: absolute; inset-inline-end: var(--space-2); inset-block-start: 50%; transform: translateY(-50%); pointer-events: none; }
+.select__input[data-empty] { color: var(--color-pencil); }

@@ -4,8 +4,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../store/StoreProvider.jsx';
 import { navigate } from '../../App.jsx';
-import { PrimaryButton, SecondaryButton } from '../../components/Button.jsx';
-import { TextField, FieldError, SearchField } from '../../components/Field.jsx';
+import { PrimaryButton, SecondaryButton, TextLink } from '../../components/Button.jsx';
+import { TextField, FieldError, SearchField, SelectField } from '../../components/Field.jsx';
 import { CourseRow } from '../../components/CourseRow.jsx';
 import { Toast, Skeleton } from '../../components/Feedback.jsx';
 import { Screen, StepIndicator, Footer } from '../../components/Screen.jsx';
@@ -14,6 +14,7 @@ import { codeKey, makeCourse, searchCourses, validateNewCourse } from '../../lib
 import { readTranscript } from '../../lib/transcript.js';
 import { devState, devUpload } from '../../lib/devState.js';
 import { t } from '../../lib/strings.js';
+import { OTHER_UNIVERSITY, UNIVERSITIES } from '../../lib/universities.js';
 import UploadCard from './UploadCard.jsx';
 import './input.css';
 
@@ -29,7 +30,10 @@ const ERROR_TEXT = {
 };
 
 export default function InputScreen() {
-  const { status, courses, addCourse, addCourses, removeCourse, markCompleted, draft, setDraft } = useStore();
+  const {
+    status, courses, addCourse, addCourses, removeCourse, markCompleted, draft, setDraft,
+    university, setUniversity, loadSample, resetAll,
+  } = useStore();
   const loading = status === 'loading';
 
   const [form, setForm] = useState({ code: '', pre: '', name: '' });
@@ -77,6 +81,18 @@ export default function InputScreen() {
     setNewCode(course.code);
     setToast({ code: course.code, name: course.name });
     codeRef.current?.focus();
+  }
+
+  // «امسح كل المقررات وابدأ من جديد»: asks first, then clears this device's plan (keeps the university).
+  function resetPlan() {
+    if (!window.confirm(t('input.reset.confirm'))) return;
+    resetAll();
+    setForm({ code: '', pre: '', name: '' });
+    setError(null);
+    setToast(null);
+    setQuery('');
+    setNewCode(null);
+    setUpload({ status: 'idle', fileName: '', result: null });
   }
 
   function undoAdd() {
@@ -134,6 +150,19 @@ export default function InputScreen() {
         {/* Decision 2: the paste link «الصقها مرة وحدة» is hidden this round. */}
       </header>
 
+      <div className="input-university">
+        <SelectField
+          label={t('input.university.label')}
+          placeholder={t('input.university.placeholder')}
+          value={university}
+          onChange={setUniversity}
+          options={[
+            ...UNIVERSITIES.map((u) => ({ value: u.id, label: u.name })),
+            { value: OTHER_UNIVERSITY, label: t('input.university.other') },
+          ]}
+        />
+      </div>
+
       <div className="input-upload">
         <UploadCard
           upload={upload}
@@ -186,6 +215,7 @@ export default function InputScreen() {
           </div>
           <h2 className="section-heading">{t('input.empty.title')}</h2>
           <p className="subtitle">{t('input.empty.body')}</p>
+          <TextLink onClick={loadSample}>{t('input.sample')}</TextLink>
         </section>
       )}
 
@@ -221,6 +251,7 @@ export default function InputScreen() {
               );
             })}
           </ul>
+          <TextLink size="caption" onClick={resetPlan}>{t('input.reset')}</TextLink>
         </section>
       )}
 

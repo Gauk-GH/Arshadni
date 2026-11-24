@@ -48,3 +48,7 @@ export const BackIcon = ({ size = 24 }) => (
 export const SearchIcon = ({ size = 20 }) => (
   <Svg size={size}><circle cx="11" cy="11" r="7" /><path d="M20 20l-4-4" /></Svg>
 );
+
+export const ChevronDownIcon = ({ size = 20 }) => (
+  <Svg size={size}><path d="M6 9l6 6 6-6" /></Svg>
+);

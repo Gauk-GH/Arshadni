@@ -3,15 +3,18 @@
 // screen 2 changes the number on screen 3.
 //
 // Flow: on open, restore from localStorage (HANDOFF rule 14); if nothing valid is saved,
-// start from mock.json (decision 10). Every change to the courses is saved again.
+// start EMPTY (decision 22). «جرّب ببيانات تجريبية» loads mock.json's sample plan on request.
+// Every change to the courses is saved again.
 import { createContext, useCallback, useContext, useEffect, useMemo, useReducer } from 'react';
 import mock from '../data/mock.json';
 import { codeKey } from '../lib/courses.js';
 import { loadData, saveData, SCHEMA_VERSION } from '../lib/storage.js';
 import { applyDevState, devState } from '../lib/devState.js';
+import { isKnownUniversity } from '../lib/universities.js';
 
 const StoreContext = createContext(null);
 
+// The sample plan (mock.json): used by «جرّب ببيانات تجريبية» and by the dev states.
 function fromMock() {
   return {
     major: mock.studyPlan.major,
@@ -21,10 +24,16 @@ function fromMock() {
   };
 }
 
+// A first visit: nothing saved yet.
+function emptyStart() {
+  return { major: '', courses: [], settings: { ...mock.settings }, savedPath: null };
+}
+
 const initialState = {
   status: 'loading', // 'loading' while restoring, then 'ready'
   persist: true,     // false while a dev state is shown, so real data is never overwritten
   major: '',
+  university: '',    // id from lib/universities.js, '' = not chosen
   courses: [],
   settings: { maxCoursesPerTerm: 6 },
   savedPath: null,
@@ -59,6 +68,13 @@ function reducer(state, action) {
       return state.lastRemaining === action.n ? state : { ...state, lastRemaining: action.n };
     case 'draft':
       return { ...state, draft: action.draft };
+    case 'loadSample':
+      return { ...state, ...fromMock(), lastRemaining: null };
+    case 'resetAll':
+      // Keeps the chosen university; clears courses, major and the saved path.
+      return { ...state, ...emptyStart(), lastRemaining: null, draft: null };
+    case 'university':
+      return { ...state, university: action.id };
     case 'savedPath':
       return { ...state, savedPath: action.savedPath };
     default:
@@ -69,7 +85,7 @@ function reducer(state, action) {
 function toStored(state, savedPath = state.savedPath) {
   return {
     schemaVersion: SCHEMA_VERSION,
-    studyPlan: { major: state.major, courses: state.courses },
+    studyPlan: { major: state.major, university: state.university, courses: state.courses },
     settings: state.settings,
     savedPath,
   };
@@ -95,8 +111,14 @@ export function StoreProvider({ children }) {
     }
     const saved = loadData();
     const data = saved
-      ? { major: saved.studyPlan.major ?? '', courses: saved.studyPlan.courses, settings: saved.settings, savedPath: saved.savedPath ?? null }
-      : fromMock();
+      ? {
+        major: saved.studyPlan.major ?? '',
+        university: isKnownUniversity(saved.studyPlan.university) ? saved.studyPlan.university : '',
+        courses: saved.studyPlan.courses,
+        settings: saved.settings,
+        savedPath: saved.savedPath ?? null,
+      }
+      : emptyStart();
     dispatch({ type: 'restored', data, persist: true });
   }, []);
 
@@ -126,6 +148,9 @@ export function StoreProvider({ children }) {
       markCompleted: (codes) => dispatch({ type: 'markCompleted', codes }),
       setDraft: (draft) => dispatch({ type: 'draft', draft }),
       setLastRemaining: (n) => dispatch({ type: 'lastRemaining', n }),
+      loadSample: () => dispatch({ type: 'loadSample' }),
+      resetAll: () => dispatch({ type: 'resetAll' }),
+      setUniversity: (id) => dispatch({ type: 'university', id }),
       savePath,
     }),
     [state, savePath],

@@ -65,7 +65,7 @@ Back: the right-pointing arrow on screens 2–4 goes one step back. «عدّل �
 | Noun | Fields | Notes |
 |---|---|---|
 | `Course` | `code` (string, e.g. "CS 210"), `name` (string, Arabic or English), `prerequisites` (array of codes), `completed` (boolean), `addedAt` (timestamp) | One list holds both required and completed courses |
-| `StudyPlan` | `major` (string) [?], `courses` (Course[]) | `major` is shown as the header on screen 3 ("علوم الحاسب") but there is no field to enter it yet [?] |
+| `StudyPlan` | `major` (string) [?], `university` (id from `web/src/lib/universities.js`, "" = not chosen, "other" = not in the list), `courses` (Course[]) | `major` is shown as the header on screen 3 ("علوم الحاسب") but there is no field to enter it yet [?] |
 | `Settings` | `maxCoursesPerTerm` (number, default 6) | Editable [?] — no UI for it in this round |
 | `Summary` (derived) | `total`, `completed`, `remaining`, `available[]`, `locked[]` | Computed, not stored |
 | `GraduationPath` (derived) | `id` (A/B/C), `label`, `strategy` (balanced / heavy-first / light-first), `terms` (array of arrays of codes) | All paths have the same number of terms |
@@ -140,6 +140,12 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | input.empty.title | ابدأ بأول مقرر من خطة قسمك |
 | input.empty.body | افتح خطتك الدراسية من موقع القسم، وانسخ رمز كل مقرر واسمه هنا. أو الصق القائمة كلها من الرابط فوق. |
 | input.empty.button | أضف مقرر واحد على الأقل |
+| input.university.label | جامعتك |
+| input.university.placeholder | اختر جامعتك |
+| input.university.other | جامعة ثانية |
+| input.sample | جرّب ببيانات تجريبية |
+| input.reset | امسح كل المقررات وابدأ من جديد |
+| input.reset.confirm | متأكد؟ بنمسح كل مقرراتك والمسار المحفوظ من هذا الجهاز. |
 | input.loading | نرجّع مقرراتك المحفوظة… |
 | input.error.bothEmpty | اكتب رمز المقرر واسمه من خطة قسمك، وبعدها اضغط «أضف المقرر». |
 | input.error.noCode | ناقص رمز المقرر، مثل CS 310. |
@@ -248,3 +254,6 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 19. Dense tick bar above 60 courses (rule 19).
 20. Separator between facts is «،» on every screen, never «·» (it looks like the Arabic zero «٠» next to numbers).
 21. Path strategies are count-based (open question 5 closed). mock.json path C differs in which courses go first; that is expected.
+22. First visit starts EMPTY (replaces decision 10's mock start). «جرّب ببيانات تجريبية» in screen 1's empty state loads the mock.json sample plan.
+23. Screen 1 gets «امسح كل المقررات وابدأ من جديد» under the list (asks to confirm; clears courses, major and saved path on this device; keeps the university). Needed to reset between test students.
+24. Screen 1 starts with an optional «جامعتك» picker (native select: scroll wheel on iPhone). Riyadh universities + «جامعة ثانية». Saved with the plan, not used in the logic yet. KFUPM is in Dhahran, so it is not in the Riyadh list.

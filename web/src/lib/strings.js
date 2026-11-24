@@ -55,6 +55,13 @@ const STRINGS = {
   'input.row.delete': 'احذف {code}',
   'input.search': 'ابحث في {n} مقرر',
   'input.newestFirst': 'الأحدث فوق',
+  // Added on the user's request (not in the design): university picker, sample data, reset.
+  'input.university.label': 'جامعتك',
+  'input.university.placeholder': 'اختر جامعتك',
+  'input.university.other': 'جامعة ثانية',
+  'input.sample': 'جرّب ببيانات تجريبية',
+  'input.reset': 'امسح كل المقررات وابدأ من جديد',
+  'input.reset.confirm': 'متأكد؟ بنمسح كل مقرراتك والمسار المحفوظ من هذا الجهاز.',
   // From the design (StepIndicator, DESIGN.md §6), not in HANDOFF §8.
   'common.step': 'الخطوة {n} من {total}',
 
