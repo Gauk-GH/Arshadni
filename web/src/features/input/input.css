@@ -27,11 +27,6 @@
 .input-empty__ticks { display: flex; gap: var(--tick-gap-large); block-size: var(--tick-large); margin-block-end: var(--space-2); }
 .input-empty__ticks span { flex: 1; border: var(--border-mid) dashed var(--color-pencil); border-radius: var(--radius-tick); }
 
-/* Footer extras: «saved» note and the toast floating above the footer */
-.footer__note { display: flex; align-items: center; justify-content: center; gap: var(--space-1); }
-.footer__toast { position: absolute; inset-inline: var(--space-3); inset-block-end: calc(100% + var(--space-2)); }
-.footer { position: sticky; } /* the toast is positioned against the footer */
-
 /* ---------- Upload card ---------- */
 .upload {
   inline-size: 100%;

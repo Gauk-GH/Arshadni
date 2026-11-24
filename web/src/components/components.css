@@ -188,3 +188,9 @@
 .search input { flex: 1; min-inline-size: 0; border: 0; background: none; outline: none; font-size: var(--text-body); color: var(--color-ink); }
 .search input::placeholder { color: var(--color-pencil); opacity: 1; }
 
+
+/* ---------- Footer extras: note line, toast floating above the footer ---------- */
+.footer__note { display: flex; align-items: center; justify-content: center; gap: var(--space-1); }
+.footer__toast { position: absolute; inset-inline: var(--space-3); inset-block-end: calc(100% + var(--space-2)); }
+.footer { position: sticky; } /* the toast is positioned against the footer */
+.btn-secondary:disabled { border-color: var(--color-rule); color: var(--color-pencil); cursor: not-allowed; transform: none; background: var(--color-surface); }

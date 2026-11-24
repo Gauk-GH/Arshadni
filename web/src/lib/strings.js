@@ -77,6 +77,14 @@ const STRINGS = {
   'done.success.title': 'علّمت كل خطتك',
   'done.success.body': 'حسب اللي أدخلته ما باقي عليك شي. تأكد من القسم إن ما فيه مقررات ناقصة من خطتك.',
 
+  // Design-only labels for screen 3 (HiRemaining, StatesRemaining), copied word for word.
+  // The list titles are split from their count because the design styles «(٦)» lighter.
+  'remaining.back': 'رجوع لتعليم المقررات',
+  'remaining.summary': 'ملخص التقدم',
+  'remaining.ticks.label': 'خلصت {done} من {total} مقرر',
+  'remaining.available.title': 'تقدر تسجّلها الترم الجاي',
+  'remaining.locked.title': 'تحتاج متطلب قبلها',
+  'common.count': '({n})',
   'remaining.label': 'باقي لك',
   'remaining.unit': 'مقرر',
   'remaining.ticks': 'كل شرطة مقرر، خلصت {done} من {total}',

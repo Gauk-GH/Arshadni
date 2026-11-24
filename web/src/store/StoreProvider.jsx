@@ -28,6 +28,7 @@ const initialState = {
   courses: [],
   settings: { maxCoursesPerTerm: 6 },
   savedPath: null,
+  lastRemaining: null, // remaining count when screen 3 was last shown (for «تحدّث المتبقي»). Never saved.
   draft: null,       // { code } or { name } handed from screen 2 to screen 1's form. Never saved.
 };
 
@@ -54,6 +55,8 @@ function reducer(state, action) {
         courses: state.courses.map((c) => (keys.has(codeKey(c.code)) ? { ...c, completed: true } : c)),
       };
     }
+    case 'lastRemaining':
+      return state.lastRemaining === action.n ? state : { ...state, lastRemaining: action.n };
     case 'draft':
       return { ...state, draft: action.draft };
     case 'savedPath':
@@ -122,6 +125,7 @@ export function StoreProvider({ children }) {
       toggleCompleted: (code) => dispatch({ type: 'toggleCompleted', code }),
       markCompleted: (codes) => dispatch({ type: 'markCompleted', codes }),
       setDraft: (draft) => dispatch({ type: 'draft', draft }),
+      setLastRemaining: (n) => dispatch({ type: 'lastRemaining', n }),
       savePath,
     }),
     [state, savePath],
