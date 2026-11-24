@@ -116,6 +116,10 @@ Storage: device only (browser local storage), no account, no server. Key name an
 17. Transcript courses are matched to plan courses with the same normalization as rule 2. Matched → `completed: true`. Unmatched → listed for the user to add or ignore; never added silently.
 18. Only passed courses in the transcript count as completed [?] (how to read grades like F, W, IP is open).
 19. When a plan has more than 60 courses, the tick bar is dense (1px gaps instead of 2–3px). Screen 2 also shows «ابحث بدل ما تمرّر» after the count.
+20. **Unlocks (screen 3):** a course unlocks DIRECTLY the remaining courses that list it as a prerequisite. Completed courses and courses not in the plan are not counted.
+21. The available list is sorted by how many courses each one unlocks directly (most first); ties keep the student's list order. The «متاح» badge is not shown there. Courses that unlock 1+ get «يفتح {n}»; the first course gets «يفتح أكثر شي» only if it unlocks 1+.
+22. The open card lists the direct courses, then mini ticks (solid = direct, dashed = later) and «و{n} ثانية بعدها: {codes}» for everything further down the chain (no repeats, list order). The line is hidden when there are none. One card open at a time.
+23. **Chain («الطريق له:»):** from an available course to the locked course, following the prerequisite with the LONGEST chain at each step (it decides the earliest term); ties go to the first prerequisite. Step 1 «متاح الحين», step 2 «الترم اللي بعده», step 3 «أقرب وقت: بعد ترمين», step k ≥ 4 «أقرب وقت: بعد {k−1} أترام» (3–10) / «ترم» (11+).
 
 ## 8. State texts
 
@@ -186,6 +190,17 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | done.error.button | أضف {query} لخطتك |
 | done.success.title | علّمت كل خطتك |
 | done.success.body | حسب اللي أدخلته ما باقي عليك شي. تأكد من القسم إن ما فيه مقررات ناقصة من خطتك. |
+| remaining.available.sorted | مرتبة حسب كم مقرر تفتح لك |
+| remaining.unlocks | يفتح {n} |
+| remaining.unlocks.most | يفتح أكثر شي |
+| remaining.unlocks.title | إذا خلصته، تقدر تسجّل الترم اللي بعده: |
+| remaining.unlocks.later | و{n} ثانية بعدها: {codes} |
+| remaining.chain.title | الطريق له: |
+| remaining.chain.now | متاح الحين |
+| remaining.chain.next | الترم اللي بعده |
+| remaining.chain.after2 | أقرب وقت: بعد ترمين |
+| remaining.chain.afterFew | أقرب وقت: بعد {n} أترام |
+| remaining.chain.afterMany | أقرب وقت: بعد {n} ترم |
 | remaining.label | باقي لك |
 | remaining.unit | مقرر |
 | remaining.ticks | كل شرطة مقرر، خلصت {done} من {total} |
@@ -282,3 +297,4 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 26. The picker uses the normal input size (16px, 48px box), like the other fields (24px was tried and reverted). The native select sits invisibly over a text box so long names wrap instead of being cut.
 27. Screen 1 redesign (design NewInput): start · list · add sheet (see §4). The inline form is gone; the university picker shows on the start state only. Filled choice card sub-text uses `paper`, not `rule`. «محفوظة في جهازك…» dropped from the list footer.
 28. «امسح كل المقررات» asks in a sheet («امسح» / «لا») and offers «تراجع» after.
+29. Screen 3 «يفتح لك» (design Unlocks): rules 20–23. Chain step dots are circles (the only radius-50% exception). The pill is 32px visually inside a 48px tap area. Mini ticks are ~20px each and wrap. `{codes}` is joined with «، ».

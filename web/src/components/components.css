@@ -288,3 +288,49 @@
   display: flex; justify-content: center; padding-inline: var(--space-3); pointer-events: none;
 }
 .floating-toast > * { inline-size: 100%; max-inline-size: calc(var(--frame) - 2 * var(--space-3)); pointer-events: auto; }
+
+/* ---------- «يفتح لك»: pill, expand area, mini ticks, chain steps (DESIGN.md §6) ---------- */
+/* Pill: 32px visible, inside a 48px tap area. */
+.pill-btn {
+  min-block-size: var(--tap); flex-shrink: 0; padding: 0; border: 0; background: none; cursor: pointer;
+  display: flex; align-items: center; color: var(--color-ink);
+}
+.pill {
+  min-block-size: 32px; padding: 0 var(--space-1);
+  display: flex; align-items: center; gap: 4px; white-space: nowrap;
+  border: var(--border-thin) solid var(--color-ink); border-radius: var(--radius-sm);
+  font-size: var(--text-caption); font-weight: var(--weight-semibold);
+  transition: background-color var(--dur-press) var(--ease-press), color var(--dur-press) var(--ease-press);
+}
+.pill-btn:active .pill { background: var(--color-wash-pressed); }
+.pill-btn[aria-expanded='true'] .pill { background: var(--color-ink); color: var(--color-paper); }
+
+/* Expand: height (via grid rows 0fr → 1fr) and opacity, 200ms. Reduced motion: base.css turns it off. */
+.expand { display: grid; grid-template-rows: 0fr; opacity: 0; transition: grid-template-rows 200ms ease, opacity 200ms ease; }
+.expand.is-open { grid-template-rows: 1fr; opacity: 1; }
+.expand__inner { min-block-size: 0; overflow: hidden; }
+
+/* Mini ticks: ~20px each, 3px gap, wrap to the card width. */
+.mini-ticks { display: flex; flex-wrap: wrap; gap: var(--tick-gap-large); }
+.mini-ticks i { inline-size: 20px; block-size: 16px; border-radius: var(--radius-tick); }
+.mini-ticks__solid { background: var(--color-ink); }
+.mini-ticks__dashed { border: var(--border-mid) dashed var(--color-pencil); }
+
+/* Chain steps: numbered dots on a rail. Circles: the only place radius 50% is allowed (DESIGN.md §4). */
+.chain { display: flex; flex-direction: column; }
+.chain__step { display: flex; gap: var(--space-2); align-items: stretch; }
+.chain__rail { inline-size: 24px; flex-shrink: 0; display: flex; flex-direction: column; align-items: center; }
+.chain__dot {
+  inline-size: 24px; block-size: 24px; border-radius: 50%; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-size: var(--text-caption); font-weight: var(--weight-semibold);
+}
+.chain__line { flex: 1; inline-size: 2px; min-block-size: var(--space-2); background: var(--color-rule); }
+.chain__step--now .chain__dot { background: var(--color-ink); color: var(--color-paper); }
+.chain__step--next .chain__dot { border: var(--border-mid) solid var(--color-ink); }
+.chain__step--target .chain__dot { border: var(--border-mid) dashed var(--color-pencil); color: var(--color-pencil); }
+.chain__text { flex: 1; min-inline-size: 0; display: flex; flex-direction: column; padding-block-end: var(--space-2); }
+.chain__step:last-child .chain__text { padding-block-end: 0; }
+.chain__course { font-size: var(--text-body); }
+.chain__step--target .chain__course { font-weight: var(--weight-semibold); }
+.chain__code { font-size: var(--text-caption); font-weight: var(--weight-semibold); }

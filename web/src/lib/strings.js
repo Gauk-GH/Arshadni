@@ -98,6 +98,18 @@ const STRINGS = {
   'remaining.available.title': 'تقدر تسجّلها الترم الجاي',
   'remaining.locked.title': 'تحتاج متطلب قبلها',
   'common.count': '({n})',
+  // «يفتح لك» (design Unlocks: list · open · chain).
+  'remaining.available.sorted': 'مرتبة حسب كم مقرر تفتح لك',
+  'remaining.unlocks': 'يفتح {n}',
+  'remaining.unlocks.most': 'يفتح أكثر شي',
+  'remaining.unlocks.title': 'إذا خلصته، تقدر تسجّل الترم اللي بعده:',
+  'remaining.unlocks.later': 'و{n} ثانية بعدها: {codes}',
+  'remaining.chain.title': 'الطريق له:',
+  'remaining.chain.now': 'متاح الحين',
+  'remaining.chain.next': 'الترم اللي بعده',
+  'remaining.chain.after2': 'أقرب وقت: بعد ترمين',
+  'remaining.chain.afterFew': 'أقرب وقت: بعد {n} أترام',
+  'remaining.chain.afterMany': 'أقرب وقت: بعد {n} ترم',
   'remaining.label': 'باقي لك',
   'remaining.unit': 'مقرر',
   'remaining.ticks': 'كل شرطة مقرر، خلصت {done} من {total}',
@@ -174,8 +186,8 @@ export function t(key, vars = {}) {
     if (!(name in vars)) return match;
     const value = vars[name];
     if (typeof value === 'number') return fmtNumber(value);
-    // A list of course codes ({chain}): each code isolated, joined with « ← ».
-    if (Array.isArray(value)) return value.map((code) => LRI + code + PDI).join(' ← ');
+    // A list of course codes: each code isolated; {chain} joined with « ← », {codes} with «، ».
+    if (Array.isArray(value)) return value.map((code) => LRI + code + PDI).join(name === 'chain' ? ' ← ' : '، ');
     if (LATIN_VARS.has(name)) return LRI + value + PDI;
     if (name === 'name') return FSI + value + PDI;
     return String(value);

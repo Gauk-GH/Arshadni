@@ -76,7 +76,7 @@ Touch targets: minimum 48 × 48px. List rows minimum 56px tall.
 | 4px | Badges, chips, checkbox, segmented control items, highlighted row |
 | 2px | Step progress bar |
 | 1px | Ticks |
-| 50% | — (not used) |
+| 50% | **Chain step dots only** (squares would look like checkboxes). Nowhere else |
 
 ## 5. Shadows
 
@@ -117,6 +117,26 @@ None. Separation is by 1px `rule` borders only.
 - Handle: 40 × 4px, `rule`, radius 2px, centred. Header: title 24px Readex Pro 600 at start, 48px close ✕ (24px icon) at end.
 - A toast inside the sheet sits under the header (not floating).
 - `role="dialog"`, `aria-modal="true"`; focus moves to the first field, Tab is trapped, Escape / ✕ / scrim close it, focus returns to the button that opened it; the page behind is `inert`.
+
+### Unlock pill («يفتح {n}»)
+- A real `<button>` with `aria-expanded` and `aria-controls`. Visible pill 32px tall inside a 48px tap area.
+- Pill: 13px / 600, padding 0 8px, gap 4px, radius 4px, border 1px `ink`, 16px chevron down at the end.
+- **Open**: background `ink`, text `paper`, chevron up. **Pressed**: `wash-pressed`.
+
+### Expand card (open row)
+- The row becomes a card: background `surface`, border 1px `ink`, radius 8px, padding 0 8px 16px, pulled out 8px on both sides, 8px above and below.
+- Title line 13px / 600 `ink`. Sub rows: min 48px, code (72px column) + name 16px, 1px `rule` line on top.
+- Opens and closes with height + opacity, 200ms; none with reduced motion. Only one card open at a time.
+- An opened card scrolls itself into view above the sticky footer.
+
+### Mini ticks
+- One tick per course: 20 × 16px, radius 1px, gap 3px, wrapping to the card width.
+- **Solid** (`ink`) = unlocked directly. **Dashed** (1.5px dashed `pencil`) = unlocked later.
+
+### Chain steps («الطريق له:»)
+- Numbered list. Start: a 24px rail with a 24px **circle** dot (13px / 600 number) and a 2px `rule` line to the next step.
+- Step 1 (available now): dot filled `ink`, number `paper`. Middle steps: dot outlined 1.5px `ink`. Last step (the course itself): dot dashed 1.5px `pencil`, number `pencil`, course name 600.
+- Text: code 13px / 600 + name 16px, then a 13px caption (when).
 
 ### Secondary button (outlined)
 - Height 48px, border 1.5px `ink`, background `surface` (or transparent in footer), text 16px / 600 `ink`, radius 8px.
@@ -205,6 +225,7 @@ None. Separation is by 1px `rule` borders only.
 | **Signature**: ticks into terms | Each remaining tick drops in (`translateY(-20px)` → 0, opacity 0 → 1), 450ms `cubic-bezier(.2,.8,.2,1)`, 45ms stagger, starting from the right |
 | Term cards | fade + `translateY(8px)` → 0, 400ms, delay 300ms + 120ms per card |
 | Save | 700ms loading, then done state |
+| Expand card | height + opacity, 200ms ease |
 | Bottom sheet | slides up from `translateY(100%)`, 250ms `cubic-bezier(.2,.8,.2,1)` |
 | Reduced motion | `@media (prefers-reduced-motion: reduce)` disables all animation and transitions |
 

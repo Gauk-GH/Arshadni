@@ -6,6 +6,7 @@ import { useStore } from '../../store/StoreProvider.jsx';
 import { navigate } from '../../App.jsx';
 import { PrimaryButton, SecondaryButton } from '../../components/Button.jsx';
 import { CourseRow, Badge } from '../../components/CourseRow.jsx';
+import UnlockLists from './UnlockLists.jsx';
 import { AlertCard, Toast, Skeleton } from '../../components/Feedback.jsx';
 import { TickBar } from '../../components/TickBar.jsx';
 import { Screen, Footer } from '../../components/Screen.jsx';
@@ -18,14 +19,6 @@ import './remaining.css';
 const TOAST_MS = 5000;
 const DENSE_THRESHOLD = 60; // HANDOFF rule 19
 const FIRST_YEAR_SHARE = 0.25; // under 25% completed: add «الخطة تقسمها لك على أترام» (HANDOFF §8)
-
-function ListTitle({ titleKey, n }) {
-  return (
-    <h2 className="section-heading remaining-list__title">
-      {t(titleKey)} <span className="remaining-list__count">{t('common.count', { n })}</span>
-    </h2>
-  );
-}
 
 export default function RemainingScreen() {
   const { status, major, courses, lastRemaining, setLastRemaining } = useStore();
@@ -141,29 +134,7 @@ export default function RemainingScreen() {
 
         {!loading && !cycle && summary.remaining > 0 && (
           <>
-            {summary.available.length > 0 && (
-              <>
-                <ListTitle titleKey="remaining.available.title" n={summary.available.length} />
-                <ul>
-                  {summary.available.map((c) => (
-                    <CourseRow key={c.code} code={c.code} name={c.name}
-                      trailing={<Badge kind="available">{t('remaining.badge.available')}</Badge>} />
-                  ))}
-                </ul>
-              </>
-            )}
-            {summary.locked.length > 0 && (
-              <>
-                <div className="remaining-list__gap" />
-                <ListTitle titleKey="remaining.locked.title" n={summary.locked.length} />
-                <ul>
-                  {summary.locked.map(({ course, waitingFor }) => (
-                    <CourseRow key={course.code} code={course.code} name={course.name} mutedCode
-                      trailing={<Badge kind="locked">{t('remaining.badge.locked', { code: waitingFor })}</Badge>} />
-                  ))}
-                </ul>
-              </>
-            )}
+            <UnlockLists courses={courses} summary={summary} />
           </>
         )}
       </section>

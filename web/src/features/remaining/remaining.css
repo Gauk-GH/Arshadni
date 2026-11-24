@@ -26,3 +26,37 @@
 
 .remaining-message { padding-block-start: var(--space-3); display: flex; flex-direction: column; gap: var(--space-1); }
 .remaining-alert { padding-block-start: var(--space-3); }
+
+/* ---------- «يفتح لك» lists ---------- */
+.unlock-sorted { margin: 4px 0 var(--space-1); }
+.unlock-most {
+  align-self: flex-start; padding: 0 var(--space-1); border-radius: var(--radius-sm);
+  background: var(--color-ink); color: var(--color-paper);
+  font-size: var(--text-caption); font-weight: var(--weight-semibold);
+}
+.unlock-item__row .course-row__body { gap: 4px; }
+/* Locked rows are whole-row buttons. */
+.unlock-item__toggle {
+  inline-size: 100%; border: 0; border-block-end: var(--border-thin) solid var(--color-rule);
+  background: none; padding: 0; text-align: start; cursor: pointer; font: inherit; color: inherit;
+}
+.unlock-item__toggle:active { background: var(--color-wash-pressed); }
+/* Open: the row becomes a white card with an ink border (padding 0 8 16, pulled out by 8px). */
+.unlock-item.is-open {
+  margin: var(--space-1) calc(-1 * var(--space-1));
+  padding: 0 var(--space-1) var(--space-2);
+  background: var(--color-surface); border: var(--border-thin) solid var(--color-ink); border-radius: var(--radius-lg);
+}
+.unlock-item.is-open .unlock-item__row { border-block-end: 0; }
+.unlock-card__title { margin-block-end: var(--space-1); font-size: var(--text-caption); font-weight: var(--weight-semibold); color: var(--color-ink); }
+.unlock-card__title--chain { margin-block-end: var(--space-2); }
+.unlock-card__row {
+  min-block-size: var(--tap); display: flex; align-items: center; gap: var(--space-2);
+  border-block-start: var(--border-thin) solid var(--color-rule);
+}
+.unlock-card__later {
+  border-block-start: var(--border-thin) solid var(--color-rule); padding-block-start: var(--space-2);
+  display: flex; flex-direction: column; gap: var(--space-1);
+}
+/* Footer height (two buttons + padding) so an opened card scrolls to just above it, not under it. */
+.unlock-item { scroll-margin-block: var(--space-2) 180px; }
