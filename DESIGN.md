@@ -212,4 +212,5 @@ Inline stroke SVG, 24px viewBox, `stroke-linecap: round`. Stroke 1.75px (back), 
 - Course codes stay Latin (`CS 210`) and are wrapped in `dir="ltr"` / `unicode-bidi: isolate`.
 - Not mirrored: check marks, spinners, course codes.
 - Use Arabic punctuation: « » for quotes, ، for commas.
+- Separate facts with «،», never the middle dot «·»: next to Arabic-Indic digits it looks like the zero «٠».
 - Use logical CSS properties (`margin-inline-end`, `justify-content: flex-start`) so RTL is the default.

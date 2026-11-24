@@ -46,8 +46,8 @@ Back: the right-pointing arrow on screens 2–4 goes one step back. «عدّل �
 | 1 | Very long plan (64 courses) | Search field appears above the list | Search |
 | 1 | Transcript is being read | «نقرأ سجلك الأكاديمي…» + file name, primary disabled | Automatic |
 | 1 | Transcript is a scanned image | «ما قدرنا نقرأ سجلك» + «الملف صورة ممسوحة، مو PDF فيه نص. نزّل السجل من بوابة الجامعة كـ PDF وارفقه مرة ثانية، أو أدخل مقرراتك يدويًا تحت.» | «ارفق ملف ثاني» or type manually |
-| 1 | Transcript read | «لقينا ٢٨ مقرر خلصتها · بتلقاها معلّمة في الخطوة الجاية» | «غيّر الملف» or continue |
-| 1 | Transcript has courses not in the plan | «لقينا ٣١ مقرر خلصتها · ٢٨ منها في خطتك، و٣ مو موجودة فيها» + list | «أضف الـ ٣ لخطتك» or «تجاهلها، مو من متطلبات تخصصي» |
+| 1 | Transcript read | «لقينا ٢٨ مقرر خلصتها، بتلقاها معلّمة في الخطوة الجاية» | «غيّر الملف» or continue |
+| 1 | Transcript has courses not in the plan | «لقينا ٣١ مقرر خلصتها، ٢٨ منها في خطتك، و٣ مو موجودة فيها» + list | «أضف الـ ٣ لخطتك» or «تجاهلها، مو من متطلبات تخصصي» |
 | 2 | Arrived with no courses | «ما فيه مقررات تعلّمها للحين» + primary «أضف مقررات خطتك» | Go to screen 1 |
 | 2 | Search finds nothing | «ما لقينا «CS 501» في خطتك» + secondary «أضف CS 501 لخطتك» | Add it or fix the search |
 | 2 | Everything ticked | «علّمت كل خطتك» note + «اعرض المتبقي (٠ مقرر)» | Continue |
@@ -112,6 +112,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 16. Transcript import accepts PDF with a text layer only [?]. A scanned image fails with the scan error; manual entry stays available.
 17. Transcript courses are matched to plan courses with the same normalization as rule 2. Matched → `completed: true`. Unmatched → listed for the user to add or ignore; never added silently.
 18. Only passed courses in the transcript count as completed [?] (how to read grades like F, W, IP is open).
+19. When a plan has more than 60 courses, the tick bar is dense (1px gaps instead of 2–3px). Screen 2 also shows «ابحث بدل ما تمرّر» after the count.
 
 ## 8. State texts
 
@@ -144,7 +145,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | input.error.noCode | ناقص رمز المقرر، مثل CS 310. |
 | input.error.noName | ناقص اسم المقرر. انسخه من خطة قسمك. |
 | input.error.duplicate | {code} مضاف قبل باسم «{name}». عدّله من القائمة تحت، أو اكتب رمز ثاني. |
-| input.success | انضاف {code} {name} · تراجع |
+| input.success | انضاف {code} {name}، تراجع |
 | done.title | علّم المقررات اللي خلصتها |
 | done.count | علّمت {n} من {total} مقرر |
 | done.search | ابحث بالرمز أو الاسم |
@@ -160,7 +161,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | done.success.body | حسب اللي أدخلته ما باقي عليك شي. تأكد من القسم إن ما فيه مقررات ناقصة من خطتك. |
 | remaining.label | باقي لك |
 | remaining.unit | مقرر |
-| remaining.ticks | كل شرطة مقرر · خلصت {done} من {total} |
+| remaining.ticks | كل شرطة مقرر، خلصت {done} من {total} |
 | remaining.available | تقدر تسجّلها الترم الجاي ({n}) |
 | remaining.locked | تحتاج متطلب قبلها ({n}) |
 | remaining.badge.available | متاح |
@@ -177,8 +178,8 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | remaining.error.button | صحّح المتطلب السابق |
 | remaining.success | تحدّث المتبقي: صار {new} بدل {old} |
 | plan.title | تخلّص تقريبًا في {n} أترام |
-| plan.sub | حسب اللي أدخلته · حد أقصى {max} مقررات بالترم |
-| plan.paths | المسار أ · متوازن / المسار ب · الثقيل أول / المسار ج · الخفيف أول |
+| plan.sub | حسب اللي أدخلته، حد أقصى {max} مقررات بالترم |
+| plan.paths | المسار أ، متوازن / المسار ب، الثقيل أول / المسار ج، الخفيف أول |
 | plan.terms | الترم الجاي / الترم اللي بعده / ترم التخرج |
 | plan.disclaimer | ترتيب مقترح، مو ضمان. راجعه مع مرشدك الأكاديمي. |
 | plan.save | احفظ المسار {letter} |
@@ -241,3 +242,5 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 16. Paste screen deferred to the next round.
 17. Wording: plural of ترم is «أترام» (not «ترمات») everywhere.
 18. Screen 1 gets an optional "attach academic record" card (transcript PDF). Contradicts the PRD MVP scope; user chose to add it.
+19. Dense tick bar above 60 courses (rule 19).
+20. Separator between facts is «،» on every screen, never «·» (it looks like the Arabic zero «٠» next to numbers).
