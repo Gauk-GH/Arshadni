@@ -206,7 +206,7 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 2. **Paste format** [?]: what does a pasted list look like (one course per line? "CODE - Name"? tab-separated from the department PDF)?
 3. **Multiple prerequisites** [?]: screen 1 has one prerequisite field. Do we need more than one per course, or co-requisites?
 4. **Missing prerequisite in plan** [?]: if a prerequisite code is not in the list, treat it as completed, missing, or warn?
-5. **Path strategies** [?]: exact rules for "balanced", "heavy first", "light first" (by count only, or by credit hours?). Credit hours are not collected now.
+5. **Path strategies** (decided): exact rules for "balanced", "heavy first", "light first" (by count only, or by credit hours?). Credit hours are not collected now. → **By count only.** B fills every term to the max; A spreads courses evenly (bigger terms first); C uses the same spread with smaller terms first. Which courses go into a term: longest prerequisite chain first, then the student's list order; each term is shown in the student's list order.
 6. **Equal term count** [?]: if only one strategy reaches the minimum number of terms, show one path or show others with more terms?
 7. **Summer terms** [?]: counted as terms or ignored?
 8. **Max per term** [?]: 6 is the default; where does the user change it (no UI yet)?
@@ -247,3 +247,4 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 18. Screen 1 gets an optional "attach academic record" card (transcript PDF). Contradicts the PRD MVP scope; user chose to add it.
 19. Dense tick bar above 60 courses (rule 19).
 20. Separator between facts is «،» on every screen, never «·» (it looks like the Arabic zero «٠» next to numbers).
+21. Path strategies are count-based (open question 5 closed). mock.json path C differs in which courses go first; that is expected.

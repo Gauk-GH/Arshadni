@@ -88,6 +88,12 @@ try {
     const file = `${outPrefix}-${width}.png`;
     writeFileSync(file, Buffer.from(data, 'base64'));
     console.log(file, JSON.stringify({ ...rest, pageHeight: h }));
+    // Page errors and console.error calls since the page loaded.
+    const problems = events
+      .filter((e) => e.method === 'Runtime.exceptionThrown' || (e.method === 'Runtime.consoleAPICalled' && e.params.type === 'error'))
+      .map((e) => e.params.exceptionDetails?.exception?.description ?? e.params.args?.map((a) => a.value ?? a.description).join(' '));
+    if (problems.length) console.log('PAGE ERRORS:', problems.join(' | '));
+    if (process.env.SHOT_LOG) console.log('LOG:', await evaluate('JSON.stringify(window.__log ?? [])'));
   }
   ws.close();
 } finally {
