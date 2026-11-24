@@ -166,3 +166,6 @@ build/
 Thumbs.db
 .vscode/
 .idea/
+
+# local Claude Code settings (may hold personal permissions)
+.claude/settings.local.json
