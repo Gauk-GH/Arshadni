@@ -9,6 +9,42 @@
 .done-list { flex: 1; padding: 0 var(--space-2) var(--space-3); }
 .done-list .course-row--tappable { margin-inline: 0; padding-inline: var(--space-1); }
 
+/* Search result count while grouped («٤ نتائج») */
+.done-results { margin: 0 var(--space-3) var(--space-1); }
+
+/* ---------- Groups by prefix (design DoneGroups, DESIGN.md §6 Group header) ---------- */
+.group { border-block-end: var(--border-thin) solid var(--color-rule); }
+/* Columns: prefix · meta · «علّم الكل» · chevron. The toggle spans every column (subgrid);
+   «علّم الكل» sits on top of it in column 3. */
+.group__head {
+  display: grid; grid-template-columns: auto 1fr auto auto; column-gap: var(--space-2);
+  align-items: center; min-block-size: 64px; padding-inline: var(--space-1);
+}
+.group__head--no-all { grid-template-columns: auto 1fr auto; }
+.group__toggle {
+  grid-column: 1 / -1; grid-row: 1;
+  display: grid; grid-template-columns: subgrid; align-items: center;
+  min-block-size: 64px; margin: 0; padding: 0; border: 0; background: none;
+  color: var(--color-ink); font: inherit; text-align: start; cursor: pointer;
+  border-radius: var(--radius-sm); transition: background-color var(--dur-press) var(--ease-press);
+}
+.group__toggle:active { background: var(--color-wash-pressed); }
+.group__toggle:focus-visible { outline: var(--border-thick) solid var(--color-ink); outline-offset: 2px; }
+.group__prefix { grid-column: 1; min-inline-size: var(--tap); font-size: var(--text-body); font-weight: var(--weight-semibold); }
+.group__prefix.code { text-align: right; }
+.group__meta { grid-column: 2; min-inline-size: 0; display: flex; flex-direction: column; gap: 4px; }
+.group__caption--full { display: inline-flex; align-items: center; gap: 4px; color: var(--color-ink); font-weight: var(--weight-semibold); }
+.group__bar { display: flex; block-size: 4px; max-inline-size: 120px; background: var(--color-rule); border-radius: var(--radius-bar); }
+.group__fill { block-size: 4px; background: var(--color-ink); border-radius: var(--radius-bar); }
+.group__chev { grid-column: -2; display: flex; justify-content: center; inline-size: var(--space-3); }
+.group__all { grid-column: 3; grid-row: 1; position: relative; z-index: 1; }
+.group__all:focus-visible { outline: none; }
+.group__all:focus-visible .pill { outline: var(--border-thick) solid var(--color-ink); outline-offset: 2px; }
+/* Rows inside a group: 1px rule on top, indented 16px at the start. */
+.group__rows { padding-inline-start: var(--space-2); }
+.group__rows .course-row { border-block-end: 0; border-block-start: var(--border-thin) solid var(--color-rule); }
+.group__rows .course-row--tappable { margin-inline: 0; }
+
 /* All ticked: note card above the list */
 .done-note {
   margin: 0 var(--space-3) var(--space-2);

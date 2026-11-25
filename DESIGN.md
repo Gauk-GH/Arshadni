@@ -138,6 +138,13 @@ None. Separation is by 1px `rule` borders only.
 - Step 1 (available now): dot filled `ink`, number `paper`. Middle steps: dot outlined 1.5px `ink`. Last step (the course itself): dot dashed 1.5px `pencil`, number `pencil`, course name 600.
 - Text: code 13px / 600 + name 16px, then a 13px caption (when).
 
+### Group header (screen 2, design DoneGroups)
+- Group: bottom border 1px `rule`. Header row min 64px, gap 16px.
+- Toggle: one `<button aria-expanded aria-controls>` holding prefix (16px / 600, `dir="ltr"`, min 48px column; «مقررات ثانية» is Arabic, no `ltr`), caption «{done} من {total}» (13px / 500 `pencil`) over a 4px bar (track `rule`, fill `ink`, radius 2px, max 120px, fills from the right), and a 20px chevron at the end (down closed, up open).
+- Full group: caption «{n} من {n}، كلها مخلّصة» in `ink` 600 with a 16px check icon at the start.
+- «علّم الكل» / «شيل الكل»: separate button, visible box 32px (13px / 600, border 1px `ink`, radius 4px, padding 0 8px) inside a 48px tap area. Pressed: `wash-pressed`. Hidden while searching.
+- Rows: course rows inside the group, 1px `rule` line on top, indented 16px at the start. Opens and closes like the Expand card (height + opacity, 200ms; none with reduced motion).
+
 ### Secondary button (outlined)
 - Height 48px, border 1.5px `ink`, background `surface` (or transparent in footer), text 16px / 600 `ink`, radius 8px.
 - Optional 20px icon on the start side (e.g. "+" in "أضف المقرر").

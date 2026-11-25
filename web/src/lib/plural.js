@@ -8,6 +8,7 @@ const NOUNS = {
   course: ['مقرر واحد', 'مقررين', '{n} مقررات', '{n} مقرر'],
   code: ['رمز واحد', 'رمزين', '{n} رموز', '{n} رمز'],
   term: ['ترم واحد', 'ترمين', '{n} أترام', '{n} ترم'],
+  result: ['نتيجة واحدة', 'نتيجتين', '{n} نتائج', '{n} نتيجة'],
   // The word alone, next to a number shown separately (screen 3's big number: «١٤» «مقرر»).
   courseWord: ['مقرر', 'مقرر', 'مقررات', 'مقرر'],
 };

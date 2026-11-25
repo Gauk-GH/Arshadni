@@ -68,6 +68,17 @@ function reducer(state, action) {
         courses: state.courses.map((c) => (keys.has(codeKey(c.code)) ? { ...c, completed: true } : c)),
       };
     }
+    case 'setTicks': {
+      // [{ code, completed }]: «علّم الكل», «شيل الكل» and their «تراجع» (HANDOFF rule 30).
+      const wanted = new Map(action.ticks.map((x) => [codeKey(x.code), x.completed]));
+      return {
+        ...state,
+        courses: state.courses.map((c) => {
+          const key = codeKey(c.code);
+          return wanted.has(key) && wanted.get(key) !== c.completed ? { ...c, completed: wanted.get(key) } : c;
+        }),
+      };
+    }
     case 'lastRemaining':
       return state.lastRemaining === action.n ? state : { ...state, lastRemaining: action.n };
     case 'draft':
@@ -159,6 +170,7 @@ export function StoreProvider({ children }) {
       removeCourse: (code) => dispatch({ type: 'removeCourse', code }),
       toggleCompleted: (code) => dispatch({ type: 'toggleCompleted', code }),
       markCompleted: (codes) => dispatch({ type: 'markCompleted', codes }),
+      setTicks: (ticks) => dispatch({ type: 'setTicks', ticks }),
       setDraft: (draft) => dispatch({ type: 'draft', draft }),
       setLastRemaining: (n) => dispatch({ type: 'lastRemaining', n }),
       loadSample: () => dispatch({ type: 'loadSample' }),

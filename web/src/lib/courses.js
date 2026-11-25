@@ -112,6 +112,52 @@ export function findCycle(courses) {
   return null;
 }
 
+// HANDOFF rule 27: the Latin letters at the start of a code ("CS 210" → "CS", "CS-210" → "CS").
+// "" when the code doesn't start with letters.
+export function codePrefix(code) {
+  const match = codeKey(code).match(/^[A-Z]+/);
+  return match ? match[0] : '';
+}
+
+export const OTHERS_KEY = '__others'; // the «مقررات ثانية» group
+
+// HANDOFF rules 27–28: groups by prefix. Returns [{ key, prefix, isOthers, courses, done, total }].
+// Prefixes with one course, and codes with no prefix, go into the «مقررات ثانية» group.
+// Order: biggest first; ties keep the order each prefix first shows up in the list; others last.
+// Inside a group, courses keep the list order.
+export function groupCourses(courses) {
+  const byPrefix = new Map(); // a Map remembers insertion order = first appearance
+  for (const course of courses) {
+    const prefix = codePrefix(course.code);
+    if (!byPrefix.has(prefix)) byPrefix.set(prefix, []);
+    byPrefix.get(prefix).push(course);
+  }
+  const groups = [];
+  const others = [];
+  for (const [prefix, list] of byPrefix) {
+    if (prefix === '' || list.length === 1) others.push(...list);
+    else groups.push({ key: prefix, prefix, isOthers: false, courses: list });
+  }
+  // Array.sort is stable, so equal sizes keep their first-appearance order.
+  groups.sort((a, b) => b.courses.length - a.courses.length);
+  if (others.length > 0) {
+    // Back into list order, since they came from different prefixes.
+    const order = new Map(courses.map((c, i) => [c, i]));
+    others.sort((a, b) => order.get(a) - order.get(b));
+    groups.push({ key: OTHERS_KEY, prefix: '', isOthers: true, courses: others });
+  }
+  return groups.map((g) => ({
+    ...g,
+    total: g.courses.length,
+    done: g.courses.filter((c) => c.completed).length,
+  }));
+}
+
+// HANDOFF rule 30: «علّم الكل» while any course is unticked, «شيل الكل» when all are ticked.
+export function groupTickAction(group) {
+  return group.courses.every((c) => c.completed) ? 'unmark' : 'mark';
+}
+
 // Search by code or name (HANDOFF searchCourses). Code matching ignores spaces and case.
 export function searchCourses(courses, query) {
   const q = String(query).trim();

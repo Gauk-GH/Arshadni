@@ -55,6 +55,10 @@ Back: the right-pointing arrow on screens 2–4 goes one step back. «عدّل �
 | 2 | Search finds nothing | «ما لقينا «CS 501» في خطتك» + secondary «أضف CS 501 لخطتك» | Add it or fix the search |
 | 2 | Everything ticked | «علّمت كل خطتك» note + «اعرض المتبقي (٠ مقرر)» | Continue |
 | 2 | 72 courses | Dense tick bar (gap 1px), search «ابحث في ٧٢ مقرر» | Search |
+| 2 | Long plan (more than 20 courses) | **Groups** (design DoneGroups): courses grouped by code prefix, all closed; count gets «، مجمّعة حسب الرمز» while nothing is ticked | Open a group, or «علّم الكل» |
+| 2 | Ticked a whole group | Toast «علّمت {n|course} في {prefix}» + «تراجع» | «تراجع» |
+| 2 | Unticked a whole group | Toast «شلت العلامة عن {n|course} في {prefix}» + «تراجع» | «تراجع» |
+| 2 | Search while grouped | «{n|result}» under the field; groups with hits open, hits only; «علّم الكل» hidden | Clear the search |
 | 3 | 0 remaining | Number «٠», «حسب اللي أدخلته، خلصت خطتك كلها» + advice to confirm with the department | «راجع مقرراتي» |
 | 3 | Circular prerequisites | Alert «ما نقدر نرتّب خطتك» naming both courses, «متعارض» badges | «صحّح المتطلب السابق» → screen 1 |
 | 3 | Back after editing | Toast «تحدّث المتبقي: صار ١٢ بدل ١٤» | — |
@@ -89,6 +93,9 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | `addUnmatchedCourses` / `ignoreUnmatched` | Screen 1 after import | adds the unmatched courses to the plan (completed), or drops them |
 | `toggleCompleted` | Screen 2 | flips `completed`, updates tick bar and button count |
 | `searchCourses` | Screen 2 (and screen 1 when the list is long) | filters by code or name |
+| `toggleGroup` | Screen 2 group header | opens or closes one group (screen memory only) |
+| `setGroupTicks` | Screen 2 «علّم الكل» / «شيل الكل» | group codes → all `completed: true` / `false`, toast with «تراجع» |
+| `undoGroupTicks` | Screen 2 toast | puts back the group's ticks from before |
 | `computeRemaining` | Screen 3 | builds Summary |
 | `generatePaths` | Screen 4 on open | builds 3 GraduationPaths |
 | `selectPath` | Screen 4 | switches displayed path |
@@ -121,7 +128,13 @@ Storage: device only (browser local storage), no account, no server. Key name an
 22. The open card lists the direct courses, then mini ticks (solid = direct, dashed = later) and «و{n} ثانية بعدها: {codes}» for everything further down the chain (no repeats, list order). The line is hidden when there are none. One card open at a time.
 23. **Chain («الطريق له:»):** from an available course to the locked course, following the prerequisite with the LONGEST chain at each step (it decides the earliest term); ties go to the first prerequisite. Step 1 «متاح الحين», step 2 «الترم اللي بعده», step 3 «أقرب وقت: بعد ترمين», step k ≥ 4 «أقرب وقت: بعد {k−1} أترام» (3–10) / «ترم» (11+).
 24. **Copy format («انسخ رموز الترم الجاي»):** the first term's codes as displayed («CS 210»), in the card's order, joined with ", " (English comma + space, because it is pasted into English registration systems), nothing before or after. Example: `CS 210, CS 250, CS 330, STAT 201, ISLM 102`. Try the clipboard API, then the older select-and-copy once; if both fail, show the text selected with «ما قدرنا ننسخ…». Changing the path resets the button.
-25. **Arabic counts:** one shared helper (`web/src/lib/plural.js`) for every number followed by a noun: 1 «مقرر واحد» · 2 «مقررين» · 3–10 «{n} مقررات» · 0 and 11+ «{n} مقرر»; the same for «رمز / رمزين / رموز» and «ترم / ترمين / أترام». In §8, `{n|course}`, `{n|code}`, `{n|term}` mean "the number with the right form" and `{n|courseWord}` the word alone. Sentences whose wording changes with the count (definite «كل الـ {n} مقرر») have their own `.one` / `.two` rows in §8; 3+ uses the main row.
+25. **Arabic counts:** one shared helper (`web/src/lib/plural.js`) for every number followed by a noun: 1 «مقرر واحد» · 2 «مقررين» · 3–10 «{n} مقررات» · 0 and 11+ «{n} مقرر»; the same for «رمز / رمزين / رموز», «ترم / ترمين / أترام» and «نتيجة واحدة / نتيجتين / نتائج / نتيجة». In §8, `{n|course}`, `{n|code}`, `{n|term}`, `{n|result}` mean "the number with the right form" and `{n|courseWord}` the word alone. Sentences whose wording changes with the count (definite «كل الـ {n} مقرر») have their own `.one` / `.two` rows in §8; 3+ uses the main row.
+26. **Groups (screen 2, design DoneGroups):** screen 2 groups courses by code prefix when the plan has more than 20 courses (same threshold as rule 12). With 20 or fewer, the list stays flat with no «علّم الكل». If the only group would be «مقررات ثانية», the list also stays flat.
+27. **Prefix** = the Latin letters at the start of the code (`CS 210` → `CS`, `CS-210` → `CS`). A code that doesn't start with letters has no prefix. Courses with no prefix, and prefixes with only one course, go into «مقررات ثانية».
+28. **Group order:** biggest group first; ties keep the order in which each prefix first shows up in the student's list; «مقررات ثانية» is always last. Inside a group, rows keep the list order.
+29. **All groups start closed.** Open/closed is screen memory only (never saved) and resets when you leave screen 2.
+30. **«علّم الكل» / «شيل الكل»:** if any course in the group is unticked, the button says «علّم الكل» and ticks all of them; if all are ticked, it says «شيل الكل» and unticks all of them. `{n}` in the toast is how many courses actually changed. «تراجع» puts back exactly the ticks that group had before. The toast closes after 5s, and as soon as any other tick changes.
+31. **Search while grouped:** same matching as `searchCourses`. Groups with no hits are hidden; groups with hits show open with only the hits, caption «{n|result} في {prefix}»; «علّم الكل» is hidden; «{n|result}» under the search field. Clearing the search puts every group back to the open/closed state it had before. No hits: the existing «ما لقينا…» state. While nothing is ticked, `done.groupedHint` follows `done.count` (after `done.longHint` when both apply), joined with «، ».
 
 ## 8. State texts
 
@@ -198,6 +211,18 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | done.error.button | أضف {query} لخطتك |
 | done.success.title | علّمت كل خطتك |
 | done.success.body | حسب اللي أدخلته ما باقي عليك شي. تأكد من القسم إن ما فيه مقررات ناقصة من خطتك. |
+| done.groupedHint | مجمّعة حسب الرمز |
+| done.group.count | {done} من {total} |
+| done.group.full | {n} من {n}، كلها مخلّصة (16px check icon before it, not a text «✓») |
+| done.group.others | مقررات ثانية |
+| done.group.markAll | علّم الكل |
+| done.group.unmarkAll | شيل الكل |
+| done.group.markAll.label | علّم كل مقررات {prefix} (aria-label) |
+| done.group.unmarkAll.label | شيل العلامة عن كل مقررات {prefix} (aria-label) |
+| done.group.marked | علّمت {n|course} في {prefix} |
+| done.group.unmarked | شلت العلامة عن {n|course} في {prefix} |
+| done.search.results | {n|result} |
+| done.group.results | {n|result} في {prefix} |
 | remaining.available.sorted | مرتبة حسب كم مقرر تفتح لك |
 | remaining.unlocks | يفتح {n} |
 | remaining.unlocks.most | يفتح أكثر شي |
@@ -321,3 +346,4 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 29. Screen 3 «يفتح لك» (design Unlocks): rules 20–23. Chain step dots are circles (the only radius-50% exception). The pill is 32px visually inside a 48px tap area. Mini ticks are ~20px each and wrap. `{codes}` is joined with «، ».
 30. Screen 4 course names + copy (design PlanNames): term cards list code + name rows; picker subs «متوازن / ثقيل / خفيف»; shape line from the real counts; «انسخ رموز الترم الجاي» in the first card only (rule 24); plan ticks 20px and path items 48px; Arabic counts through one helper (rule 25).
 31. One/two wording for the definite-count texts: reset confirm, reset toast, «أضف الـ {n} لخطتك», and the plan «no prerequisites» body (rule 25).
+32. Screen 2 groups by code prefix (design DoneGroups): rules 26–31. Groups start closed; «علّم الكل» / «شيل الكل» per group with a toast and «تراجع»; «مقررات ثانية» last.

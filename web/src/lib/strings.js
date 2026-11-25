@@ -5,7 +5,8 @@
 // - numbers go through fmtNumber, so they show as Arabic-Indic digits (١٤).
 // - course codes and search text ({code}, {query}, {a}, {b}) are wrapped in invisible
 //   Unicode "left-to-right isolate" marks, so "CS 210" never flips inside Arabic text.
-// - names ({name}) may be Arabic or English, so they get a "first-strong isolate".
+// - names ({name}) and group prefixes ({prefix}) may be Arabic or English, so they get a
+//   "first-strong isolate".
 import { fmtNumber } from './format.js';
 import { countOf, pluralForm } from './plural.js';
 
@@ -96,6 +97,19 @@ const STRINGS = {
   'done.error.button': 'أضف {query} لخطتك',
   'done.success.title': 'علّمت كل خطتك',
   'done.success.body': 'حسب اللي أدخلته ما باقي عليك شي. تأكد من القسم إن ما فيه مقررات ناقصة من خطتك.',
+  // Groups by code prefix (design DoneGroups, HANDOFF rules 26–31).
+  'done.groupedHint': 'مجمّعة حسب الرمز',
+  'done.group.count': '{done} من {total}',
+  'done.group.full': '{n} من {n}، كلها مخلّصة',
+  'done.group.others': 'مقررات ثانية',
+  'done.group.markAll': 'علّم الكل',
+  'done.group.unmarkAll': 'شيل الكل',
+  'done.group.markAll.label': 'علّم كل مقررات {prefix}',
+  'done.group.unmarkAll.label': 'شيل العلامة عن كل مقررات {prefix}',
+  'done.group.marked': 'علّمت {n|course} في {prefix}',
+  'done.group.unmarked': 'شلت العلامة عن {n|course} في {prefix}',
+  'done.search.results': '{n|result}',
+  'done.group.results': '{n|result} في {prefix}',
 
   // Design-only labels for screen 3 (HiRemaining, StatesRemaining), copied word for word.
   // The list titles are split from their count because the design styles «(٦)» lighter.
@@ -209,7 +223,8 @@ export function t(key, vars = {}) {
     // A list of course codes: each code isolated; {chain} joined with « ← », {codes} with «، ».
     if (Array.isArray(value)) return value.map((code) => LRI + code + PDI).join(name === 'chain' ? ' ← ' : '، ');
     if (LATIN_VARS.has(name)) return LRI + value + PDI;
-    if (name === 'name') return FSI + value + PDI;
+    // {prefix} is Latin («CS») or Arabic («مقررات ثانية»), so it also takes its direction from itself.
+    if (name === 'name' || name === 'prefix') return FSI + value + PDI;
     return String(value);
   });
 }
