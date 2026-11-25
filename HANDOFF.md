@@ -230,6 +230,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | remaining.storage.broken.title | ما قدرنا نقرأ مقرراتك المحفوظة |
 | remaining.storage.broken.body | فيه خلل في البيانات المحفوظة بجهازك. أضف مقرراتك من جديد، وبياناتك القديمة محفوظة كنسخة احتياطية. |
 | remaining.storage.blocked.title | المتصفح ما يسمح لنا نحفظ مقرراتك |
+| dev.state | وضع تجربة، ما ينحفظ شي (dev server only, while `?state=` is in the address) |
 | remaining.storage.blocked.body | ممكن لأنك في وضع التصفح الخاص. افتح أرشدني في نافذة عادية عشان ما تضيع مقرراتك لما تقفل الصفحة. |
 | plan.title | تخلّص تقريبًا في {n|term} |
 | plan.sub | حسب اللي أدخلته، حد أقصى {max|course} بالترم |

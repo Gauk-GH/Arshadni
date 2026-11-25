@@ -119,6 +119,15 @@
 .badge--locked { border: var(--border-thin) dashed var(--color-pencil); color: var(--color-pencil); }
 .badge--conflict { border: var(--border-thin) solid var(--color-error-ink); color: var(--color-error-ink); }
 
+/* Dev only (?state=): fixed at the top end corner, styled like the conflict badge. Never blocks taps. */
+.dev-state-label {
+  position: fixed; inset-block-start: var(--space-1); inset-inline-end: var(--space-1); z-index: 1000;
+  margin: 0; padding: 0 var(--space-1); border-radius: var(--radius-sm); pointer-events: none;
+  background: var(--color-surface); border: var(--border-thin) solid var(--color-error-ink);
+  color: var(--color-error-ink); font-size: var(--text-caption); font-weight: var(--weight-semibold);
+  line-height: var(--leading-body);
+}
+
 .chip {
   padding: 4px var(--space-1); border-radius: var(--radius-sm);
   background: var(--color-paper); border: var(--border-thin) solid var(--color-rule);

@@ -135,6 +135,7 @@ const STRINGS = {
   'remaining.error.badge': 'متعارض',
   'remaining.error.button': 'صحّح المتطلب السابق',
   'remaining.success': 'تحدّث المتبقي: صار {new} بدل {old}',
+  'dev.state': 'وضع تجربة، ما ينحفظ شي', // dev only, shown while ?state= is in the address
   'remaining.storage.broken.title': 'ما قدرنا نقرأ مقرراتك المحفوظة',
   'remaining.storage.broken.body': 'فيه خلل في البيانات المحفوظة بجهازك. أضف مقرراتك من جديد، وبياناتك القديمة محفوظة كنسخة احتياطية.',
   'remaining.storage.blocked.title': 'المتصفح ما يسمح لنا نحفظ مقرراتك',
