@@ -21,7 +21,7 @@ const DENSE_THRESHOLD = 60; // HANDOFF rule 19
 const FIRST_YEAR_SHARE = 0.25; // under 25% completed: add «الخطة تقسمها لك على أترام» (HANDOFF §8)
 
 export default function RemainingScreen() {
-  const { status, major, courses, lastRemaining, setLastRemaining } = useStore();
+  const { status, major, courses, lastRemaining, setLastRemaining, storageError } = useStore();
   const loading = status === 'loading';
   const summary = summarize(courses);
   const cycle = loading ? null : findCycle(courses);
@@ -98,6 +98,16 @@ export default function RemainingScreen() {
             <li className="course-row"><Skeleton inline={64} /><Skeleton /></li>
             <li className="course-row"><Skeleton inline={64} /><Skeleton inline="60%" /></li>
           </ul>
+        )}
+
+        {!loading && (storageError === 'blocked' || (storageError === 'broken' && noCourses)) && (
+          // Storage blocked (always shown), or saved data broken: backed up, started fresh,
+          // shown until the student adds courses again. Never a raw error.
+          <div className="remaining-alert">
+            <AlertCard title={t(`remaining.storage.${storageError}.title`)}>
+              {t(`remaining.storage.${storageError}.body`)}
+            </AlertCard>
+          </div>
         )}
 
         {noCourses && (

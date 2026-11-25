@@ -24,9 +24,11 @@ function fromMock() {
   };
 }
 
+const DEFAULT_SETTINGS = { maxCoursesPerTerm: 6 }; // HANDOFF §5
+
 // A first visit: nothing saved yet.
 function emptyStart() {
-  return { major: '', courses: [], settings: { ...mock.settings }, savedPath: null };
+  return { major: '', courses: [], settings: { ...DEFAULT_SETTINGS }, savedPath: null };
 }
 
 const initialState = {
@@ -35,8 +37,9 @@ const initialState = {
   major: '',
   university: '',    // id from lib/universities.js, '' = not chosen
   courses: [],
-  settings: { maxCoursesPerTerm: 6 },
+  settings: { ...DEFAULT_SETTINGS },
   savedPath: null,
+  storageError: null, // 'broken' | 'blocked' | null, set once on open. Never saved.
   lastRemaining: null, // remaining count when screen 3 was last shown (for «تحدّث المتبقي»). Never saved.
   draft: null,       // { code } or { name } handed from screen 2 to screen 1's form. Never saved.
   transcript: null,  // { found } after a transcript import, for screen 1's «سجلك مرفق» line. Never saved.
@@ -115,7 +118,8 @@ export function StoreProvider({ children }) {
       });
       return;
     }
-    const saved = loadData();
+    const result = loadData();
+    const saved = result.status === 'ok' ? result.data : null;
     const data = saved
       ? {
         major: saved.studyPlan.major ?? '',
@@ -125,7 +129,10 @@ export function StoreProvider({ children }) {
         savedPath: saved.savedPath ?? null,
       }
       : emptyStart();
-    dispatch({ type: 'restored', data, persist: true });
+    const storageError = result.status === 'broken' || result.status === 'blocked' ? result.status : null;
+    // Broken data whose backup failed is left untouched: we don't save over it this visit.
+    const persist = !(result.status === 'broken' && !result.canSave);
+    dispatch({ type: 'restored', data: { ...data, storageError }, persist });
   }, []);
 
   // Save courses after every change (rule 14). Path saving is separate: it can fail visibly (rule 13).
