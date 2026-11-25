@@ -246,7 +246,7 @@
   border-radius: var(--radius-lg); cursor: pointer; text-align: start; font: inherit;
   transition: transform var(--dur-press) var(--ease-press), background-color var(--dur-press) var(--ease-press);
 }
-.choice:active { transform: scale(var(--press-scale)); }
+.choice:not(:disabled):active { transform: scale(var(--press-scale)); }
 .choice__icon {
   inline-size: var(--tap); block-size: var(--tap); flex-shrink: 0; border-radius: var(--radius-lg);
   display: flex; align-items: center; justify-content: center;
@@ -268,6 +268,10 @@
 .choice--outlined:active { background: var(--color-wash-pressed); }
 .choice--outlined .choice__icon { border: var(--border-thin) solid var(--color-rule); }
 .choice--outlined .choice__sub { color: var(--color-pencil); }
+/* Disabled: same as a disabled button (DESIGN.md §6): rule fill, pencil text, no press. */
+.choice:disabled { border: 0; background: var(--color-rule); color: var(--color-pencil); cursor: not-allowed; }
+.choice:disabled .choice__sub { color: var(--color-pencil); }
+.choice:disabled .choice__icon { color: var(--color-pencil); }
 
 /* ---------- Bottom sheet ---------- */
 .sheet-layer { position: fixed; inset: 0; z-index: 10; display: flex; justify-content: center; align-items: flex-end; }

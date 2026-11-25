@@ -5,8 +5,9 @@
 .ghost-ticks { display: flex; gap: var(--tick-gap-large); block-size: var(--tick-large); margin-block-start: var(--space-4); }
 .ghost-ticks span { flex: 1; border: var(--border-mid) dashed var(--color-pencil); border-radius: var(--radius-tick); }
 .start-title { margin-block-start: var(--space-2); }
-.start-choices { padding: var(--space-4) var(--space-3) 0; display: flex; flex-direction: column; gap: var(--space-2); }
+.start-choices { padding: var(--space-3) var(--space-3) 0; display: flex; flex-direction: column; gap: var(--space-2); }
 .start-university { padding: var(--space-4) var(--space-3) 0; }
+.start-university__hint { margin-block-start: var(--space-1); }
 .start-bottom {
   margin-block-start: auto; padding: var(--space-2) var(--space-3) var(--space-4);
   display: flex; flex-direction: column; align-items: center; gap: 4px;

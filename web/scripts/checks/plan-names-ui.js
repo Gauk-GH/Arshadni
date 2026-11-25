@@ -28,7 +28,7 @@ const rows = (card) => [...card.querySelectorAll('.term-row')].map((r) => plain(
 check(rows(cards()[0]).join(' | ') === 'CS 210 هياكل البيانات | CS 250 تصميم المنطق الرقمي | CS 330 نظم إدارة قواعد البيانات العلائقية | STAT 201 الإحصاء والاحتمالات | ISLM 102 الثقافة الإسلامية ٢', 'term 1 rows: code + name');
 check(cards().every((c) => c.querySelectorAll('.term-row').length > 0) && !document.querySelector('.plan-terms .chip'), 'every term card has rows (no chips)');
 check(plain(cards()[0].querySelector('.card__count').textContent) === '٥ مقررات', 'term count «٥ مقررات»');
-check([...document.querySelectorAll('.segmented__sub')].map((e) => e.textContent).join('/') === 'متوازن/ثقيل/خفيف', 'picker subs «متوازن / ثقيل / خفيف»');
+check([...document.querySelectorAll('.segmented__sub')].map((e) => e.textContent).join('/') === 'متوازن/الثقيل أول/الخفيف أول', 'picker subs «متوازن / الثقيل أول / الخفيف أول»');
 // shape line per path
 const shape = () => plain(document.querySelector('.plan-shape').textContent);
 check(shape() === 'متوازن: ٥ ثم ٥ ثم ٤ مقررات', 'A shape: ' + shape());

@@ -110,6 +110,7 @@ None. Separation is by 1px `rule` borders only.
 - Start: 48 × 48px icon tile (radius 8px, background `paper`, 24px icon in `ink`). Middle: optional tag, title 16px / 600, sub 13px / 500 (line height 1.5), 4px apart. End: 20px chevron pointing **left** (forward in RTL).
 - **Filled** (recommended choice): background `ink`, text `paper` (title and sub; hierarchy by size and weight, never `rule` on text). Tag: background `paper`, text `ink`, 13px / 600, padding 0 8px, radius 4px. Pressed: `ink-pressed`, `scale(.98)`.
 - **Outlined**: background `surface`, border 1.5px `ink`, sub in `pencil`, icon tile with 1px `rule` border. Pressed: `wash-pressed`, `scale(.98)`.
+- **Disabled** (HANDOFF decision 34): like a disabled button: background `rule`, title, sub and icon in `pencil`, no press effect.
 
 ### Bottom sheet
 - Behind: `scrim` over the whole screen; tapping it closes the sheet.

@@ -25,6 +25,8 @@ Anything marked **[?]** is my assumption and needs a decision.
 States for each screen: `StatesInput`, `StatesDone`, `StatesRemaining`, `StatesPlan` (empty, loading, error, success, full). Transcript upload states: `StatesUpload` (loading, error, success, full).
 
 > ⚠️ **Scope change:** the PRD's MVP cut "PDF/image transcript reading". The transcript upload was added on the user's request after Phase 8. It is optional: manual entry still works without it. Build it after the manual flow works.
+>
+> ⏸ **Paused for the demo (decision 33):** the transcript upload is hidden behind `FEATURE_TRANSCRIPT = false` in `web/src/lib/features.js`. Its code and states stay; turn the flag back on after the camp.
 
 ## 3. Happy path (3 navigation taps + data entry)
 
@@ -39,7 +41,8 @@ Back: the right-pointing arrow on screens 2–4 goes one step back. «عدّل �
 
 | Screen | Situation | What the user sees | Way out |
 |---|---|---|---|
-| 1 | First visit, no courses | **Start** (redesign): ghost ticks, «كيف تبي تبدأ؟», two choice cards («ارفق سجلك الأكاديمي» filled with «الأسرع», «أدخل مقرراتك بنفسك» outlined), «جامعتك (اختياري)», «جرّب ببيانات تجريبية», «كل شي ينحفظ في جهازك بس». No form, no footer button | Attach a transcript, or open the add sheet, or try the sample |
+| 1 | First visit, no courses | **Start** (redesign, demo version, decisions 33–34): ghost ticks, «كيف تبي تبدأ؟», «جامعتك» picker (required), one filled choice card «أدخل مقرراتك بنفسك» (no tag), «جرّب ببيانات تجريبية», «كل شي ينحفظ في جهازك بس». No form, no footer button. (With the transcript on: «ارفق سجلك الأكاديمي» filled with «الأسرع» first, «أدخل مقرراتك بنفسك» outlined.) | Choose a university, then open the add sheet; or try the sample |
+| 1 | No university chosen yet | «أدخل مقرراتك بنفسك» disabled; «اختر جامعتك أول عشان تبدأ» under the picker | Choose a university, or «جرّب ببيانات تجريبية» (picks the first university if none is chosen) |
 | 1 | Returning after closing the page | «نرجّع مقرراتك المحفوظة…» + skeleton rows | Automatic |
 | 1 | Has courses | **List** (redesign): «مقررات خطتك», one outlined tick per course (20px, gap 2px), «أضفت {n} مقرر، الأحدث فوق», «سجلك مرفق…» line after an import, search above 20, the list, footer «+ أضف مقرر» + «التالي: علّم اللي خلصته», «امسح كل المقررات…» link at the end | Add more, or continue |
 | 1 | Adding courses | **Add sheet** (redesign): bottom sheet «أضف مقرر» with the code / prerequisite / name fields. After each add it stays open, clears, focuses the code field and shows «انضاف {code} {name}. أضف اللي بعده» + «تراجع»; the new row is highlighted behind and its tick fills | Add the next one, or close (✕ / Escape) |
@@ -72,7 +75,7 @@ Back: the right-pointing arrow on screens 2–4 goes one step back. «عدّل �
 | Noun | Fields | Notes |
 |---|---|---|
 | `Course` | `code` (string, e.g. "CS 210"), `name` (string, Arabic or English), `prerequisites` (array of codes), `completed` (boolean), `addedAt` (timestamp) | One list holds both required and completed courses |
-| `StudyPlan` | `major` (string) [?], `university` (id from `web/src/lib/universities.js`, "" = not chosen, "other" = not in the list), `courses` (Course[]) | `major` is shown as the header on screen 3 ("علوم الحاسب") but there is no field to enter it yet [?] |
+| `StudyPlan` | `major` (string) [?], `university` (id from `web/src/lib/universities.js`, "" = not chosen, "other" = not in the list; required before manual entry, saved with the plan), `courses` (Course[]) | `major` is shown as the header on screen 3 ("علوم الحاسب") but there is no field to enter it yet [?] |
 | `Settings` | `maxCoursesPerTerm` (number, default 6) | Editable [?] — no UI for it in this round |
 | `Summary` (derived) | `total`, `completed`, `remaining`, `available[]`, `locked[]` | Computed, not stored |
 | `GraduationPath` (derived) | `id` (A/B/C), `label`, `strategy` (balanced / heavy-first / light-first), `terms` (array of arrays of codes) | All paths have the same number of terms |
@@ -178,7 +181,8 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | input.start.manual | أدخل مقرراتك بنفسك |
 | input.start.manual.sub | انسخها من خطة قسمك، مقرر مقرر |
 | input.start.local | كل شي ينحفظ في جهازك بس |
-| input.university.optional | (اختياري) |
+| input.university.optional | ~~(اختياري)~~ (removed: the university is required, decision 34) |
+| input.university.required | اختر جامعتك أول عشان تبدأ |
 | input.list.title | مقررات خطتك |
 | input.list.count | أضفت {n|course}، الأحدث فوق |
 | input.upload.attached | سجلك مرفق، لقينا {n|course} خلصتها |
@@ -259,7 +263,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | remaining.storage.blocked.body | ممكن لأنك في وضع التصفح الخاص. افتح أرشدني في نافذة عادية عشان ما تضيع مقرراتك لما تقفل الصفحة. |
 | plan.title | تخلّص تقريبًا في {n|term} |
 | plan.sub | حسب اللي أدخلته، حد أقصى {max|course} بالترم |
-| plan.paths | المسار أ، متوازن / المسار ب، ثقيل / المسار ج، خفيف |
+| plan.paths | المسار أ، متوازن / المسار ب، الثقيل أول / المسار ج، الخفيف أول |
 | plan.terms | الترم الجاي / الترم اللي بعده / ترم التخرج |
 | plan.term.count | {n|course} |
 | plan.shape.balanced | متوازن: {counts} (all term counts joined with « ثم »; the noun follows the last count, e.g. «٥ ثم ٥ ثم ٤ مقررات») |
@@ -347,3 +351,6 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 30. Screen 4 course names + copy (design PlanNames): term cards list code + name rows; picker subs «متوازن / ثقيل / خفيف»; shape line from the real counts; «انسخ رموز الترم الجاي» in the first card only (rule 24); plan ticks 20px and path items 48px; Arabic counts through one helper (rule 25).
 31. One/two wording for the definite-count texts: reset confirm, reset toast, «أضف الـ {n} لخطتك», and the plan «no prerequisites» body (rule 25).
 32. Screen 2 groups by code prefix (design DoneGroups): rules 26–31. Groups start closed; «علّم الكل» / «شيل الكل» per group with a toast and «تراجع»; «مقررات ثانية» last.
+33. **Transcript paused for the demo.** The transcript upload card and the «سجلك مرفق» line are hidden behind one flag, `FEATURE_TRANSCRIPT = false` in `web/src/lib/features.js` (code kept, comes back after the camp). With it off, the start screen shows only «أدخل مقرراتك بنفسك» as the FILLED choice card, without «الأسرع». Reason: the simulated reading gives a wrong result on an empty plan.
+34. **University required, and first.** The «جامعتك» picker moves to the top of the start screen, under the title, without «(اختياري)». Until a university is chosen, «أدخل مقرراتك بنفسك» is disabled (disabled-button colours: `rule` fill, `pencil` text) with «اختر جامعتك أول عشان تبدأ» under the picker. «جرّب ببيانات تجريبية» works without a choice and sets the first university in the list when none is chosen. The university is saved with the plan and restored on reload. Replaces the "optional" part of decisions 24 and 27.
+35. **Path picker sub-labels** are «متوازن» / «الثقيل أول» / «الخفيف أول» again. Reverses the «متوازن / ثقيل / خفيف» part of decision 30.

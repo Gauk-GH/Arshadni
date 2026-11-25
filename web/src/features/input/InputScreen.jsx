@@ -2,6 +2,8 @@
 // States: start (no courses: two choice cards) · list (has courses) · add sheet ·
 // loading (restore) · upload card (reading, failed, partial) · «سجلك مرفق» line after an import ·
 // long plan with search (> 20 courses) · reset with confirmation and «تراجع».
+// Demo (HANDOFF decisions 33–34): the transcript parts sit behind FEATURE_TRANSCRIPT (off), and the
+// university is required before «أدخل مقرراتك بنفسك» opens.
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../store/StoreProvider.jsx';
 import { navigate } from '../../App.jsx';
@@ -15,6 +17,7 @@ import { Screen, StepIndicator, Footer } from '../../components/Screen.jsx';
 import { CheckIcon, CloseIcon, FileUploadIcon, PencilIcon, PlusIcon, SpinnerIcon } from '../../components/Icons.jsx';
 import { codeKey, makeCourse, searchCourses } from '../../lib/courses.js';
 import { readTranscript } from '../../lib/transcript.js';
+import { FEATURE_TRANSCRIPT } from '../../lib/features.js';
 import { devState, devUpload } from '../../lib/devState.js';
 import { t, tn } from '../../lib/strings.js';
 import { OTHER_UNIVERSITY, UNIVERSITIES } from '../../lib/universities.js';
@@ -88,6 +91,12 @@ export default function InputScreen() {
     setNewCode(course.code);
   }
 
+  // «جرّب ببيانات تجريبية» works without a university (it is a demo): it picks the first one if none is chosen.
+  function trySample() {
+    if (!university) setUniversity(UNIVERSITIES[0].id);
+    loadSample();
+  }
+
   function chooseFile() {
     fileRef.current?.click();
   }
@@ -159,7 +168,7 @@ export default function InputScreen() {
 
   const universityPicker = (
     <SelectField
-      label={<>{t('input.university.label')} <span className="caption">{t('input.university.optional')}</span></>}
+      label={t('input.university.label')}
       placeholder={t('input.university.placeholder')}
       value={university}
       onChange={setUniversity}
@@ -191,26 +200,32 @@ export default function InputScreen() {
           <p className="subtitle">{t('input.start.body')}</p>
         </header>
 
+        {/* The university comes first and is required: manual entry stays disabled until one is chosen. */}
+        <div className="start-university">
+          {universityPicker}
+          {!university && <p id="university-hint" className="caption start-university__hint">{t('input.university.required')}</p>}
+        </div>
+
         <div className="start-choices">
-          {cardOpen ? (
+          {FEATURE_TRANSCRIPT && (cardOpen ? (
             <UploadCard upload={upload} onChooseFile={chooseFile} onAddUnmatched={addUnmatched} onIgnoreUnmatched={ignoreUnmatched} />
           ) : (
             <ChoiceCard
               variant="filled" icon={<FileUploadIcon />} tag={t('input.start.fastest')}
               title={t('input.upload')} sub={t('input.upload.sub')} onClick={chooseFile}
             />
-          )}
+          ))}
+          {/* With the transcript off, manual entry is the only way in, so it becomes the filled card (no «الأسرع»). */}
           <ChoiceCard
-            variant="outlined" icon={<PencilIcon />}
+            variant={FEATURE_TRANSCRIPT ? 'outlined' : 'filled'} icon={<PencilIcon />}
             title={t('input.start.manual')} sub={t('input.start.manual.sub')} onClick={openSheet}
+            disabled={!university} aria-describedby={university ? undefined : 'university-hint'}
           />
         </div>
 
-        <div className="start-university">{universityPicker}</div>
-
         <div className="start-bottom">
           {toast && <div ref={toastRef} className="start-bottom__toast">{toastBody}</div>}
-          <TextLink onClick={loadSample}>{t('input.sample')}</TextLink>
+          <TextLink onClick={trySample}>{t('input.sample')}</TextLink>
           <span className="caption start-bottom__note"><CheckIcon size={16} stroke={2} />{t('input.start.local')}</span>
         </div>
 
@@ -243,7 +258,7 @@ export default function InputScreen() {
           <UploadCard upload={upload} onChooseFile={chooseFile} onAddUnmatched={addUnmatched} onIgnoreUnmatched={ignoreUnmatched} />
         </div>
       )}
-      {!cardOpen && transcript && (
+      {FEATURE_TRANSCRIPT && !cardOpen && transcript && (
         <div className="list-upload"><UploadSummary found={transcript.found} onChooseFile={chooseFile} /></div>
       )}
 
@@ -302,7 +317,7 @@ export default function InputScreen() {
   return (
     <Screen>
       {isStart ? startContent : listContent}
-      {fileInput}
+      {FEATURE_TRANSCRIPT && fileInput}
       {floatingToast}
       {sheet && (
         <AddCourseSheet courses={courses} initial={sheet.initial} submitOnOpen={sheet.submitOnOpen}

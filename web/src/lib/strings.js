@@ -34,7 +34,6 @@ const STRINGS = {
   'input.sheet.title': 'أضف مقرر',
   'input.sheet.close': 'سكّر',
   'input.success.next': 'انضاف {code} {name}. أضف اللي بعده',
-  'input.university.optional': '(اختياري)',
   'input.reset.confirm': 'تمسح كل الـ {n} مقرر؟',
   'input.reset.confirm.one': 'تمسح المقرر الوحيد؟',
   'input.reset.confirm.two': 'تمسح المقررين؟',
@@ -74,6 +73,7 @@ const STRINGS = {
   'input.university.label': 'جامعتك',
   'input.university.placeholder': 'اختر جامعتك',
   'input.university.other': 'جامعة ثانية',
+  'input.university.required': 'اختر جامعتك أول عشان تبدأ',
   'input.sample': 'جرّب ببيانات تجريبية',
   'input.reset': 'امسح كل المقررات وابدأ من جديد',
   // From the design (StepIndicator, DESIGN.md §6), not in HANDOFF §8.
@@ -185,8 +185,8 @@ const STRINGS = {
   'plan.path.B': 'المسار ب',
   'plan.path.C': 'المسار ج',
   'plan.strategy.balanced': 'متوازن',
-  'plan.strategy.heavy-first': 'ثقيل',
-  'plan.strategy.light-first': 'خفيف',
+  'plan.strategy.heavy-first': 'الثقيل أول',
+  'plan.strategy.light-first': 'الخفيف أول',
   // HANDOFF plan.terms: names for the first, second and last term.
   'plan.term.next': 'الترم الجاي',
   'plan.term.after': 'الترم اللي بعده',
