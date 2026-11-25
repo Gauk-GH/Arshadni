@@ -136,7 +136,7 @@ const STRINGS = {
   'remaining.error.button': 'صحّح المتطلب السابق',
   'remaining.success': 'تحدّث المتبقي: صار {new} بدل {old}',
   'remaining.storage.broken.title': 'ما قدرنا نقرأ مقرراتك المحفوظة',
-  'remaining.storage.broken.body': 'فيه خلل في البيانات المحفوظة بجهازك. أضف مقرراتك من جديد، وبيانات القديمة محفوظة كنسخة احتياطية.',
+  'remaining.storage.broken.body': 'فيه خلل في البيانات المحفوظة بجهازك. أضف مقرراتك من جديد، وبياناتك القديمة محفوظة كنسخة احتياطية.',
   'remaining.storage.blocked.title': 'المتصفح ما يسمح لنا نحفظ مقرراتك',
   'remaining.storage.blocked.body': 'ممكن لأنك في وضع التصفح الخاص. افتح أرشدني في نافذة عادية عشان ما تضيع مقرراتك لما تقفل الصفحة.',
 
