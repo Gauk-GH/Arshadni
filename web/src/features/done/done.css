@@ -17,10 +17,12 @@
 /* Columns: prefix · meta · «علّم الكل» · chevron. The toggle spans every column (subgrid);
    «علّم الكل» sits on top of it in column 3. */
 .group__head {
-  display: grid; grid-template-columns: auto 1fr auto auto; column-gap: var(--space-2);
+  /* The caption column never goes narrower than its text, so «٥ من ٥، كلها مخلّصة» stays on one
+     line; a long Arabic group name («مقررات ثانية») folds onto two lines instead when space is tight. */
+  display: grid; grid-template-columns: auto minmax(max-content, 1fr) auto auto; column-gap: var(--space-2);
   align-items: center; min-block-size: 64px; padding-inline: var(--space-1);
 }
-.group__head--no-all { grid-template-columns: auto 1fr auto; }
+.group__head--no-all { grid-template-columns: auto minmax(max-content, 1fr) auto; }
 .group__toggle {
   grid-column: 1 / -1; grid-row: 1;
   display: grid; grid-template-columns: subgrid; align-items: center;
@@ -33,6 +35,7 @@
 .group__prefix { grid-column: 1; min-inline-size: var(--tap); font-size: var(--text-body); font-weight: var(--weight-semibold); }
 .group__prefix.code { text-align: right; }
 .group__meta { grid-column: 2; min-inline-size: 0; display: flex; flex-direction: column; gap: 4px; }
+.group__meta .caption { white-space: nowrap; }
 .group__caption--full { display: inline-flex; align-items: center; gap: 4px; color: var(--color-ink); font-weight: var(--weight-semibold); }
 .group__bar { display: flex; block-size: 4px; max-inline-size: 120px; background: var(--color-rule); border-radius: var(--radius-bar); }
 .group__fill { block-size: 4px; background: var(--color-ink); border-radius: var(--radius-bar); }
