@@ -1,7 +1,7 @@
 # Arshadni (أرشدني) — DESIGN.md
 
 Direction: **Ink & Paper (حبر وورق)**. Like an academic advisor's notebook: quiet paper, navy ink, one red-pen mark on the thing that matters.
-Device: mobile, 390 × 844 px frame. Language: Arabic, `dir="rtl"`, `lang="ar"`.
+Device: mobile, 390 × 844 px frame (from 600px wide: a framed card on a desk, §10). Language: Arabic, `dir="rtl"`, `lang="ar"`.
 Boldness is spent in **one place**: the "remaining" number and the 42-tick bar on the Remaining screen. Everything else is calm.
 
 ---
@@ -27,6 +27,7 @@ Derived surfaces (not for text):
 | `wash-new` | `#E9E4D8` | Start color of the "new row" fade (1.2s → transparent) |
 | `skeleton` | `#E5E0D3` | Loading skeleton blocks |
 | `scrim` | `#1F2A44` at 40% (`rgba(31, 42, 68, .4)`) | **Only** behind the bottom sheet. The one allowed transparency |
+| `desk` | `#ECE8DF` | **Only** the page around the app card from 600px wide (§10). Never inside the app |
 
 No gradients. No shadows. No transparency effects (except `scrim` behind the bottom sheet).
 
@@ -265,3 +266,16 @@ Inline stroke SVG, 24px viewBox, `stroke-linecap: round`. Stroke 1.75px (back), 
 - Use Arabic punctuation: « » for quotes, ، for commas.
 - Separate facts with «،», never the middle dot «·»: next to Arabic-Indic digits it looks like the zero «٠».
 - Use logical CSS properties (`margin-inline-end`, `justify-content: flex-start`) so RTL is the default.
+
+## 10. Desktop and tablet framing
+
+Phones (below 600px wide) are not affected: the app fills the screen as designed above.
+
+From **600px wide** (tablets, laptops, desktop PCs) the app sits on a desk as one card:
+
+- **Desk:** the page background around the card is `desk` (`#ECE8DF`). Nothing inside the app uses it.
+- **Card:** width `clamp(420px, 36vw, 480px)` (token `--frame-desk`), centered; background `paper`; border 1px `rule`; radius 8px; 24px (`space-3`, token `--desk-gap`) of desk above and below.
+- **Height:** `100dvh` minus the 48px of desk. The page itself never scrolls; the content scrolls **inside** the card, so the sticky footer stays at the card's bottom.
+- **Floating things stay in the card:** footers and their toasts, the floating toast, the bottom sheet and its scrim (the scrim covers the card only, and the sheet is as wide as the card), and the dev-state label. Nothing is wider than the card or attached to the browser window's edges.
+- No shadows, no gradients. Screen content, spacing and behaviour are the same as on a phone.
+

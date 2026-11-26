@@ -302,6 +302,27 @@
 }
 .floating-toast > * { inline-size: 100%; max-inline-size: calc(var(--frame) - 2 * var(--space-3)); pointer-events: auto; }
 
+/* ---------- Desktop and tablet framing (DESIGN.md §10): floating things stay inside the app card ---------- */
+/* The card is centered, var(--frame-desk) wide, var(--desk-gap) from the top and bottom (base.css).
+   A fixed layer with inset-inline: 0 + a width + margin-inline: auto sits exactly over it. */
+@media (min-width: 600px) {
+  .sheet-layer {
+    inset-block: var(--desk-gap); inset-inline: 0; margin-inline: auto;
+    inline-size: var(--frame-desk);
+    border-radius: var(--radius-lg); overflow: hidden;
+  }
+  .sheet { max-inline-size: none; max-block-size: 90%; }
+  .floating-toast {
+    inset-block-end: calc(var(--desk-gap) + var(--space-4)); margin-inline: auto;
+    inline-size: var(--frame-desk);
+  }
+  .floating-toast > * { max-inline-size: none; }
+  .dev-state-label {
+    inset-block-start: calc(var(--desk-gap) + var(--space-1));
+    inset-inline-end: calc(50% - var(--frame-desk) / 2 + var(--space-1));
+  }
+}
+
 /* ---------- «يفتح لك»: pill, expand area, mini ticks, chain steps (DESIGN.md §6) ---------- */
 /* Pill: 32px visible, inside a 48px tap area. */
 .pill-btn {

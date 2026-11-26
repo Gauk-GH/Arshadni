@@ -44,6 +44,28 @@ svg { display: block; flex-shrink: 0; }
   flex-direction: column;
 }
 
+/* Desktop and tablet framing (DESIGN.md §10). Below 600px nothing here applies: phones are unchanged.
+   From 600px the app is a centered card on a "desk". The card has a fixed height and scrolls INSIDE
+   (so the sticky footer stays at the card's bottom); things that float are fitted to the card in
+   components.css. No shadows, no gradients. */
+@media (min-width: 600px) {
+  body {
+    background: var(--color-desk);
+    padding-block: var(--desk-gap);
+  }
+  .app {
+    inline-size: var(--frame-desk);
+    max-inline-size: none;
+    block-size: calc(100dvh - 2 * var(--desk-gap));
+    min-block-size: 0;
+    background: var(--color-paper);
+    border: var(--border-thin) solid var(--color-rule);
+    border-radius: var(--radius-lg);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after {
     animation: none !important;

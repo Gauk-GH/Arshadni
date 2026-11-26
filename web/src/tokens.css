@@ -17,6 +17,7 @@
   --color-wash-new: #E9E4D8;     /* start of the new-row fade */
   --color-skeleton: #E5E0D3;     /* skeleton blocks */
   --color-scrim: rgba(31, 42, 68, .4); /* ink at 40%: ONLY behind the bottom sheet */
+  --color-desk: #ECE8DF;         /* from 600px wide: the page AROUND the app card only. Never inside the app */
 
   /* 2. Typography (DESIGN.md §2): only these four sizes */
   --font-display: 'Readex Pro', 'IBM Plex Sans Arabic', Tahoma, sans-serif;
@@ -41,6 +42,8 @@
   --tap: 48px;        /* minimum touch target */
   --row-min: 56px;    /* list rows, primary button, segmented items */
   --frame: 390px;     /* mobile frame width */
+  --frame-desk: clamp(420px, 36vw, 480px); /* from 600px wide: the app card's width (DESIGN.md §10) */
+  --desk-gap: var(--space-3); /* from 600px wide: desk space above and below the card */
   --code-col: 72px;   /* course code column in list rows */
   --tick-large: 28px; /* tick bar heights and gaps (DESIGN.md §6) */
   --tick-small: 12px;

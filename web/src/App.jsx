@@ -29,6 +29,8 @@ export default function App() {
     const onChange = () => {
       setPath(readPath());
       window.scrollTo(0, 0);
+      // From 600px wide the app card scrolls inside itself (DESIGN.md §10): reset it too. No effect on phones.
+      document.querySelector('.app')?.scrollTo(0, 0);
     };
     window.addEventListener('hashchange', onChange);
     return () => window.removeEventListener('hashchange', onChange);
