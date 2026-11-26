@@ -44,6 +44,8 @@
   --frame: 390px;     /* mobile frame width */
   --frame-desk: clamp(420px, 36vw, 480px); /* from 600px wide: the app card's width (DESIGN.md §10) */
   --desk-gap: var(--space-3); /* from 600px wide: desk space above and below the card */
+  --doodle-opacity: 0.07; /* the card's study doodles, the only decoration (DESIGN.md §11) */
+  --doodle-stroke: 1.3;   /* their stroke width, non-scaling */
   --code-col: 72px;   /* course code column in list rows */
   --tick-large: 28px; /* tick bar heights and gaps (DESIGN.md §6) */
   --tick-small: 12px;

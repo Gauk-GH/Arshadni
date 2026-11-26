@@ -35,8 +35,10 @@ svg { display: block; flex-shrink: 0; }
   overflow: hidden; clip-path: inset(50%); white-space: nowrap;
 }
 
-/* The mobile frame: one column, centered on wider screens. */
+/* The mobile frame: one column, centered on wider screens.
+   isolation: its own layer stack, so the doodles (z-index: -1) sit above its paper, below all content. */
 .app {
+  isolation: isolate;
   max-inline-size: var(--frame);
   min-block-size: 100dvh;
   margin-inline: auto;

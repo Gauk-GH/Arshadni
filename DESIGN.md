@@ -29,7 +29,7 @@ Derived surfaces (not for text):
 | `scrim` | `#1F2A44` at 40% (`rgba(31, 42, 68, .4)`) | **Only** behind the bottom sheet. The one allowed transparency |
 | `desk` | `#ECE8DF` | **Only** the page around the app card from 600px wide (§10). Never inside the app |
 
-No gradients. No shadows. No transparency effects (except `scrim` behind the bottom sheet).
+No gradients. No shadows. No transparency effects (except `scrim` behind the bottom sheet, and the study doodles' opacity, §11). The study doodles (§11) are the only decoration.
 
 ---
 
@@ -279,4 +279,28 @@ From **600px wide** (tablets, laptops, desktop PCs) the app sits on a desk as on
 - **Scrollbar:** thin (`scrollbar-width: thin`), `rule` thumb on a `paper` track.
 - **Floating things stay in the card:** footers and their toasts, the floating toast, the bottom sheet and its scrim (the scrim covers the card only, and the sheet is as wide as the card), and the dev-state label. Nothing is wider than the card or attached to the browser window's edges.
 - No shadows, no gradients. Screen content, spacing and behaviour are the same as on a phone.
+
+## 11. Decoration: study doodles (the only one allowed)
+
+One layer of light outline study icons inside the app card (the `paper` area), behind all content, on every screen and every device. No other decoration anywhere. Source: Claude Design artboard «اقتراح · خلفية اللابتوب برسومات دراسية خفيفة» (`DeskPattern.dc.html`); code: `web/src/lib/doodles.js` (layout, copied exactly) and `web/src/components/DeskDoodles.jsx` (the layer).
+
+| Setting | Value |
+|---|---|
+| Icons | 12 outline icons on a 24 × 24 grid: book, laptop, pencil, graduation cap, phone, calculator, ruler, open book, backpack, flask, clock, monitor |
+| Count | 110, a **maximum** (an icon that finds no free spot is skipped) |
+| Seed | 7 (seeded random generator: the same layout on every visit for the same card size) |
+| Opacity | 0.07 (token `--doodle-opacity`), on the whole layer |
+| Stroke | `pencil`, width 1.3 (token `--doodle-stroke`), non-scaling, round caps and joins, no fill |
+
+Placement (exactly as the artboard):
+- Sizes 40–230px: `size = 40 + rand^2.2 × 190` (mostly small and medium, a few large). Largest placed first; smaller ones fill the gaps.
+- Light overlap only: a spot is rejected if two centres are closer than 0.82 × the sum of their radii (radius = 0.42 × size). Up to 60 tries per icon, then it is skipped.
+- Icons may spill a little past the card edges (centres up to 0.2 × size outside).
+- Rotation: over 120px up to ±15°, smaller up to ±28°. Never the same icon twice in a row.
+- The card's own width and height are used (phone: the screen; from 600px: the card's outer size, so 1280 × 800 gives exactly the artboard's 461 × 752).
+
+Rules:
+- One layer, absolutely fixed to the card: the content scrolls over it. `aria-hidden`, `pointer-events: none`, below all content (`z-index: -1` inside the card's own stacking layer).
+- Nothing about text, buttons or layout changes. Opaque parts (footer, bottom sheet, inputs, cards) cover it as before.
+- Text still passes on top of a stroke: `ink` 11.9:1, `pencil` 5.2:1, `error-ink` 5.5:1, `red-pen` 3.6:1 (large text only). Checked by `web/scripts/checks/doodles.mjs`.
 

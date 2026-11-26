@@ -302,6 +302,20 @@
 }
 .floating-toast > * { inline-size: 100%; max-inline-size: calc(var(--frame) - 2 * var(--space-3)); pointer-events: auto; }
 
+/* ---------- Study doodles (DESIGN.md §11): the card's only decoration ---------- */
+/* Fixed to the card (the content scrolls over it), behind everything, never takes taps.
+   Laid out left to right like the design artboard (positions come from lib/doodles.js). */
+.doodles {
+  position: fixed; inset-block: 0; inset-inline: 0; margin-inline: auto;
+  inline-size: min(100%, var(--frame));
+  z-index: -1; overflow: hidden; pointer-events: none; direction: ltr;
+  opacity: var(--doodle-opacity);
+}
+.doodles__icon {
+  position: absolute; overflow: visible;
+  stroke: var(--color-pencil); stroke-width: var(--doodle-stroke); stroke-linecap: round; stroke-linejoin: round;
+}
+
 /* ---------- Desktop and tablet framing (DESIGN.md §10): floating things stay inside the app card ---------- */
 /* The card is centered, var(--frame-desk) wide, var(--desk-gap) from the top and bottom (base.css).
    A fixed layer with inset-inline: 0 + a width + margin-inline: auto sits exactly over it. */
@@ -317,6 +331,12 @@
     inline-size: var(--frame-desk);
   }
   .floating-toast > * { max-inline-size: none; }
+  /* Doodles: exactly over the card's inside (within its 1px border). */
+  .doodles {
+    inset-block: calc(var(--desk-gap) + var(--border-thin));
+    inline-size: calc(var(--frame-desk) - 2 * var(--border-thin));
+    border-radius: calc(var(--radius-lg) - var(--border-thin));
+  }
   .dev-state-label {
     inset-block-start: calc(var(--desk-gap) + var(--space-1));
     inset-inline-end: calc(50% - var(--frame-desk) / 2 + var(--space-1));

@@ -3,6 +3,7 @@ import InputScreen from './features/input/InputScreen.jsx';
 import DoneScreen from './features/done/DoneScreen.jsx';
 import RemainingScreen from './features/remaining/RemainingScreen.jsx';
 import PlanScreen from './features/plan/PlanScreen.jsx';
+import DeskDoodles from './components/DeskDoodles.jsx';
 
 // Hash routing: the part after # in the URL picks the screen (#/input, #/done, ...).
 // No library needed for 4 screens. Unknown paths fall back to screen 1.
@@ -39,6 +40,7 @@ export default function App() {
   const Screen = ROUTES[path];
   return (
     <div className="app">
+      <DeskDoodles />
       <Screen />
     </div>
   );
