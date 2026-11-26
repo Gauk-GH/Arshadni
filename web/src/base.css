@@ -63,6 +63,9 @@ svg { display: block; flex-shrink: 0; }
     border-radius: var(--radius-lg);
     overflow-y: auto;
     overscroll-behavior: contain;
+    /* Thin, quiet scrollbar: rule-coloured thumb on the paper track. */
+    scrollbar-width: thin;
+    scrollbar-color: var(--color-rule) var(--color-paper);
   }
 }
 

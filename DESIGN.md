@@ -276,6 +276,7 @@ From **600px wide** (tablets, laptops, desktop PCs) the app sits on a desk as on
 - **Desk:** the page background around the card is `desk` (`#ECE8DF`). Nothing inside the app uses it.
 - **Card:** width `clamp(420px, 36vw, 480px)` (token `--frame-desk`), centered; background `paper`; border 1px `rule`; radius 8px; 24px (`space-3`, token `--desk-gap`) of desk above and below.
 - **Height:** `100dvh` minus the 48px of desk. The page itself never scrolls; the content scrolls **inside** the card, so the sticky footer stays at the card's bottom.
+- **Scrollbar:** thin (`scrollbar-width: thin`), `rule` thumb on a `paper` track.
 - **Floating things stay in the card:** footers and their toasts, the floating toast, the bottom sheet and its scrim (the scrim covers the card only, and the sheet is as wide as the card), and the dev-state label. Nothing is wider than the card or attached to the browser window's edges.
 - No shadows, no gradients. Screen content, spacing and behaviour are the same as on a phone.
 
