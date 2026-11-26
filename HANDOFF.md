@@ -131,7 +131,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 16d. The upload card is disabled until a university is chosen, like «أدخل مقرراتك بنفسك» (decision 34).
 17. Transcript courses are matched to plan courses with the same normalization as rule 2. Matched → `completed: true`. Unmatched → listed for the user to add or ignore; never added silently. This partial state is shown only when the plan already had courses.
 17a. **Empty plan** (start screen): every passed course is added at once as completed, with no partial state. The list screen then shows «input.upload.added», and «+ أضف مقرر» is the primary button (next step) while every course in the plan came from the transcript.
-17b. Courses added from a transcript are saved with `source: "transcript"`. On screen 3, if every course is completed AND all came from a transcript, never say «خلصت خطتك كلها»: show «remaining.transcriptOnly.title» and the button «remaining.transcriptOnly.button» (to screen 1).
+17b. Courses added from a transcript are saved with `source: "transcript"`. On screen 3, if every course is completed AND all came from a transcript, never say «خلصت خطتك كلها»: show «remaining.transcriptOnly.title» and the button «remaining.transcriptOnly.button» (to screen 1). The big «باقي لك ٠ مقرر» number is replaced in the same place by «remaining.transcriptOnly.done» in `ink` (not `red-pen`).
 18. Only passed courses in the transcript count as completed (decision 36). Passed: A+ A B+ B C+ C D+ D P TR, أ+ أ ب+ ب ج+ ج د+ د ناجح معادل. Not passed: F W WF I IP NP, هـ ح منسحب غير مكتمل.
 18a. **Repeats:** a course that appears more than once counts as completed if any attempt passed; the latest passing attempt wins (its name is used).
 18b. **Privacy:** the file is read on the device only (no server, no outside website, no API) and never kept. pdf.js is loaded only after a file is picked.
@@ -264,6 +264,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | remaining.edit | عدّل مقرراتي |
 | remaining.empty.title | حسب اللي أدخلته، خلصت خطتك كلها |
 | remaining.empty.body | قبل ما تقدّم على التخرج، تأكد من القسم إن خطتك ما ينقصها مقرر وإن ساعاتك مكتملة. |
+| remaining.transcriptOnly.done | خلصت {n|course} |
 | remaining.transcriptOnly.title | أضف المقررات اللي باقية عليك عشان نحسب لك |
 | remaining.transcriptOnly.button | أضف المقررات الباقية |
 | remaining.empty.button | راجع مقرراتي |

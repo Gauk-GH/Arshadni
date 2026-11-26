@@ -147,6 +147,7 @@ const STRINGS = {
   'remaining.empty.title': 'حسب اللي أدخلته، خلصت خطتك كلها',
   'remaining.empty.body': 'قبل ما تقدّم على التخرج، تأكد من القسم إن خطتك ما ينقصها مقرر وإن ساعاتك مكتملة.',
   'remaining.empty.button': 'راجع مقرراتي',
+  'remaining.transcriptOnly.done': 'خلصت {n|course}',
   'remaining.transcriptOnly.title': 'أضف المقررات اللي باقية عليك عشان نحسب لك',
   'remaining.transcriptOnly.button': 'أضف المقررات الباقية',
   'remaining.loading': 'نحسب اللي باقي لك…',

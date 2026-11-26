@@ -62,6 +62,10 @@ if (name === 'transcript-ar-en.pdf' && !withSample) {
     const h = plain(document.querySelector('.remaining-message h2').textContent);
     check(h === 'أضف المقررات اللي باقية عليك عشان نحسب لك', 'screen 3: ' + h);
     check(!plain(document.body.textContent).includes('خلصت خطتك كلها'), 'screen 3 does not say «خلصت خطتك كلها»');
+    const done = document.querySelector('.remaining-number--done');
+    check(plain(done?.textContent) === 'خلصت ٢٨ مقرر' && !document.querySelector('.remaining-number__value'), 'screen 3 top: «خلصت ٢٨ مقرر», no «باقي لك ٠» number');
+    const ink = getComputedStyle(document.documentElement).getPropertyValue('--color-ink').trim();
+    log.push(`INFO «خلصت» colour ${getComputedStyle(done).color}, ink token ${ink}`);
     const btn = document.querySelector('.btn-primary');
     log.push('INFO screen 3 button: ' + plain(btn.textContent));
     btn.click();

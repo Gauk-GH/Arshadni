@@ -75,11 +75,18 @@ export default function RemainingScreen() {
           </>
         ) : (
           <>
-            <p className="subtitle">{t('remaining.label')}</p>
-            <div className="remaining-number">
-              <span className="remaining-number__value">{fmtNumber(summary.remaining)}</span>
-              <span className="remaining-number__unit">{t('remaining.unit', { n: summary.remaining })}</span>
-            </div>
+            {onlyTranscript ? (
+              // Rule 17b: «باقي لك ٠ مقرر» would contradict «أضف المقررات اللي باقية عليك», so say what is done.
+              <p className="remaining-number remaining-number--done">{t('remaining.transcriptOnly.done', { n: summary.completed })}</p>
+            ) : (
+              <>
+                <p className="subtitle">{t('remaining.label')}</p>
+                <div className="remaining-number">
+                  <span className="remaining-number__value">{fmtNumber(summary.remaining)}</span>
+                  <span className="remaining-number__unit">{t('remaining.unit', { n: summary.remaining })}</span>
+                </div>
+              </>
+            )}
             {summary.total > 0 && (
               <div className="remaining-ticks">
                 <TickBar total={summary.total} filled={summary.completed} dense={summary.total > DENSE_THRESHOLD} label={ticksLabel} />
