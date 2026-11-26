@@ -10,8 +10,8 @@ Must stories (demo = story 3):
 3. See a simple suggested order for the remaining courses (never claim it is the shortest path, never show a date).
 
 Screens (HANDOFF.md §2): 1 أدخل خطتك → 2 علّم اللي خلصته → 3 المتبقي → 4 خطة التخرج.
-Transcript upload card: build its states, but simulate the reading from mock.json. No real PDF parsing.
-Out of scope: every university's catalog, real transcript parsing, connecting to university systems, login/accounts/cloud profiles, guaranteed shortest path or graduation dates, course availability/seats/registration, paste-list screen, English UI, AI features.
+Transcript upload card: real reading on the device with pdf.js (HANDOFF decision 36, rules 16–18b). The file never leaves the device; no server, no OCR.
+Out of scope: every university's catalog, university-specific transcript layouts, OCR of scanned transcripts, connecting to university systems, login/accounts/cloud profiles, guaranteed shortest path or graduation dates, course availability/seats/registration, paste-list screen, English UI, AI features.
 Build nothing that is not in HANDOFF.md. If I ask for something out of scope, say so before building it.
 
 ## Design
@@ -30,6 +30,7 @@ Build nothing that is not in HANDOFF.md. If I ask for something out of scope, sa
 | React Context (one shared store) | one course list shared by 4 screens | built in |
 | `localStorage` via `lib/storage.js` | courses stay on the device, no backend | built in |
 | Hash routing (`#/input`, `#/done`, `#/remaining`, `#/plan`) | 4 screens, zero packages | built in |
+| pdfjs-dist (legacy build, lazy-loaded in `lib/pdfText.js`) | reads the transcript PDF on the device | 6.5.438 (`@napi-rs/canvas` overridden to 1.1.1) |
 | npm | starter uses it | 11.20.0 (local Node 26.13.1) |
 
 Pin exact versions. If it grows: accounts or cross-device sync, add Supabase. More screens, add React Router. Logic bugs, add Vitest for `lib/`. English, add i18next. AI, a Vercel Function so the key stays off the browser.

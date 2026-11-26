@@ -15,6 +15,8 @@
   line-height: var(--leading-display); color: var(--color-red-pen);
 }
 .remaining-number__unit { font-family: var(--font-display); font-size: var(--text-title); font-weight: var(--weight-semibold); }
+/* Transcript-only plan (HANDOFF rule 17b): «خلصت {n} مقرر» in ink, never the red remaining number. */
+.remaining-number--done { font-family: var(--font-display); font-size: var(--text-title); font-weight: var(--weight-semibold); color: var(--color-ink); }
 .remaining-ticks { margin-block-start: var(--space-3); }
 
 /* Lists */

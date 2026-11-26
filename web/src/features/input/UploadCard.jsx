@@ -1,14 +1,15 @@
 // UploadCard.jsx: the transcript card's states (DESIGN.md §6 Upload card, StatesUpload).
-// reading → done | partial | failed. The reading is simulated (lib/transcript.js).
+// reading → done | partial | failed. The reading is real and on the device (lib/transcript.js, decision 35).
 // The idle state is the filled choice card on the start screen; the file picker lives in InputScreen,
 // so every "choose a file" button opens the same one (onChooseFile).
 import { SecondaryButton, TextLink } from '../../components/Button.jsx';
 import { CourseRow } from '../../components/CourseRow.jsx';
 import { AlertIcon, CheckIcon, SpinnerIcon } from '../../components/Icons.jsx';
 import { t, tn } from '../../lib/strings.js';
+import { MAX_MB } from '../../lib/transcript.js';
 
 export default function UploadCard({ upload, onChooseFile, onAddUnmatched, onIgnoreUnmatched }) {
-  const { status, fileName, result } = upload;
+  const { status, fileName, result, reason } = upload;
 
   if (status === 'reading') {
     return (
@@ -32,7 +33,7 @@ export default function UploadCard({ upload, onChooseFile, onAddUnmatched, onIgn
             <span className="upload__sub code" dir="ltr">{fileName}</span>
           </span>
         </div>
-        <p className="upload__error">{t('input.upload.error.scan')}</p>
+        <p className="upload__error">{t(`input.upload.error.${reason ?? 'scan'}`, { mb: MAX_MB })}</p>
         <SecondaryButton onClick={onChooseFile}>{t('input.upload.error.retry')}</SecondaryButton>
       </div>
     );
@@ -59,6 +60,17 @@ export default function UploadCard({ upload, onChooseFile, onAddUnmatched, onIgn
   }
 
   return null;
+}
+
+// After a transcript on an EMPTY plan (HANDOFF rule 17a): the courses were added straight away,
+// so this says how many and what to do next (add the courses that are still left).
+export function UploadAdded({ added }) {
+  return (
+    <div className="upload-line upload-line--note" role="status">
+      <CheckIcon size={20} />
+      <span className="upload-line__text">{t('input.upload.added', { n: added })}</span>
+    </div>
+  );
 }
 
 // The list state's one-line summary after an import: «سجلك مرفق، لقينا ٢٨ مقرر خلصتها · غيّر».

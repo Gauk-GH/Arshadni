@@ -35,6 +35,9 @@
   background: var(--color-surface); border: var(--border-thin) solid var(--color-rule); border-radius: var(--radius-lg);
 }
 .upload-line__text { flex: 1; font-size: var(--text-caption); font-weight: var(--weight-medium); }
+/* Two sentences: room above and below, icon on the first line. */
+.upload-line--note { padding-block: var(--space-1); align-items: flex-start; }
+.upload-line--note svg { flex-shrink: 0; }
 
 /* ---------- Add sheet form ---------- */
 .sheet-form { display: flex; flex-direction: column; gap: var(--space-2); }
