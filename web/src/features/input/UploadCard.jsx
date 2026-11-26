@@ -62,6 +62,17 @@ export default function UploadCard({ upload, onChooseFile, onAddUnmatched, onIgn
   return null;
 }
 
+// After a transcript on an EMPTY plan (HANDOFF rule 17a): the courses were added straight away,
+// so this says how many and what to do next (add the courses that are still left).
+export function UploadAdded({ added }) {
+  return (
+    <div className="upload-line upload-line--note" role="status">
+      <CheckIcon size={20} />
+      <span className="upload-line__text">{t('input.upload.added', { n: added })}</span>
+    </div>
+  );
+}
+
 // The list state's one-line summary after an import: «سجلك مرفق، لقينا ٢٨ مقرر خلصتها · غيّر».
 export function UploadSummary({ found, onChooseFile }) {
   return (

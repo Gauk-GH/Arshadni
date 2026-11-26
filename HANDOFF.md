@@ -28,7 +28,7 @@ States for each screen: `StatesInput`, `StatesDone`, `StatesRemaining`, `StatesP
 >
 > ⏸ **Paused for the demo (decision 33):** the transcript upload is hidden behind `FEATURE_TRANSCRIPT = false` in `web/src/lib/features.js`. Its code and states stay; turn the flag back on after the camp.
 >
-> 📄 **Real reading (decision 36, branch `feature/real-transcript`):** the PDF is read on the device with pdf.js and the flag is on. Known gap: the upload card is only on the start screen (empty plan), so a real transcript there always gives the partial state («٠ منها في خطتك») and «أضف الـ {n} لخطتك» adds the courses as completed.
+> 📄 **Real reading (decision 36, branch `feature/real-transcript`):** the PDF is read on the device with pdf.js and the flag is on. On an empty plan the passed courses are added straight away (rule 17a); the partial state is only for a plan that already has courses.
 
 ## 3. Happy path (3 navigation taps + data entry)
 
@@ -128,7 +128,10 @@ Storage: device only (browser local storage), no account, no server. Key name an
 16a. **Limits:** not a PDF (type or `.pdf` name) → «input.upload.error.notPdf»; over 10 MB → «input.upload.error.tooBig»; pdf.js can't open it (damaged, password) → «input.upload.error.generic»; reading takes over 15 seconds → stop and «input.upload.error.timeout».
 16b. **Is it a transcript?** Only if the text has at least one marker («السجل الأكاديمي», «Academic Record», «Transcript», «GPA», «المعدل») AND at least 3 course lines. Otherwise «input.upload.error.notTranscript».
 16c. **Course line:** a line with a course code (2–5 Latin or Arabic letters, optional space, 3–4 digits: «CS 210», «CS210», «عال 101») AND a grade on the same line. Not university-specific. Words like «Fall 2024», «Total 120», «الفصل 2024» are not codes.
-17. Transcript courses are matched to plan courses with the same normalization as rule 2. Matched → `completed: true`. Unmatched → listed for the user to add or ignore; never added silently.
+16d. The upload card is disabled until a university is chosen, like «أدخل مقرراتك بنفسك» (decision 34).
+17. Transcript courses are matched to plan courses with the same normalization as rule 2. Matched → `completed: true`. Unmatched → listed for the user to add or ignore; never added silently. This partial state is shown only when the plan already had courses.
+17a. **Empty plan** (start screen): every passed course is added at once as completed, with no partial state. The list screen then shows «input.upload.added», and «+ أضف مقرر» is the primary button (next step) while every course in the plan came from the transcript.
+17b. Courses added from a transcript are saved with `source: "transcript"`. On screen 3, if every course is completed AND all came from a transcript, never say «خلصت خطتك كلها»: show «remaining.transcriptOnly.title» and the button «remaining.transcriptOnly.button» (to screen 1).
 18. Only passed courses in the transcript count as completed (decision 36). Passed: A+ A B+ B C+ C D+ D P TR, أ+ أ ب+ ب ج+ ج د+ د ناجح معادل. Not passed: F W WF I IP NP, هـ ح منسحب غير مكتمل.
 18a. **Repeats:** a course that appears more than once counts as completed if any attempt passed; the latest passing attempt wins (its name is used).
 18b. **Privacy:** the file is read on the device only (no server, no outside website, no API) and never kept. pdf.js is loaded only after a file is picked.
@@ -199,6 +202,7 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | input.list.count | أضفت {n|course}، الأحدث فوق |
 | input.upload.attached | سجلك مرفق، لقينا {n|course} خلصتها |
 | input.upload.changeShort | غيّر |
+| input.upload.added | أضفنا {n|course} خلصتها من سجلك. الحين أضف المقررات اللي باقية عليك من خطة قسمك |
 | input.addOne | أضف مقرر |
 | input.sheet.title | أضف مقرر |
 | input.sheet.close | سكّر |
@@ -260,6 +264,8 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | remaining.edit | عدّل مقرراتي |
 | remaining.empty.title | حسب اللي أدخلته، خلصت خطتك كلها |
 | remaining.empty.body | قبل ما تقدّم على التخرج، تأكد من القسم إن خطتك ما ينقصها مقرر وإن ساعاتك مكتملة. |
+| remaining.transcriptOnly.title | أضف المقررات اللي باقية عليك عشان نحسب لك |
+| remaining.transcriptOnly.button | أضف المقررات الباقية |
 | remaining.empty.button | راجع مقرراتي |
 | remaining.loading | نحسب اللي باقي لك… |
 | remaining.error.title | ما نقدر نرتّب خطتك |
@@ -366,4 +372,4 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 33. **Transcript paused for the demo.** The transcript upload card and the «سجلك مرفق» line are hidden behind one flag, `FEATURE_TRANSCRIPT = false` in `web/src/lib/features.js` (code kept, comes back after the camp). With it off, the start screen shows only «أدخل مقرراتك بنفسك» as the FILLED choice card, without «الأسرع». Reason: the simulated reading gives a wrong result on an empty plan.
 34. **University required, and first.** The «جامعتك» picker moves to the top of the start screen, under the title, without «(اختياري)». Until a university is chosen, «أدخل مقرراتك بنفسك» is disabled (disabled-button colours: `rule` fill, `pencil` text) with «اختر جامعتك أول عشان تبدأ» under the picker. «جرّب ببيانات تجريبية» works without a choice and sets the first university in the list when none is chosen. The university is saved with the plan and restored on reload. Replaces the "optional" part of decisions 24 and 27.
 35. **Path picker sub-labels** are «متوازن» / «الثقيل أول» / «الخفيف أول» again. Reverses the «متوازن / ثقيل / خفيف» part of decision 30.
-36. **Real transcript reading, on the device** (branch `feature/real-transcript` until "merge"). The PDF is read in the browser with pdf.js (`pdfjs-dist` 6.5.438, legacy build), loaded with a dynamic import only after a file is picked, so the first page stays fast. Nothing leaves the device. A generic parser (rules 16–18b) finds course lines by code + grade; matching to the plan and the 4 card states (reading, error, done, partial) are unchanged (rule 17). Errors get their own texts (§8 `input.upload.error.*`). `FEATURE_TRANSCRIPT = true` on the branch. Replaces decision 11 (simulated reading) and ends the pause of decision 33 on the branch. Test files with fake data: `web/scripts/fixtures/` (rebuild with `make-fixtures.mjs`); checks: `scripts/checks/transcript.mjs`, `transcript-ui.js`, `demo-flow-ui.js`.
+36. **Real transcript reading, on the device** (branch `feature/real-transcript` until "merge"). The PDF is read in the browser with pdf.js (`pdfjs-dist` 6.5.438, legacy build), loaded with a dynamic import only after a file is picked, so the first page stays fast. Nothing leaves the device. A generic parser (rules 16–18b) finds course lines by code + grade; matching to the plan and the 4 card states (reading, error, done, partial) are unchanged (rule 17). Errors get their own texts (§8 `input.upload.error.*`). On an empty plan the courses go straight in (rules 17a–17b), and the upload card needs a university first (rule 16d). `FEATURE_TRANSCRIPT = true` on the branch. Replaces decision 11 (simulated reading) and ends the pause of decision 33 on the branch. Test files with fake data: `web/scripts/fixtures/` (rebuild with `make-fixtures.mjs`); checks: `scripts/checks/transcript.mjs`, `transcript-ui.js`, `demo-flow-ui.js`.

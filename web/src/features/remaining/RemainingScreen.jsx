@@ -45,6 +45,9 @@ export default function RemainingScreen() {
 
   const noCourses = !loading && summary.total === 0;
   const allDone = !loading && !noCourses && summary.remaining === 0;
+  // Rule 17b: every course is completed AND came from the transcript, so the plan is only half entered.
+  // Never say «خلصت خطتك كلها» then: ask for the courses still left instead.
+  const onlyTranscript = allDone && courses.every((c) => c.source === 'transcript');
   const ticksLabel = t('remaining.ticks.label', { done: summary.completed, total: summary.total });
   const cycleKeys = new Set((cycle ?? []).map(codeKey));
   const cycleCourses = courses.filter((c) => cycleKeys.has(codeKey(c.code)));
@@ -117,10 +120,16 @@ export default function RemainingScreen() {
           </div>
         )}
 
-        {allDone && (
+        {allDone && !onlyTranscript && (
           <div className="remaining-message">
             <h2 className="section-heading">{t('remaining.empty.title')}</h2>
             <p className="subtitle">{t('remaining.empty.body')}</p>
+          </div>
+        )}
+
+        {onlyTranscript && (
+          <div className="remaining-message">
+            <h2 className="section-heading">{t('remaining.transcriptOnly.title')}</h2>
           </div>
         )}
 
@@ -157,6 +166,8 @@ export default function RemainingScreen() {
         )}
         {noCourses ? (
           <PrimaryButton onClick={() => navigate('/input')}>{t('done.empty.button')}</PrimaryButton>
+        ) : onlyTranscript ? (
+          <PrimaryButton onClick={() => navigate('/input')}>{t('remaining.transcriptOnly.button')}</PrimaryButton>
         ) : allDone ? (
           // Rule 11: no plan button when nothing remains.
           <PrimaryButton onClick={() => navigate('/input')}>{t('remaining.empty.button')}</PrimaryButton>

@@ -21,13 +21,16 @@ import { FEATURE_TRANSCRIPT } from '../../lib/features.js';
 import { devState, devUpload } from '../../lib/devState.js';
 import { t, tn } from '../../lib/strings.js';
 import { OTHER_UNIVERSITY, UNIVERSITIES } from '../../lib/universities.js';
-import UploadCard, { UploadSummary } from './UploadCard.jsx';
+import UploadCard, { UploadAdded, UploadSummary } from './UploadCard.jsx';
 import AddCourseSheet from './AddCourseSheet.jsx';
 import './input.css';
 
 const SEARCH_THRESHOLD = 20; // decision 7 (HANDOFF rule 12)
 const TOAST_MS = 5000;
 const GHOST_TICKS = 10;
+
+// A course read from the transcript: completed, and marked so screen 3 knows where it came from (rule 17b).
+const fromTranscript = (c) => ({ ...makeCourse(c), completed: true, source: 'transcript' });
 
 export default function InputScreen() {
   const {
@@ -97,7 +100,9 @@ export default function InputScreen() {
     loadSample();
   }
 
+  // The university comes first for both ways in (decision 34): no file picker without one.
   function chooseFile() {
+    if (!university) return;
     fileRef.current?.click();
   }
 
@@ -106,6 +111,15 @@ export default function InputScreen() {
     const result = await readTranscript(file, courses, import.meta.env.DEV ? devUpload() : null);
     if (result.status === 'failed') {
       setUpload({ status: 'failed', fileName: file.name, result: null, reason: result.reason });
+      return;
+    }
+    // Empty plan (rule 17a): nothing to match against, so every passed course goes straight in,
+    // completed, and the list screen asks for the courses that are still left. No partial state.
+    if (courses.length === 0) {
+      // With nothing in the plan, every found course is "unmatched" and carries its name.
+      addCourses(result.unmatchedCourses.map(fromTranscript));
+      setTranscript({ found: result.foundCodes.length, added: result.unmatchedCourses.length });
+      setUpload({ status: 'idle', fileName: '', result: null });
       return;
     }
     markCompleted(result.matchedCodes);
@@ -123,7 +137,7 @@ export default function InputScreen() {
   }
 
   function addUnmatched() {
-    const added = upload.result.unmatchedCourses.map((c) => ({ ...makeCourse(c), completed: true }));
+    const added = upload.result.unmatchedCourses.map(fromTranscript);
     addCourses(added);
     finishImport(upload.result);
   }
@@ -144,6 +158,8 @@ export default function InputScreen() {
   }
 
   const reading = upload.status === 'reading';
+  // Only courses that came from the transcript so far: «+ أضف مقرر» is the next step, so it leads.
+  const onlyTranscript = !loading && courses.length > 0 && courses.every((c) => c.source === 'transcript');
   const cardOpen = ['reading', 'failed', 'partial'].includes(upload.status);
   const isStart = !loading && courses.length === 0;
   const showSearch = courses.length > SEARCH_THRESHOLD;
@@ -213,6 +229,7 @@ export default function InputScreen() {
             <ChoiceCard
               variant="filled" icon={<FileUploadIcon />} tag={t('input.start.fastest')}
               title={t('input.upload')} sub={t('input.upload.sub')} onClick={chooseFile}
+              disabled={!university} aria-describedby={university ? undefined : 'university-hint'}
             />
           ))}
           {/* With the transcript off, manual entry is the only way in, so it becomes the filled card (no «الأسرع»). */}
@@ -258,7 +275,10 @@ export default function InputScreen() {
           <UploadCard upload={upload} onChooseFile={chooseFile} onAddUnmatched={addUnmatched} onIgnoreUnmatched={ignoreUnmatched} />
         </div>
       )}
-      {FEATURE_TRANSCRIPT && !cardOpen && transcript && (
+      {FEATURE_TRANSCRIPT && !cardOpen && transcript?.added && onlyTranscript && (
+        <div className="list-upload"><UploadAdded added={transcript.added} /></div>
+      )}
+      {FEATURE_TRANSCRIPT && !cardOpen && transcript && !(transcript.added && onlyTranscript) && (
         <div className="list-upload"><UploadSummary found={transcript.found} onChooseFile={chooseFile} /></div>
       )}
 
@@ -304,8 +324,17 @@ export default function InputScreen() {
       </section>
 
       <Footer>
-        <SecondaryButton ref={addBtnRef} icon={<PlusIcon />} disabled={loading} onClick={openSheet}>{t('input.addOne')}</SecondaryButton>
-        <PrimaryButton disabled={loading || reading} onClick={() => navigate('/done')}>{t('input.next')}</PrimaryButton>
+        {onlyTranscript ? (
+          <>
+            <PrimaryButton ref={addBtnRef} icon={<PlusIcon />} onClick={openSheet}>{t('input.addOne')}</PrimaryButton>
+            <SecondaryButton disabled={reading} onClick={() => navigate('/done')}>{t('input.next')}</SecondaryButton>
+          </>
+        ) : (
+          <>
+            <SecondaryButton ref={addBtnRef} icon={<PlusIcon />} disabled={loading} onClick={openSheet}>{t('input.addOne')}</SecondaryButton>
+            <PrimaryButton disabled={loading || reading} onClick={() => navigate('/done')}>{t('input.next')}</PrimaryButton>
+          </>
+        )}
       </Footer>
 
     </>
