@@ -1,6 +1,6 @@
 // features.js: on/off switches for whole features. Change a value here, nowhere else.
 //
-// FEATURE_TRANSCRIPT: the simulated transcript upload on screen 1 («ارفق سجلك الأكاديمي»).
-// Paused for the demo (HANDOFF decision 33): off hides the upload card and the «سجلك مرفق» line.
-// The code stays (UploadCard.jsx, lib/transcript.js); set it back to true after the camp.
-export const FEATURE_TRANSCRIPT = false;
+// FEATURE_TRANSCRIPT: the transcript upload on screen 1 («ارفق سجلك الأكاديمي») and the «سجلك مرفق» line.
+// On (HANDOFF decision 35): the PDF is really read, on the device, with pdf.js (lib/transcript.js, lib/pdfText.js).
+// Off: the upload card is hidden and manual entry is the only way in (the demo layout of decision 33).
+export const FEATURE_TRANSCRIPT = true;

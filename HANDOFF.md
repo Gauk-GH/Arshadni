@@ -27,6 +27,8 @@ States for each screen: `StatesInput`, `StatesDone`, `StatesRemaining`, `StatesP
 > ⚠️ **Scope change:** the PRD's MVP cut "PDF/image transcript reading". The transcript upload was added on the user's request after Phase 8. It is optional: manual entry still works without it. Build it after the manual flow works.
 >
 > ⏸ **Paused for the demo (decision 33):** the transcript upload is hidden behind `FEATURE_TRANSCRIPT = false` in `web/src/lib/features.js`. Its code and states stay; turn the flag back on after the camp.
+>
+> 📄 **Real reading (decision 36, branch `feature/real-transcript`):** the PDF is read on the device with pdf.js and the flag is on. Known gap: the upload card is only on the start screen (empty plan), so a real transcript there always gives the partial state («٠ منها في خطتك») and «أضف الـ {n} لخطتك» adds the courses as completed.
 
 ## 3. Happy path (3 navigation taps + data entry)
 
@@ -122,9 +124,14 @@ Storage: device only (browser local storage), no account, no server. Key name an
 13. If saving to device storage fails, keep the plan on screen and show the save error.
 14. Restore saved courses automatically on open.
 15. A prerequisite code that is not in the plan (e.g. `ARAB 101`) is treated as… [?] (completed? missing? warn?).
-16. Transcript import accepts PDF with a text layer only [?]. A scanned image fails with the scan error; manual entry stays available.
+16. Transcript import accepts PDF with a text layer only (decision 36). A file with almost no text (under 20 characters) is a scanned image and fails with the scan error; manual entry stays available.
+16a. **Limits:** not a PDF (type or `.pdf` name) → «input.upload.error.notPdf»; over 10 MB → «input.upload.error.tooBig»; pdf.js can't open it (damaged, password) → «input.upload.error.generic»; reading takes over 15 seconds → stop and «input.upload.error.timeout».
+16b. **Is it a transcript?** Only if the text has at least one marker («السجل الأكاديمي», «Academic Record», «Transcript», «GPA», «المعدل») AND at least 3 course lines. Otherwise «input.upload.error.notTranscript».
+16c. **Course line:** a line with a course code (2–5 Latin or Arabic letters, optional space, 3–4 digits: «CS 210», «CS210», «عال 101») AND a grade on the same line. Not university-specific. Words like «Fall 2024», «Total 120», «الفصل 2024» are not codes.
 17. Transcript courses are matched to plan courses with the same normalization as rule 2. Matched → `completed: true`. Unmatched → listed for the user to add or ignore; never added silently.
-18. Only passed courses in the transcript count as completed [?] (how to read grades like F, W, IP is open).
+18. Only passed courses in the transcript count as completed (decision 36). Passed: A+ A B+ B C+ C D+ D P TR, أ+ أ ب+ ب ج+ ج د+ د ناجح معادل. Not passed: F W WF I IP NP, هـ ح منسحب غير مكتمل.
+18a. **Repeats:** a course that appears more than once counts as completed if any attempt passed; the latest passing attempt wins (its name is used).
+18b. **Privacy:** the file is read on the device only (no server, no outside website, no API) and never kept. pdf.js is loaded only after a file is picked.
 19. When a plan has more than 60 courses, the tick bar is dense (1px gaps instead of 2–3px). Screen 2 also shows «ابحث بدل ما تمرّر» after the count.
 20. **Unlocks (screen 3):** a course unlocks DIRECTLY the remaining courses that list it as a prerequisite. Completed courses and courses not in the plan are not counted.
 21. The available list is sorted by how many courses each one unlocks directly (most first); ties keep the student's list order. The «متاح» badge is not shown there. Courses that unlock 1+ get «يفتح {n}»; the first course gets «يفتح أكثر شي» only if it unlocks 1+.
@@ -159,6 +166,11 @@ Storage: device only (browser local storage), no account, no server. Key name an
 | input.upload.error.title | ما قدرنا نقرأ سجلك |
 | input.upload.error.scan | الملف صورة ممسوحة، مو PDF فيه نص. نزّل السجل من بوابة الجامعة كـ PDF وارفقه مرة ثانية، أو أدخل مقرراتك يدويًا تحت. |
 | input.upload.error.retry | ارفق ملف ثاني |
+| input.upload.error.notTranscript | هذا الملف ما يبان إنه سجل أكاديمي. نزّل السجل من بوابة جامعتك |
+| input.upload.error.notPdf | هذا الملف مو PDF. ارفق سجلك الأكاديمي كملف PDF، أو أدخل مقرراتك يدويًا. |
+| input.upload.error.tooBig | الملف أكبر من {mb} ميقا. ارفق سجلك الأكاديمي من بوابة جامعتك، أو أدخل مقرراتك يدويًا. |
+| input.upload.error.timeout | قراءة الملف طوّلت وما كملت. جرّب مرة ثانية، أو أدخل مقرراتك يدويًا. |
+| input.upload.error.generic | ما قدرنا نفتح الملف. ارفق ملف ثاني، أو أدخل مقرراتك يدويًا. |
 | input.upload.partial.sub | {matched} منها في خطتك، و{unmatched} مو موجودة فيها |
 | input.upload.partial.add | أضف الـ {n} لخطتك |
 | input.upload.partial.add.one | أضفه لخطتك |
@@ -306,9 +318,9 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 10. **Search threshold** [?]: show search after 20 courses?
 11. **Code normalization** [?]: always display as "LETTERS space DIGITS"?
 12. **Returning user** [?]: on open with saved data, land on screen 3 (Remaining) instead of screen 1?
-13. **Transcript reading** [?]: read the PDF on the device (privacy, no server) or send it to a server? The MVP has no backend.
-14. **Transcript formats** [?]: which universities' transcript layouts must work first? Each university's PDF looks different.
-15. **Grades** [?]: which grades count as completed (D? Pass? transfer credit? in-progress courses this term)?
+13. ~~**Transcript reading** [?]~~ Answered (decision 36): on the device with pdf.js.
+14. ~~**Transcript formats** [?]~~ Answered (decision 36): one generic parser (code + grade on a line), no university-specific layouts.
+15. ~~**Grades** [?]~~ Answered (decision 36, rule 18).
 16. **Scanned transcripts** [?]: support OCR later, or always ask for a text PDF?
 
 ## 10. Prototype limits (not product decisions)
@@ -354,3 +366,4 @@ Numbers in `{n}` are shown with Arabic-Indic digits. `{code}` stays Latin.
 33. **Transcript paused for the demo.** The transcript upload card and the «سجلك مرفق» line are hidden behind one flag, `FEATURE_TRANSCRIPT = false` in `web/src/lib/features.js` (code kept, comes back after the camp). With it off, the start screen shows only «أدخل مقرراتك بنفسك» as the FILLED choice card, without «الأسرع». Reason: the simulated reading gives a wrong result on an empty plan.
 34. **University required, and first.** The «جامعتك» picker moves to the top of the start screen, under the title, without «(اختياري)». Until a university is chosen, «أدخل مقرراتك بنفسك» is disabled (disabled-button colours: `rule` fill, `pencil` text) with «اختر جامعتك أول عشان تبدأ» under the picker. «جرّب ببيانات تجريبية» works without a choice and sets the first university in the list when none is chosen. The university is saved with the plan and restored on reload. Replaces the "optional" part of decisions 24 and 27.
 35. **Path picker sub-labels** are «متوازن» / «الثقيل أول» / «الخفيف أول» again. Reverses the «متوازن / ثقيل / خفيف» part of decision 30.
+36. **Real transcript reading, on the device** (branch `feature/real-transcript` until "merge"). The PDF is read in the browser with pdf.js (`pdfjs-dist` 6.5.438, legacy build), loaded with a dynamic import only after a file is picked, so the first page stays fast. Nothing leaves the device. A generic parser (rules 16–18b) finds course lines by code + grade; matching to the plan and the 4 card states (reading, error, done, partial) are unchanged (rule 17). Errors get their own texts (§8 `input.upload.error.*`). `FEATURE_TRANSCRIPT = true` on the branch. Replaces decision 11 (simulated reading) and ends the pause of decision 33 on the branch. Test files with fake data: `web/scripts/fixtures/` (rebuild with `make-fixtures.mjs`); checks: `scripts/checks/transcript.mjs`, `transcript-ui.js`, `demo-flow-ui.js`.

@@ -2,7 +2,7 @@
 // States: start (no courses: two choice cards) · list (has courses) · add sheet ·
 // loading (restore) · upload card (reading, failed, partial) · «سجلك مرفق» line after an import ·
 // long plan with search (> 20 courses) · reset with confirmation and «تراجع».
-// Demo (HANDOFF decisions 33–34): the transcript parts sit behind FEATURE_TRANSCRIPT (off), and the
+// HANDOFF decisions 33–35: the transcript parts sit behind FEATURE_TRANSCRIPT (on: real reading), and the
 // university is required before «أدخل مقرراتك بنفسك» opens.
 import { useEffect, useRef, useState } from 'react';
 import { useStore } from '../../store/StoreProvider.jsx';
@@ -105,7 +105,7 @@ export default function InputScreen() {
     setUpload({ status: 'reading', fileName: file.name, result: null });
     const result = await readTranscript(file, courses, import.meta.env.DEV ? devUpload() : null);
     if (result.status === 'failed') {
-      setUpload({ status: 'failed', fileName: file.name, result: null });
+      setUpload({ status: 'failed', fileName: file.name, result: null, reason: result.reason });
       return;
     }
     markCompleted(result.matchedCodes);
